@@ -13,7 +13,7 @@ TODO
  - Photos --> photos connected to the DMs
 
 
-Storing Users: 
+Storing Users: Mukund, Kush
  - profiles
  - New User account creation
  - password
@@ -21,13 +21,13 @@ Storing Users:
  - User viewer
  - Add, block, and remove friend features
 
-Storing Messages:
+Storing Messages: Jai, William
  - Message content (picture content)
  - Sending Message
  - recieving message
  - message visibility
 
-Threading: 
+Threading: Alan
  - make it thread safe
  - run searches on multiple threads
  - possibly run functions like add, remove, post on a seperate thread.
