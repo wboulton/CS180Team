@@ -14,7 +14,7 @@ public class User {
     private ArrayList<User> blockedUsers;
     //profile picture
     private byte[] profilePicture;
-
+// you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profilePicture) {
         this.username = username;
         this.password = password;
