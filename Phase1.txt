@@ -1,0 +1,13 @@
+The first phase of the project consists of building the entire database side of the project including interfaces and test cases. 
+Forward thinking is strongly encouraged. Questions such as: What are we storing? How are we accessing it? What are we calculating?
+All should be addressed during this stage. Project 3 was an example of a database. HW10 covers techniques on how to make the 
+database thread safe. Remember the database will only be interacting with a single server; however, that server will be 
+interacting with multiple clients simultaneously. A README.txt file is required with each phase and should be submitted in 
+the Vocareum workspace alongside any java files. See documentation bellow.
+
+TODO 
+ - Storing Users --> friends tied
+ - Creating test cases
+ - Threading
+ - DMs --> senders and recievers tied, linked to photos if necessary
+ - Photos --> photos connected to the DMs
