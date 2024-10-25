@@ -11,3 +11,23 @@ TODO
  - Threading
  - DMs --> senders and recievers tied, linked to photos if necessary
  - Photos --> photos connected to the DMs
+
+
+Storing Users: 
+ - profiles
+ - New User account creation
+ - password
+ - User search
+ - User viewer
+ - Add, block, and remove friend features
+
+Storing Messages:
+ - Message content (picture content)
+ - Sending Message
+ - recieving message
+ - message visibility
+
+Threading: 
+ - make it thread safe
+ - run searches on multiple threads
+ - possibly run functions like add, remove, post on a seperate thread.
