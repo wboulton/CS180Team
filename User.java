@@ -1,5 +1,4 @@
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -65,4 +64,7 @@ public class User {
         }
     }
 
+    public void changeUsername(String newUsername) {
+        this.username = newUsername;
+    }
 }
