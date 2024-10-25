@@ -1,5 +1,8 @@
 import java.util.*;
 import java.io.*;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.nio.file.Files; 
 
 public class MessageDatabase {
     protected ArrayList<Message> recievedMessages;

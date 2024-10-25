@@ -39,4 +39,5 @@ public class Message implements MessageInterface {
     public byte[] getPicture() {
         return this.pictureContent;
     }
+    
 }
