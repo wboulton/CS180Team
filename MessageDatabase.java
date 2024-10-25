@@ -26,10 +26,12 @@ public class MessageDatabase {
             String line;
             while ((line = bfr.readLine()) != null) {
                 Message newMessage = new Message(line);
-                if (newMessage.isSent()) {
+                if (newMessage.getSender() == user.getUsername()) {
                     sentMessages.add(newMessage);
-                } else {
+                } else if (newMessage.getReciever() == user.getUsername()){
                     recievedMessages.add(newMessage);
+                } else {
+                    System.out.println("This message shouldn't be here");
                 }
             }
         } catch (Exception e) {
