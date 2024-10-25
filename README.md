@@ -51,6 +51,7 @@ Enable comment on posts.
 Anyone that can view a comment can upvote or downvote it.
 The post owner and comment owner can delete the comment.
 Extra credit opportunity – Add photo posts to news feed.
+
 The first phase of the project consists of building the entire database side of the project including interfaces and test cases. Forward thinking is strongly encouraged. Questions such as: What are we storing? How are we accessing it? What are we calculating? All should be addressed during this stage. Project 3 was an example of a database. HW10 covers techniques on how to make the database thread safe. Remember the database will only be interacting with a single server; however, that server will be interacting with multiple clients simultaneously. A README.txt file is required with each phase and should be submitted in the Vocareum workspace alongside any java files. See documentation bellow.
 
 The second phase will be to design and implement the server by linking it to the database and to start work on the client side of the program. Again, forward thinking is strongly encouraged, remember the team will be required to add a GUI to their client. The client should only communicate with the server, all computation should be handled on the server side of the software. A README.txt file is required with each phase and should be submitted in the Vocareum workspace alongside any java files. See documentation bellow.
