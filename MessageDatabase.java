@@ -20,5 +20,20 @@ public class MessageDatabase {
     private ArrayList getRecievedMessages() {
         return recievedMessages;
     }
-    
+    //I imagine this function will be used to read through the message database and assign all messages to their assigned ArrayList
+    private void recoverMessages() { 
+        try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
+            String line;
+            while ((line = bfr.readLine()) != null) {
+                Message newMessage = new Message(line);
+                if (newMessage.isSent()) {
+                    sentMessages.add(newMessage);
+                } else {
+                    recievedMessages.add(newMessage);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
