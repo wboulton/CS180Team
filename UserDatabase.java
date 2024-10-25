@@ -25,8 +25,14 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     }
     public void createUser(String username, String password, String firstName, String lastName, String profilePicture) {
         // This method creates a new user
-        User newUser = new User(username, password, firstName, lastName, profilePicture);
-        users.add(newUser);
+        //if the username is not taken, create a new user
+        if (getUser(username) == null) {
+            User user = new User(username, password, firstName, lastName, profilePicture);
+            users.add(user);
+            writeDB(user);
+        } else {
+            System.out.println("Username is taken");
+        }
     }
     //add to database
     public void writeDB(User user) {
@@ -69,6 +75,11 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         return user.verifyLogin(password);
     }
-    //view user
-
+    //change username
+    public void changeUsername(User user, String newUsername) {
+        //if the username is not taken, change the username
+        if (getUser(newUsername) == null) {
+            user.changeUsername(newUsername);
+        }
+    }
 }
