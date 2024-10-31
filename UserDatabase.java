@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.nio.file.Files;
 
 public class UserDatabase {
     /*
@@ -20,19 +22,33 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         // This is a constructor
         this.outputFile = outputFile;
         this.messageFile = messageFile;
+        load();
         users = new ArrayList<User>();
 
     }
-    public void createUser(String username, String password, String firstName, String lastName, String profilePicture) {
+    public void createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
         // This method creates a new user
         //if the username is not taken, create a new user
-        if (getUser(username) == null) {
-            User user = new User(username, password, firstName, lastName, profilePicture);
-            users.add(user);
-            writeDB(user);
-        } else {
-            System.out.println("Username is taken");
+        //if user already exists, throw exception
+        if (getUser(username) != null) {
+            throw new BadDataException("Username already exists");
         }
+        //if password is not legal, throw exception
+        if (!legalPassword(password)) {
+            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one number, at least one Capital letter and at least one lowercase letter");
+        }
+        //if the profile picture is not found, throw exception
+        try {
+            File imageFile = new File(profilePicture);
+            byte[] imageData = Files.readAllBytes(imageFile.toPath());
+        } catch (Exception e) {
+            throw new BadDataException("Profile picture not found");
+        }
+        //create a new user
+        User user = new User(username, password, firstName, lastName, profilePicture);
+        users.add(user);
+        writeDB(user);
+        
     }
     //add to database
     public void writeDB(User user) {
@@ -54,9 +70,9 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         // This method blocks a user
         user.blockUser(blockedUser);
     }
-    public void unblockUser(User user, User blockedUser) {
+    public boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        user.unblockUser(blockedUser);
+        return user.unblockUser(blockedUser);
     }
     public User getUser(String username) {
         // This method gets a user by their username
@@ -80,6 +96,30 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         //if the username is not taken, change the username
         if (getUser(newUsername) == null) {
             user.changeUsername(newUsername);
+        }
+    }
+    //legal password
+    public boolean legalPassword(String password) {
+
+        // This method checks if a password is legal - at least 8 characters, 
+        //at least one number, at least one Capital letter and at least one lowercase letter
+        return password.length() >= 8 && password.matches(".*[0-9].*") 
+        && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*");
+    }
+
+    //load function for when the program starts
+    public void load() {
+        // This method loads the database
+        try {
+            Scanner scanner = new Scanner(new File(outputFile));
+            while (scanner.hasNextLine()) {
+                String[] data = scanner.nextLine().split(", ");
+                User user = new User(data[0], data[1], data[2], data[3], data[4]);
+                users.add(user);
+            }
+            scanner.close();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
