@@ -31,3 +31,7 @@ Threading: Alan
  - make it thread safe
  - run searches on multiple threads
  - possibly run functions like add, remove, post on a seperate thread.
+
+Other Things we need:
+ - Interfaces
+ - Test Cases

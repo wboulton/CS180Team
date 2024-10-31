@@ -15,7 +15,7 @@ public class User {
     //profile picture
     private byte[] profilePicture;
 
-    
+    // you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profilePicture) {
         //username rules - no commas, doesn't already exist, not empty
         //if userDatabase is null, create a new userDatabase
