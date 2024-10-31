@@ -31,7 +31,7 @@ public class serverThread extends Thread{
                 break;
             case UNBLOCK:
                 User otherUser4 = this.userDB.getUser(this.value);
-                this.user.blockUser(otherUser4);
+                this.user.unblockUser(otherUser4);
                 break;
             case POST:
                 
