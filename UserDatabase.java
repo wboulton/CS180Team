@@ -1,6 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.lang.*;
 
 public class UserDatabase {
     /*
@@ -15,6 +16,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     private ArrayList<User> users;
     private String outputFile;
     private String messageFile;
+    public static final Object lock = new Object();
 
     public UserDatabase(String outputFile, String messageFile) {
         // This is a constructor
@@ -26,37 +28,46 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     public void createUser(String username, String password, String firstName, String lastName, String profilePicture) {
         // This method creates a new user
         //if the username is not taken, create a new user
-        if (getUser(username) == null) {
-            User user = new User(username, password, firstName, lastName, profilePicture);
-            users.add(user);
-            writeDB(user);
-        } else {
-            System.out.println("Username is taken");
+        synchronized(lock){
+            if (getUser(username) == null) {
+                User user = new User(username, password, firstName, lastName, profilePicture);
+                users.add(user);
+                writeDB(user);
+            } else {
+                System.out.println("Username is taken");
+            }
         }
     }
     //add to database
     public void writeDB(User user) {
         // append user to database
-        try {
-            FileWriter writer = new FileWriter(outputFile, true);
-            writer.write(user.toString() + "\n");
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        synchronized(lock){
+            try {
+                FileWriter writer = new FileWriter(outputFile, true);
+                writer.write(user.toString() + "\n");
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
-
     }
     public void removeFriend(User user, User friend) {
         // This method removes a friend from a user
-        user.removeFriend(friend);
+        synchronized(lock){
+            user.removeFriend(friend);
+        }
     }
     public void blockUser(User user, User blockedUser) {
         // This method blocks a user
-        user.blockUser(blockedUser);
+        synchronized(lock){
+            user.blockUser(blockedUser);
+        }
     }
     public void unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        user.unblockUser(blockedUser);
+        synchronized(lock){
+            user.unblockUser(blockedUser);
+        }
     }
     public User getUser(String username) {
         // This method gets a user by their username
@@ -78,8 +89,10 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     //change username
     public void changeUsername(User user, String newUsername) {
         //if the username is not taken, change the username
-        if (getUser(newUsername) == null) {
-            user.changeUsername(newUsername);
+        synchronized(lock){
+            if (getUser(newUsername) == null) {
+                user.changeUsername(newUsername);
+            }
         }
     }
 }

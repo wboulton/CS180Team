@@ -12,6 +12,7 @@ public class User {
     private String lastName;
     private ArrayList<User> friends;
     private ArrayList<User> blockedUsers;
+    public static final Object lock = new Object();
     //profile picture
     private byte[] profilePicture;
 // you probably want a constructor which can take in a csv line from the database and make a user based on that
@@ -30,16 +31,24 @@ public class User {
         }
     }
     public void addFriend(User user) {
-        friends.add(user);
+        synchronized(lock){
+            friends.add(user);
+        }
     }
     public void removeFriend(User user) {
-        friends.remove(user);
+        synchronized(lock){
+            friends.remove(user);
+        }
     }
     public void blockUser(User user) {
-        blockedUsers.add(user);
+        synchronized(lock){
+            blockedUsers.add(user);
+        }
     }
     public void unblockUser(User user) {
-        blockedUsers.remove(user);
+        synchronized(lock){
+            blockedUsers.remove(user);
+        }
     }
     public String getUsername() {
         return username;
