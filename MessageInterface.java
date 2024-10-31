@@ -5,5 +5,11 @@ public interface MessageInterface {
     byte[] getPicture();
     boolean hasPicture();
     String toString();
-    void editMessage();
+    void editMessage(String content); //these void messages need signatures
+    void sendMessage();
+    void deleteMessage();
+    void addPicture();
+    void editPicture(byte[] pictureContent);
+    void readMessage(); 
+    int getPictureLocation();
 }
