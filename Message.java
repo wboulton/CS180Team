@@ -1,5 +1,4 @@
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.*;
 
 public class Message implements MessageInterface {
     private String sender; //usernames of sender and reciever
@@ -29,10 +28,10 @@ public class Message implements MessageInterface {
         this.content = content;
     }
 
-    public User getReciever() {
+    public String getReciever() {
         return reciever;
     }
-    public User getSender() {
+    public String getSender() {
         return sender;
     }
     @Override
@@ -53,7 +52,18 @@ public class Message implements MessageInterface {
     }
     @Override
     public void sendMessage() {
-        
+        String senderFile = String.format("%s.txt", sender);
+        String recieverFile = String.format("%s.txt", reciever);
+        try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
+            out.println(this.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try (BufferedReader bfr = new BufferedReader(new FileReader(recieverFile))) {
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     @Override
     public void deleteMessage() {
@@ -61,17 +71,22 @@ public class Message implements MessageInterface {
     }
     @Override
     public void addPicture() {
-        pictureLocation++;
+        try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
+            pictureLocation = Integer.parseInt(bfr.readLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         pictureFile = String.format("%d.jpg", pictureLocation);
         try (BufferedWriter bwr = new BufferedWriter(new FileWriter(PICTURE_NUMBERS))) {
-            
+            bwr.write(pictureLocation);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
     @Override
     public void readMessage() {
-        
+        //this is intentionally left blank, we have the get content this would be used in the
+        //future for gui's possibly
     }
     @Override
     public void editPicture(byte[] pictureContent) {

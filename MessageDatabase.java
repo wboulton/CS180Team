@@ -29,9 +29,9 @@ public class MessageDatabase {
             String line;
             while ((line = bfr.readLine()) != null) {
                 Message newMessage = new Message(line);
-                if (newMessage.getSender() == user.getUsername()) {
+                if (newMessage.getSender().equals(user.getUsername())) {
                     sentMessages.add(newMessage);
-                } else if (newMessage.getReciever() == user.getUsername()){
+                } else if (newMessage.getReciever().equals(user.getUsername())){
                     recievedMessages.add(newMessage);
                 } else {
                     System.out.println("This message shouldn't be here");
