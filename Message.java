@@ -10,7 +10,7 @@ public class Message implements MessageInterface {
     private String pictureFile;
     private final String PICTURE_NUMBERS = "picture.txt";
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse csv of some format, probably: sender,reciever,content,containsPicture,pictureContent,pictureFile
+//this should parse csv of some format, probably: sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         String[] info = data.split(",");
         sender = info[0];
@@ -18,7 +18,7 @@ public class Message implements MessageInterface {
         content = info[2]; //content will be null if there is not text in the message and only a picture presumably
         containsPicture = Boolean.parseBoolean(info[3]);
         if (containsPicture) {
-            pictureFile = info[5];
+            pictureFile = info[4];
         }
     }
 //This will be the direct creation of messages
@@ -26,6 +26,7 @@ public class Message implements MessageInterface {
         this.sender = sender.getUsername();
         this.reciever = reciever.getUsername();
         this.content = content;
+        containsPicture = false;
     }
 
     public String getReciever() {
@@ -59,8 +60,8 @@ public class Message implements MessageInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        try (BufferedReader bfr = new BufferedReader(new FileReader(recieverFile))) {
-            
+        try (PrintWriter out = new PrintWriter(new FileWriter(recieverFile, true))) {
+            out.println(this.toString());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -82,6 +83,7 @@ public class Message implements MessageInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        containsPicture = true;
     }
     @Override
     public void readMessage() {
@@ -94,8 +96,11 @@ public class Message implements MessageInterface {
     }
     @Override
     public String toString() {
-        String result = String.format("%s,%s,%s,%b,%s", sender, reciever, content,
-            containsPicture, pictureFile);
+        String result = String.format("%s,%s,%s,%b", sender, reciever, content,
+            containsPicture);
+        if (containsPicture) {
+            result += "," + pictureFile;
+        }
         return result;
     }
 }
