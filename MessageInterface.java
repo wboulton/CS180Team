@@ -11,5 +11,4 @@ public interface MessageInterface {
     void addPicture();
     void editPicture(byte[] pictureContent);
     void readMessage(); 
-    int getPictureLocation();
 }
