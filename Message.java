@@ -1,6 +1,8 @@
 import java.awt.image.BufferedImage;
 import java.io.*;
 
+import javax.imageio.ImageIO;
+
 public class Message implements MessageInterface {
     private String sender; //usernames of sender and reciever
     private String reciever;
@@ -86,8 +88,11 @@ public class Message implements MessageInterface {
             e.printStackTrace();
         }
         try {
-            ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent)
+            ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent);
             BufferedImage newImage = ImageIO.read(streamObj);
+            ImageIO.write(newImage, "jpg", new File(pictureFile)); 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         containsPicture = true;
     }
