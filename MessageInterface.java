@@ -10,4 +10,5 @@ public interface MessageInterface {
     void addPicture(byte[] pictureContent);
     void editPicture(byte[] pictureContent);
     void readMessage(); 
+    void setMessageID(int id);
 }

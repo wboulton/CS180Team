@@ -43,6 +43,8 @@ public class Message implements MessageInterface {
         }
         containsPicture = false;
     }
+
+    // the following are simple getter and setter methods
     public int getMessageID() {
         return messageID;
     }
@@ -68,9 +70,14 @@ public class Message implements MessageInterface {
     public void editMessage(String content) {
         this.content = content;
     }
+    @Override
+    public void setMessageID(int id) {
+        this.messageID = id;
+    }
     //I removed the send message and delete message functions. I think these would be
     //better placed in the Message Database file
     
+    //this will add a picture to the message, setting hasPicture to true and creating a file for the picture
     @Override
     public void addPicture(byte[] pictureContent) {
         try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
@@ -98,10 +105,20 @@ public class Message implements MessageInterface {
         //this is intentionally left blank, we have the get content this would be used in the
         //future for gui's possibly
     }
-    @Override
+    @Override //this takes in a new byte array of a picture and changes the picture file
+    //I did not use addPicture because that would be file inefficient. 
     public void editPicture(byte[] pictureContent) {
         this.pictureContent = pictureContent;
+        try {
+            ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent);
+            BufferedImage newImage = ImageIO.read(streamObj);
+            ImageIO.write(newImage, "jpg", new File(pictureFile)); 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
+    //this creates the csv representation of the message the format is as follows:
+//messageID,senderUsername,recieverUsername,textContent,containsPicture,(pictureFile only if containsPicture is true)
     @Override
     public String toString() {
         String result = String.format("%d,%s,%s,%s,%b", messageID, sender, reciever, content,
