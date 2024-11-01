@@ -4,7 +4,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.Arrays;
-public class User {
+public class User implements UserInt {
     private static UserDatabase userDatabase;
     private String username;
     private String password;
