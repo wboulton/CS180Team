@@ -25,10 +25,10 @@ public class Message implements MessageInterface {
     private final String PICTURE_NUMBERS = "picture.txt";
     public final static Object lock = new Object();
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse csv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
+//this should parse psv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         synchronized(lock){
-            String[] info = data.split("|");
+            String[] info = data.split("\\|");
             messageID = Integer.parseInt(info[0]);
             sender = info[1];
             reciever = info[2];
@@ -36,6 +36,7 @@ public class Message implements MessageInterface {
             containsPicture = Boolean.parseBoolean(info[4]);
             if (containsPicture) {
                 pictureFile = info[5]; //picture file only included if containsPicture
+            }
         }
     }
 //This will be the direct creation of messages

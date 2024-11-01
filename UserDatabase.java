@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Files;
 
-public class UserDatabase {
+public class UserDatabase implements UserDBInt {
     /*
     * User profiles.
 New user account creation.
@@ -44,9 +44,14 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         if (getUser(username) != null) {
             throw new BadDataException("Username already exists");
         }
+        //if the username is not valid, throw exception
+        if (!validateUser(username)) {
+            throw new BadDataException("Username is not valid. It cannot contain a comma");
+        }
         //if password is not legal, throw exception
         if (!legalPassword(password)) {
-            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one number, at least one Capital letter and at least one lowercase letter");
+            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one" +
+                    " number, at least one Capital letter and at least one lowercase letter. '|' not allowed");
         }
         //if the profile picture is not found, throw exception
         try {
@@ -114,6 +119,10 @@ Extra credit opportunity – Add support to upload and display profile pictures.
 
         // This method checks if a password is legal - at least 8 characters, 
         //at least one number, at least one Capital letter and at least one lowercase letter
+        //if password contains comma return false
+        if (password.contains("|")) {
+            return false;
+        }
         return password.length() >= 8 && password.matches(".*[0-9].*") 
         && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*");
     }
@@ -124,13 +133,34 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         try {
             Scanner scanner = new Scanner(new File(outputFile));
             while (scanner.hasNextLine()) {
-                String[] data = scanner.nextLine().split(", ");
-                User user = new User(data[0], data[1], data[2], data[3], data[4]);
+                String[] data = scanner.nextLine().split("|");
+                User user = new User(data[0], data[1], data[2], data[3], data[6]);
+                ArrayList<User> friends = new ArrayList<>();
+                //go through the data[4], split it by comma, and add to friends the users from getUser
+                for (String friend : data[4].split(",")) {
+                    User friendUser = getUser(friend);
+                    if (friendUser != null) {
+                        friends.add(friendUser);
+                    }
+                }
+                //same for blocked, data[5]
+                ArrayList<User> blocked = new ArrayList<>();
+                for (String blockedUser : data[5].split(",")) {
+                    User blockedUserUser = getUser(blockedUser);
+                    if (blockedUserUser != null) {
+                        blocked.add(blockedUserUser);
+                    }
+                }
                 users.add(user);
             }
             scanner.close();
         } catch (Exception e) {
             return;
         }
+    }
+    public boolean validateUser(String username) {
+        // This method validates a user
+        //if username contains comma return false
+        return !username.contains("|");
     }
 }

@@ -49,7 +49,7 @@ public class User implements UserInt {
 
     public boolean addFriend(User user) {
         //if user is not blocked, add to friends
-        synchronized(lock){
+        synchronized(lock) {
           if (!blockedUsers.contains(user)) {
               friends.add(user);
               return true;
@@ -58,13 +58,13 @@ public class User implements UserInt {
         }
     }
     public boolean removeFriend(User user) {
-        synchronized(lock){
+        synchronized(lock) {
           return friends.remove(user);
         }
     }
     public boolean blockUser(User user) {
         //if user doesnt exist at all, return false
-        synchronized(lock){
+        synchronized(lock) {
           blockedUsers.add(user);
           //if user is a friend, remove from friends
           if (friends.contains(user)) {
@@ -75,7 +75,7 @@ public class User implements UserInt {
     }
     public boolean unblockUser(User user) {
         //if user doesnt exist in blocked users or in the user database, return false
-        synchronized(lock){
+        synchronized(lock) {
           if (!blockedUsers.contains(user) || !userDatabase.getUser(user.username).equals(user)) {
               return false;
           }
@@ -97,8 +97,19 @@ public class User implements UserInt {
         return this.username.equals(user.username);
     }
     public String toString() {
-        return username + "|" + password + "|" + firstName + "|" + lastName + "|" + Arrays.toString(profilePicture);
+        return String.format("%s|%s|%s|%s|%s|%s|%s", username, password, firstName,
+            lastName, listToString(friends), listToString(blockedUsers), Arrays.toString(profilePicture));
     }
+    
+    public String listToString(ArrayList<User> list) {
+        //only take the usernames and put it in a list which is comma separated
+        StringBuilder sb = new StringBuilder();
+        for (User user : list) {
+            sb.append(user.username).append(",");
+        }
+        return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
+    }
+    
     public BufferedImage getProfilePicture() {
         try {
             return ImageIO.read(new ByteArrayInputStream(profilePicture));
@@ -121,6 +132,12 @@ public class User implements UserInt {
 
     public ArrayList<User> getFriends() {
         return friends;
+    }
+    public void setFriends(ArrayList<User> friends) {
+        this.friends = friends;
+    }
+    public void setBlockedUsers(ArrayList<User> blockedUsers) {
+        this.blockedUsers = blockedUsers;
     }
 
     public ArrayList<User> getBlockedUsers() {
