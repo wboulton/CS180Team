@@ -87,7 +87,7 @@ public class MessageDatabase implements MData{
         } 
         try (BufferedWriter put = new BufferedWriter(new FileWriter(receiveFile))) {
             for (Message message : messagesToWrite) {
-                if (message.getMessageID() == m.getMessageID()) {
+                if (message.getMessageID() == id) {
                     continue;
                 }
                 put.write(message.toString());
