@@ -12,6 +12,7 @@ public class User {
     private String lastName;
     private ArrayList<User> friends;
     private ArrayList<User> blockedUsers;
+    public static final Object lock = new Object();
     //profile picture
     private byte[] profilePicture;
 
@@ -35,35 +36,43 @@ public class User {
             this.profilePicture = null;
         }
     }
+
     public boolean addFriend(User user) {
         //if user is not blocked, add to friends
-        if (!blockedUsers.contains(user)) {
-            friends.add(user);
-            return true;
+        synchronized(lock){
+          if (!blockedUsers.contains(user)) {
+              friends.add(user);
+              return true;
+          }
+          return false;
         }
-        return false;
     }
     public boolean removeFriend(User user) {
-        return friends.remove(user);
+        synchronized(lock){
+          return friends.remove(user);
+        }
     }
     public boolean blockUser(User user) {
         //if user doesnt exist at all, return false
-        if(!userDatabase.getUser(user.username).equals(user))
-            return false;
-        blockedUsers.add(user);
-        //if user is a friend, remove from friends
-        if (friends.contains(user)) {
-            friends.remove(user);
+        synchronized(lock){
+          blockedUsers.add(user);
+          //if user is a friend, remove from friends
+          if (friends.contains(user)) {
+              friends.remove(user);
+          }
+          return true;
         }
-        return true;
     }
     public boolean unblockUser(User user) {
         //if user doesnt exist in blocked users or in the user database, return false
-        if (!blockedUsers.contains(user) || !userDatabase.getUser(user.username).equals(user)) {
-            return false;
+        synchronized(lock){
+          if (!blockedUsers.contains(user) || !userDatabase.getUser(user.username).equals(user)) {
+              return false;
+          }
+          blockedUsers.remove(user);
+          return true;
         }
-        blockedUsers.remove(user);
-        return true;
+
     }
     public String getUsername() {
         return username;
