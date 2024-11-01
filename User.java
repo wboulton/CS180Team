@@ -4,7 +4,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.Arrays;
-public class User {
+public class User implements UserInt {
     private static UserDatabase userDatabase;
     private String username;
     private String password;
@@ -17,11 +17,11 @@ public class User {
     private byte[] profilePicture;
 
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
-    public User(String username, String password, String firstName, String lastName, String profilePicture) {
+    public User(String username, String password, String firstName, String lastName, String profile) {
         //username rules - no commas, doesn't already exist, not empty
         //if userDatabase is null, create a new userDatabase
         if (userDatabase == null) {
-            userDatabase = new UserDatabase("users.txt", "messages.txt");
+            userDatabase = new UserDatabase();
         }
         this.username = username;
         this.password = password;
@@ -29,11 +29,21 @@ public class User {
         this.lastName = lastName;
         this.friends = new ArrayList<User>();
         this.blockedUsers = new ArrayList<User>();
-        try {
-            File imageFile = new File(profilePicture);
-            byte[] imageData = Files.readAllBytes(imageFile.toPath());
-        } catch (Exception e) {
+        //if there is no comma in the profile, there is no profile picture
+        if (!profile.contains(",")) {
             this.profilePicture = null;
+            return;
+        }
+        //parse profile picture
+        String[] profileInfo = profile.split(",");
+        boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
+        if (containsPicture) {
+            try {
+                File imageFile = new File(profileInfo[1]);
+                profilePicture = Files.readAllBytes(imageFile.toPath());
+            } catch (Exception e) {
+                this.profilePicture = null;
+            }
         }
     }
 
@@ -77,7 +87,7 @@ public class User {
     public String getUsername() {
         return username;
     }
-    private boolean checkPassword(String password) {
+    public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
     public boolean verifyLogin(String password) {
@@ -87,7 +97,7 @@ public class User {
         return this.username.equals(user.username);
     }
     public String toString() {
-        return username + ", " + firstName + ", " + lastName + ", " + Arrays.toString(profilePicture);
+        return username + "|" + password + "|" + firstName + "|" + lastName + "|" + Arrays.toString(profilePicture);
     }
     public BufferedImage getProfilePicture() {
         try {

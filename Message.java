@@ -28,7 +28,7 @@ public class Message implements MessageInterface {
 //this should parse csv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         synchronized(lock){
-            String[] info = data.split(",");
+            String[] info = data.split("|");
             messageID = Integer.parseInt(info[0]);
             sender = info[1];
             reciever = info[2];
@@ -36,7 +36,6 @@ public class Message implements MessageInterface {
             containsPicture = Boolean.parseBoolean(info[4]);
             if (containsPicture) {
                 pictureFile = info[5]; //picture file only included if containsPicture
-            }
         }
     }
 //This will be the direct creation of messages
@@ -60,6 +59,10 @@ public class Message implements MessageInterface {
     }
     public int getMessageID() {
         return messageID;
+    }
+    @Override
+    public void setMessageID(int id) {
+        this.messageID = id;
     }
     public String getReciever() {
         return reciever;
@@ -125,11 +128,12 @@ public class Message implements MessageInterface {
     }
     @Override
     public String toString() {
-        String result = String.format("%d,%s,%s,%s,%b", messageID, sender, reciever, content,
+        String result = String.format("%d|%s|%s|%s|%b", messageID, sender, reciever, content,
             containsPicture);
         if (containsPicture) {
-            result += "," + pictureFile;
+            result += "|" + pictureFile;
         }
         return result;
     }
+
 }
