@@ -97,7 +97,7 @@ public class User implements UserInt {
         return this.username.equals(user.username);
     }
     public String toString() {
-        return username + ", " + firstName + ", " + lastName + ", " + Arrays.toString(profilePicture);
+        return username + "|" + password + "|" + firstName + "|" + lastName + "|" + Arrays.toString(profilePicture);
     }
     public BufferedImage getProfilePicture() {
         try {

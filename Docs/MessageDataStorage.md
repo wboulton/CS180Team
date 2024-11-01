@@ -3,8 +3,8 @@ Message data storage is handled in two different files, Message.java and Message
 # Message.java
 Message.java handles the creation and manipulation of the Message object, including: 
 messageid, sender username, reciever username, text content, if it has a picture, and picture content. 
-When stored as a csv line, the message is represented as follows: 
-messageID,sender,reciever,content,containsPicture,pictureFile
+When stored as a pipe separated line, the message is represented as follows: 
+messageID|sender|reciever|content|containsPicture|pictureFile
 However, pictureFile (and the comma preceding it) only appear if containsPicture is true. 
 here is a breakdown of those fields: 
 ```java 
