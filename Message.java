@@ -56,6 +56,10 @@ public class Message implements MessageInterface {
     public int getMessageID() {
         return messageID;
     }
+    @Override
+    public void setMessageID(int id) {
+        this.messageID = id;
+    }
     public String getReciever() {
         return reciever;
     }
