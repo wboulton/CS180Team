@@ -20,6 +20,5 @@ public interface MessageInterface {
     void editMessage(String content); //these void messages need signatures
     void addPicture(byte[] pictureContent);
     void editPicture(byte[] pictureContent);
-    void readMessage(); 
-    void setMessageID(int id);
+    void readMessage();
 }
