@@ -78,7 +78,7 @@ public class User implements UserInt {
     public String getUsername() {
         return username;
     }
-    private boolean checkPassword(String password) {
+    public boolean checkPassword(String password) {
         return this.password.equals(password);
     }
     public boolean verifyLogin(String password) {
