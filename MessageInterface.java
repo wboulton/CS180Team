@@ -17,6 +17,7 @@ public interface MessageInterface {
     boolean hasPicture();
     String toString();
     int getMessageID();
+    void setMessageID(int id);
     void editMessage(String content); //these void messages need signatures
     void addPicture(byte[] pictureContent);
     void editPicture(byte[] pictureContent);

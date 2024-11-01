@@ -25,6 +25,21 @@ Neither constructor initializes the picture, they simply set containsPicture to 
 create the picture file. 
 the second constructor handles messageID's. this will be the constructor we use when sending new messages, as it reads from the id
 file and assigns the message a new id. The other constructor simply reads an existing id. 
+Per the interface, message.java has the following methods: 
+```java
+    String getSender();
+    String getReciever();
+    String getContent();
+    byte[] getPicture();
+    boolean hasPicture();
+    String toString();
+    int getMessageID();
+    void editMessage(String content);
+    void addPicture(byte[] pictureContent);
+    void editPicture(byte[] pictureContent);
+    void readMessage(); // this is not yet implemented.
+```
+These methods work generally as expected. When addPicture() is called, a new picture file is created by finding the current number stored in the "picture.txt" file and using that number as the name of the file containing the picture. This then increments that number and stores it in the "picture.txt" file again to be used later. 
 
 # MessageDatabase.java
 MessageDatabase.java is the file that handles each user's database of messages. It is intended to create a new text file for each user
