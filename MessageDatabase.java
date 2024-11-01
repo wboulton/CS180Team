@@ -1,12 +1,25 @@
 import java.util.*;
 import java.io.*; 
 
-public class MessageDatabase implements MData{
+/**
+ * Team Project -- MessageDatabase
+ *
+ * This file handles the message data for each user. 
+ * For more in depth documentation see Docs/MessageDataStorage.md
+ *
+ * @author William Boulton, 7
+ *
+ * @version November 1, 2024
+ * 
+ */
+
+public class MessageDatabase extends Thread implements MData {
     protected ArrayList<Message> recievedMessages;
     protected ArrayList<Message> sentMessages;
     private User user; // this will be the user who has sent or recieved the messages stored in said database object
     private String filePath;
 
+//this creates a message database for the specified user, which is a csv file with name "username.txt"
     public MessageDatabase(User user) {
         this.user = user;
         filePath = String.format("%s.txt", user.getUsername());
@@ -20,7 +33,7 @@ public class MessageDatabase implements MData{
     public ArrayList getRecievedMessages() {
         return recievedMessages;
     }
-    //I imagine this function will be used to read through the message database and assign all messages to their assigned ArrayList
+//this reads all of the messages in a user's file and adds them to the correct sent/recieved arraylist
     public void recoverMessages() { 
         try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
             String line;
@@ -39,7 +52,11 @@ public class MessageDatabase implements MData{
         }
     }
 
+//this handles sending messages by adding it immediately to the arraylist and the file for this user, it also adds it
+// to the file for the recieving user. I do this immediately so that if the program crashes later the messages are
+// not lost. 
     public void sendMessage(Message m) {
+        sentMessages.add(m);
         String senderFile = String.format("%s.txt", m.getSender());
         String recieverFile = String.format("%s.txt", m.getReciever());
         try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
@@ -53,8 +70,58 @@ public class MessageDatabase implements MData{
             e.printStackTrace();
         }
     }
+
+// this removes a specified message from both the sender and reciever's files
     @Override
     public void deleteMessage(Message m) {
-        
+        int id = m.getMessageID();
+        sentMessages.remove(m);
+        //here I use the arraylist to generate the new list of messages after the delete, this means 
+        //the array list must be up to date before deleting.
+        try (BufferedWriter sender = new BufferedWriter(new FileWriter(filePath))) {
+            for (Message message : sentMessages) {
+                sender.write(message.toString());
+                sender.newLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        String receiver = m.getReciever();
+        String receiveFile = String.format("%s.txt", receiver);
+        ArrayList<Message> messagesToWrite = new ArrayList<>();
+        try (BufferedReader get = new BufferedReader(new FileReader(receiveFile))) {
+            String line;
+            while ((line = get.readLine()) != null) {
+                messagesToWrite.add(new Message(line));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } 
+        try (BufferedWriter put = new BufferedWriter(new FileWriter(receiveFile))) {
+            for (Message message : messagesToWrite) {
+                if (message.getMessageID() == id) {
+                    continue;
+                }
+                put.write(message.toString());
+                put.newLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public User getUser() {
+        return user;
+    }
+    @Override
+    public String getFilePath() {
+        return filePath;
+    }
+    //edits the message by creating a new one witht the same messageID and resending it. 
+    @Override
+    public void editMessage(Message m, Message n) {
+        n.setMessageID(m.getMessageID());
+        deleteMessage(m);
+        sendMessage(n);
     }
 }

@@ -58,7 +58,8 @@ public class User implements UserInt {
     }
     public boolean blockUser(User user) {
         //if user doesnt exist at all, return false
-        
+        if(!userDatabase.getUser(user.username).equals(user))
+            return false;
         blockedUsers.add(user);
         //if user is a friend, remove from friends
         if (friends.contains(user)) {
@@ -95,6 +96,26 @@ public class User implements UserInt {
         } catch (Exception e) {
             return null;
         }
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public ArrayList<User> getFriends() {
+        return friends;
+    }
+
+    public ArrayList<User> getBlockedUsers() {
+        return blockedUsers;
     }
 
     public void changeUsername(String newUsername) {

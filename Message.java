@@ -1,7 +1,17 @@
 import java.awt.image.BufferedImage;
 import java.io.*;
-
 import javax.imageio.ImageIO;
+
+/**
+ * Team Project -- Message
+ *
+ * This file creates the message objects for when each user sends a message
+ *
+ * @author William Boulton, 7
+ *
+ * @version November 1, 2024
+ *
+ */
 
 public class Message implements MessageInterface {
     private String sender; //usernames of sender and reciever
