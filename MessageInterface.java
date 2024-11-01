@@ -8,7 +8,7 @@ public interface MessageInterface {
     void editMessage(String content); //these void messages need signatures
     void sendMessage();
     void deleteMessage();
-    void addPicture();
+    void addPicture(byte[] pictureContent);
     void editPicture(byte[] pictureContent);
     void readMessage(); 
 }

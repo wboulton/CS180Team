@@ -1,3 +1,4 @@
+import java.awt.image.BufferedImage;
 import java.io.*;
 
 public class Message implements MessageInterface {
@@ -7,6 +8,7 @@ public class Message implements MessageInterface {
     private byte[] pictureContent;
     private boolean containsPicture;
     private static int pictureLocation;
+    private static int messageID;
     private String pictureFile;
     private final String PICTURE_NUMBERS = "picture.txt";
     //the file containing all sent and recieved messages for each user is just username.txt
@@ -71,7 +73,7 @@ public class Message implements MessageInterface {
         
     }
     @Override
-    public void addPicture() {
+    public void addPicture(byte[] pictureContent) {
         try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
             pictureLocation = Integer.parseInt(bfr.readLine());
         } catch (Exception e) {
@@ -82,6 +84,10 @@ public class Message implements MessageInterface {
             bwr.write(pictureLocation);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        try {
+            ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent)
+            BufferedImage newImage = ImageIO.read(streamObj);
         }
         containsPicture = true;
     }
