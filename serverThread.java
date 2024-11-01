@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+
 /**
  * Team Project -- Message
  *
@@ -16,7 +17,8 @@ public class serverThread extends Thread {
     private UserDatabase userDB;
     private MessageDatabase messageDatabase;
 
-    public serverThread(UserDatabase userDB, MessageDatabase messageDatabase, User user, Action action, String[] values) {
+    public serverThread(UserDatabase userDB, MessageDatabase messageDatabase, User user, Action action,
+            String[] values) {
         this.userDB = userDB;
         this.messageDatabase = messageDatabase;
         this.user = user;
@@ -72,7 +74,7 @@ public class serverThread extends Thread {
             case EDIT_MESSAGE:
                 Message oldMessage = new Message(this.values[0]);
                 Message newMessage = new Message(this.values[1]);
-                messageDatabase.editMessage(oldMessage,newMessage);
+                messageDatabase.editMessage(oldMessage, newMessage);
                 break;
             default:
                 break;
