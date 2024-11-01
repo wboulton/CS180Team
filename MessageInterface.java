@@ -1,3 +1,14 @@
+/**
+ * Team Project -- MessageInterface
+ *
+ * This is simply the interface for Message.java
+ *
+ * @author William Boulton, 7
+ *
+ * @version November 1, 2024
+ * 
+ */
+
 public interface MessageInterface {
     String getSender();
     String getReciever();

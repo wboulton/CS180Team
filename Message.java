@@ -3,6 +3,18 @@ import java.io.*;
 
 import javax.imageio.ImageIO;
 
+/**
+ * Team Project -- Message
+ *
+ * This file handles the creation and alteration of message objects. 
+ * For more in depth documentation see Docs/MessageDataStorage.md
+ *
+ * @author William Boulton, 7
+ *
+ * @version November 1, 2024
+ * 
+ */
+
 public class Message implements MessageInterface {
     private String sender; //usernames of sender and reciever
     private String reciever;

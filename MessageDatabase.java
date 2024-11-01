@@ -1,6 +1,18 @@
 import java.util.*;
 import java.io.*; 
 
+/**
+ * Team Project -- MessageDatabase
+ *
+ * This file handles the message data for each user. 
+ * For more in depth documentation see Docs/MessageDataStorage.md
+ *
+ * @author William Boulton, 7
+ *
+ * @version November 1, 2024
+ * 
+ */
+
 public class MessageDatabase implements MData{
     protected ArrayList<Message> recievedMessages;
     protected ArrayList<Message> sentMessages;
