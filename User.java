@@ -49,7 +49,7 @@ public class User implements UserInt {
 
     public boolean addFriend(User user) {
         //if user is not blocked, add to friends
-        synchronized(lock){
+        synchronized(lock) {
           if (!blockedUsers.contains(user)) {
               friends.add(user);
               return true;
@@ -58,13 +58,13 @@ public class User implements UserInt {
         }
     }
     public boolean removeFriend(User user) {
-        synchronized(lock){
+        synchronized(lock) {
           return friends.remove(user);
         }
     }
     public boolean blockUser(User user) {
         //if user doesnt exist at all, return false
-        synchronized(lock){
+        synchronized(lock) {
           blockedUsers.add(user);
           //if user is a friend, remove from friends
           if (friends.contains(user)) {
@@ -75,7 +75,7 @@ public class User implements UserInt {
     }
     public boolean unblockUser(User user) {
         //if user doesnt exist in blocked users or in the user database, return false
-        synchronized(lock){
+        synchronized(lock) {
           if (!blockedUsers.contains(user) || !userDatabase.getUser(user.username).equals(user)) {
               return false;
           }

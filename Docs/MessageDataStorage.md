@@ -3,7 +3,7 @@ Message data storage is handled in two different files, Message.java and Message
 # Message.java
 Message.java handles the creation and manipulation of the Message object, including: 
 messageid, sender username, reciever username, text content, if it has a picture, and picture content. 
-When stored as a pipe separated line, the message is represented as follows: 
+When stored as a pipe separated line (psv), the message is represented as follows: 
 messageID|sender|reciever|content|containsPicture|pictureFile
 However, pictureFile (and the comma preceding it) only appear if containsPicture is true. 
 here is a breakdown of those fields: 
@@ -16,7 +16,7 @@ here is a breakdown of those fields:
     private String pictureFile;
 ```
 The message file contains two constructors, one that creates a message with two users and text content and one that takes a csv line
-and creates a message based on the csv data. There is no error handling in the csv type, so all data passed to it must be accurate. 
+and creates a message based on the psv data. There is no error handling in the psv type, so all data passed to it must be accurate. 
 ```java
 public Message(String data)
 public Message(User sender, User reciever, String content)
