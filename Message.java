@@ -1,4 +1,7 @@
+import java.awt.image.BufferedImage;
 import java.io.*;
+
+import javax.imageio.ImageIO;
 
 public class Message implements MessageInterface {
     private String sender; //usernames of sender and reciever
@@ -7,10 +10,11 @@ public class Message implements MessageInterface {
     private byte[] pictureContent;
     private boolean containsPicture;
     private static int pictureLocation;
+    private static int messageID;
     private String pictureFile;
     private final String PICTURE_NUMBERS = "picture.txt";
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse csv of some format, probably: sender,reciever,content,containsPicture,pictureFile
+//this should parse csv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         String[] info = data.split(",");
         sender = info[0];
@@ -71,7 +75,7 @@ public class Message implements MessageInterface {
         
     }
     @Override
-    public void addPicture() {
+    public void addPicture(byte[] pictureContent) {
         try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
             pictureLocation = Integer.parseInt(bfr.readLine());
         } catch (Exception e) {
@@ -80,6 +84,13 @@ public class Message implements MessageInterface {
         pictureFile = String.format("%d.jpg", pictureLocation);
         try (BufferedWriter bwr = new BufferedWriter(new FileWriter(PICTURE_NUMBERS))) {
             bwr.write(pictureLocation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent);
+            BufferedImage newImage = ImageIO.read(streamObj);
+            ImageIO.write(newImage, "jpg", new File(pictureFile)); 
         } catch (Exception e) {
             e.printStackTrace();
         }
