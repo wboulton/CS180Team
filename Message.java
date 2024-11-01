@@ -1,4 +1,7 @@
+import java.awt.image.BufferedImage;
 import java.io.*;
+
+import javax.imageio.ImageIO;
 
 public class Message implements MessageInterface {
     private String sender; //usernames of sender and reciever
@@ -7,18 +10,20 @@ public class Message implements MessageInterface {
     private byte[] pictureContent;
     private boolean containsPicture;
     private static int pictureLocation;
+    private int messageID;
     private String pictureFile;
     private final String PICTURE_NUMBERS = "picture.txt";
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse csv of some format, probably: sender,reciever,content,containsPicture,pictureFile
+//this should parse csv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         String[] info = data.split(",");
-        sender = info[0];
-        reciever = info[1];
-        content = info[2]; //content will be null if there is not text in the message and only a picture presumably
-        containsPicture = Boolean.parseBoolean(info[3]);
+        messageID = Integer.parseInt(info[0]);
+        sender = info[1];
+        reciever = info[2];
+        content = info[3]; //content will be null if there is not text in the message and only a picture presumably
+        containsPicture = Boolean.parseBoolean(info[4]);
         if (containsPicture) {
-            pictureFile = info[4];
+            pictureFile = info[5]; //picture file only included if containsPicture
         }
     }
 //This will be the direct creation of messages
@@ -26,9 +31,21 @@ public class Message implements MessageInterface {
         this.sender = sender.getUsername();
         this.reciever = reciever.getUsername();
         this.content = content;
+        try (BufferedReader bfr = new BufferedReader(new FileReader("MessageIDCounter.txt"))) {
+            messageID = Integer.parseInt(bfr.readLine());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try (BufferedWriter bwr = new BufferedWriter(new FileWriter("MessageIDCounter.txt"))) {
+            bwr.write(messageID + 1);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         containsPicture = false;
     }
-
+    public int getMessageID() {
+        return messageID;
+    }
     public String getReciever() {
         return reciever;
     }
@@ -51,27 +68,11 @@ public class Message implements MessageInterface {
     public void editMessage(String content) {
         this.content = content;
     }
+    //I removed the send message and delete message functions. I think these would be
+    //better placed in the Message Database file
+    
     @Override
-    public void sendMessage() {
-        String senderFile = String.format("%s.txt", sender);
-        String recieverFile = String.format("%s.txt", reciever);
-        try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
-            out.println(this.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try (PrintWriter out = new PrintWriter(new FileWriter(recieverFile, true))) {
-            out.println(this.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @Override
-    public void deleteMessage() {
-        
-    }
-    @Override
-    public void addPicture() {
+    public void addPicture(byte[] pictureContent) {
         try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
             pictureLocation = Integer.parseInt(bfr.readLine());
         } catch (Exception e) {
@@ -80,6 +81,13 @@ public class Message implements MessageInterface {
         pictureFile = String.format("%d.jpg", pictureLocation);
         try (BufferedWriter bwr = new BufferedWriter(new FileWriter(PICTURE_NUMBERS))) {
             bwr.write(pictureLocation);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try {
+            ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent);
+            BufferedImage newImage = ImageIO.read(streamObj);
+            ImageIO.write(newImage, "jpg", new File(pictureFile)); 
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -96,7 +104,7 @@ public class Message implements MessageInterface {
     }
     @Override
     public String toString() {
-        String result = String.format("%s,%s,%s,%b", sender, reciever, content,
+        String result = String.format("%d,%s,%s,%s,%b", messageID, sender, reciever, content,
             containsPicture);
         if (containsPicture) {
             result += "," + pictureFile;
