@@ -78,9 +78,15 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
 
     }
+    public void addFriend(User user, User friend) {
+        // This method adds a friend to a user
+        user.addFriend(friend);
+    }
     public void removeFriend(User user, User friend) {
-        // This method removes a friend from a user
-        user.removeFriend(friend);
+        //if the user is a friend, remove the friend
+        if (user.getFriends().contains(friend)) {
+            user.removeFriend(friend);
+        }
     }
     public void blockUser(User user, User blockedUser) {
         // This method blocks a user
