@@ -36,6 +36,7 @@ public class Message implements MessageInterface {
             containsPicture = Boolean.parseBoolean(info[4]);
             if (containsPicture) {
                 pictureFile = info[5]; //picture file only included if containsPicture
+            }
         }
     }
 //This will be the direct creation of messages
