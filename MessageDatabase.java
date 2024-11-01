@@ -1,30 +1,27 @@
 import java.util.*;
-import java.io.*;
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.nio.file.Files; 
+import java.io.*; 
 
-public class MessageDatabase {
+public class MessageDatabase implements MData{
     protected ArrayList<Message> recievedMessages;
     protected ArrayList<Message> sentMessages;
     private User user; // this will be the user who has sent or recieved the messages stored in said database object
     private String filePath;
 
-    public MessageDatabase(User user, String filePath) {
+    public MessageDatabase(User user) {
         this.user = user;
-        this.filePath = filePath;
+        filePath = String.format("%s.txt", user.getUsername());
         recievedMessages = new ArrayList<>();
         sentMessages = new ArrayList<>();
     }
     
-    private ArrayList getSentMessages() {
+    public ArrayList getSentMessages() {
         return sentMessages;
     }
-    private ArrayList getRecievedMessages() {
+    public ArrayList getRecievedMessages() {
         return recievedMessages;
     }
     //I imagine this function will be used to read through the message database and assign all messages to their assigned ArrayList
-    private void recoverMessages() { 
+    public void recoverMessages() { 
         try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
             String line;
             while ((line = bfr.readLine()) != null) {
@@ -40,5 +37,24 @@ public class MessageDatabase {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void sendMessage(Message m) {
+        String senderFile = String.format("%s.txt", m.getSender());
+        String recieverFile = String.format("%s.txt", m.getReciever());
+        try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
+            out.println(this.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        try (PrintWriter out = new PrintWriter(new FileWriter(recieverFile, true))) {
+            out.println(this.toString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    @Override
+    public void deleteMessage(Message m) {
+        
     }
 }

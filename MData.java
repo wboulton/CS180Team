@@ -5,8 +5,6 @@ public interface MData {
     ArrayList getSentMessages();
     ArrayList getRecievedMessages();
     void recoverMessages();
-    void setFilePath(String filePath);
-    void setUser(User user);
     User getUser();
     String getFilePath();
     void sendMessage(Message m);
