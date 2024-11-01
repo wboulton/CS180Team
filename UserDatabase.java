@@ -1,6 +1,8 @@
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
+import java.util.Scanner;
+import java.nio.file.Files;
 
 import java.lang.*;
 import java.util.Scanner;
@@ -31,34 +33,34 @@ public class UserDatabase {
 
     }
 
-    public void createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
+    public void createUser(String username, String password, String firstName, String lastName, String profilePicture)
+            throws BadDataException {
         // This method creates a new user
-        //if the username is not taken, create a new user
-
-        
-    
-        //if user already exists, throw exception
+        // if the username is not taken, create a new user
+        // if user already exists, throw exception
         if (getUser(username) != null) {
             throw new BadDataException("Username already exists");
-      
-        //if password is not legal, throw exception
-        if (!legalPassword(password)) {
-            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one number, at least one Capital letter and at least one lowercase letter");
         }
-        //if the profile picture is not found, throw exception
+        // if password is not legal, throw exception
+        if (!legalPassword(password)) {
+            throw new BadDataException(
+                    "Password is not legal. It must be at least 8 characters, contain at least one number, at least one Capital letter and at least one lowercase letter");
+        }
+
+        // if the profile picture is not found, throw exception
         try {
             File imageFile = new File(profilePicture);
             byte[] imageData = Files.readAllBytes(imageFile.toPath());
         } catch (Exception e) {
             throw new BadDataException("Profile picture not found");
         }
-        synchronized(lock){
-          //create a new user
-          User user = new User(username, password, firstName, lastName, profilePicture);
-          users.add(user);
-          writeDB(user);
+        synchronized (lock) {
+            // create a new user
+            User user = new User(username, password, firstName, lastName, profilePicture);
+            users.add(user);
+            writeDB(user);
         }
-        
+
     }
 
     // add to database
@@ -141,13 +143,15 @@ public class UserDatabase {
     public void load() {
         // This method loads the database
         try {
-            Scanner scanner = new Scanner(new File(outputFile));
-            while (scanner.hasNextLine()) {
-                String[] data = scanner.nextLine().split(", ");
-                User user = new User(data[0], data[1], data[2], data[3], data[4]);
-                users.add(user);
+            synchronized (lock) {
+                Scanner scanner = new Scanner(new File(outputFile));
+                while (scanner.hasNextLine()) {
+                    String[] data = scanner.nextLine().split(", ");
+                    User user = new User(data[0], data[1], data[2], data[3], data[4]);
+                    users.add(user);
+                }
+                scanner.close();
             }
-            scanner.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

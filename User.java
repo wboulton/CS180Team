@@ -4,8 +4,8 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.Arrays;
-
 public class User {
+    private static UserDatabase userDatabase;
     private String username;
     private String password;
     private String firstName;
@@ -15,8 +15,14 @@ public class User {
     public static final Object lock = new Object();
     //profile picture
     private byte[] profilePicture;
-// you probably want a constructor which can take in a csv line from the database and make a user based on that
+
+    // you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profilePicture) {
+        //username rules - no commas, doesn't already exist, not empty
+        //if userDatabase is null, create a new userDatabase
+        if (userDatabase == null) {
+            userDatabase = new UserDatabase("users.txt", "messages.txt");
+        }
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -30,25 +36,43 @@ public class User {
             this.profilePicture = null;
         }
     }
-    public void addFriend(User user) {
+
+    public boolean addFriend(User user) {
+        //if user is not blocked, add to friends
         synchronized(lock){
-            friends.add(user);
+          if (!blockedUsers.contains(user)) {
+              friends.add(user);
+              return true;
+          }
+          return false;
         }
     }
-    public void removeFriend(User user) {
+    public boolean removeFriend(User user) {
         synchronized(lock){
-            friends.remove(user);
+          return friends.remove(user);
         }
     }
-    public void blockUser(User user) {
+    public boolean blockUser(User user) {
+        //if user doesnt exist at all, return false
         synchronized(lock){
-            blockedUsers.add(user);
+          blockedUsers.add(user);
+          //if user is a friend, remove from friends
+          if (friends.contains(user)) {
+              friends.remove(user);
+          }
+          return true;
         }
     }
-    public void unblockUser(User user) {
+    public boolean unblockUser(User user) {
+        //if user doesnt exist in blocked users or in the user database, return false
         synchronized(lock){
-            blockedUsers.remove(user);
+          if (!blockedUsers.contains(user) || !userDatabase.getUser(user.username).equals(user)) {
+              return false;
+          }
+          blockedUsers.remove(user);
+          return true;
         }
+
     }
     public String getUsername() {
         return username;
