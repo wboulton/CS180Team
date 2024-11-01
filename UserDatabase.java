@@ -15,15 +15,26 @@ Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private ArrayList<User> users;
-    private String outputFile;
-    private String messageFile;
+    private static final String outputFile = "users.txt";
+    private static final String messageFile = "messages.txt";
 
-    public UserDatabase(String outputFile, String messageFile) {
+    public UserDatabase() {
         // This is a constructor
-        this.outputFile = outputFile;
-        this.messageFile = messageFile;
-        load();
+        //if the files do not exist, create them
+        try {
+            File file = new File(outputFile);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+            file = new File(messageFile);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         users = new ArrayList<User>();
+        load();
 
     }
     public void createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
@@ -119,7 +130,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             }
             scanner.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            return;
         }
     }
 }

@@ -16,11 +16,11 @@ public class User implements UserInt {
     private byte[] profilePicture;
 
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
-    public User(String username, String password, String firstName, String lastName, String profilePicture) {
+    public User(String username, String password, String firstName, String lastName, String profile) {
         //username rules - no commas, doesn't already exist, not empty
         //if userDatabase is null, create a new userDatabase
         if (userDatabase == null) {
-            userDatabase = new UserDatabase("users.txt", "messages.txt");
+            userDatabase = new UserDatabase();
         }
         this.username = username;
         this.password = password;
@@ -28,11 +28,21 @@ public class User implements UserInt {
         this.lastName = lastName;
         this.friends = new ArrayList<User>();
         this.blockedUsers = new ArrayList<User>();
-        try {
-            File imageFile = new File(profilePicture);
-            byte[] imageData = Files.readAllBytes(imageFile.toPath());
-        } catch (Exception e) {
+        //if there is no comma in the profile, there is no profile picture
+        if (!profile.contains(",")) {
             this.profilePicture = null;
+            return;
+        }
+        //parse profile picture
+        String[] profileInfo = profile.split(",");
+        boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
+        if (containsPicture) {
+            try {
+                File imageFile = new File(profileInfo[1]);
+                profilePicture = Files.readAllBytes(imageFile.toPath());
+            } catch (Exception e) {
+                this.profilePicture = null;
+            }
         }
     }
     public boolean addFriend(User user) {
