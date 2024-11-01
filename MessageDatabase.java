@@ -18,6 +18,7 @@ public class MessageDatabase extends Thread implements MData {
     protected ArrayList<Message> sentMessages;
     private User user; // this will be the user who has sent or recieved the messages stored in said database object
     private String filePath;
+    public static final Object lock = new Object();
 
 //this creates a message database for the specified user, which is a csv file with name "username.txt"
     public MessageDatabase(User user) {
@@ -37,14 +38,16 @@ public class MessageDatabase extends Thread implements MData {
     public void recoverMessages() { 
         try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
             String line;
-            while ((line = bfr.readLine()) != null) {
-                Message newMessage = new Message(line);
-                if (newMessage.getSender().equals(user.getUsername())) {
-                    sentMessages.add(newMessage);
-                } else if (newMessage.getReciever().equals(user.getUsername())){
-                    recievedMessages.add(newMessage);
-                } else {
-                    System.out.println("This message shouldn't be here");
+            synchronized (lock){
+                while ((line = bfr.readLine()) != null) {
+                    Message newMessage = new Message(line);
+                    if (newMessage.getSender().equals(user.getUsername())) {
+                        sentMessages.add(newMessage);
+                    } else if (newMessage.getReciever().equals(user.getUsername())){
+                        recievedMessages.add(newMessage);
+                    } else {
+                        System.out.println("This message shouldn't be here");
+                    }
                 }
             }
         } catch (Exception e) {
@@ -56,57 +59,61 @@ public class MessageDatabase extends Thread implements MData {
 // to the file for the recieving user. I do this immediately so that if the program crashes later the messages are
 // not lost. 
     public void sendMessage(Message m) {
-        sentMessages.add(m);
-        String senderFile = String.format("%s.txt", m.getSender());
-        String recieverFile = String.format("%s.txt", m.getReciever());
-        try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
-            out.println(this.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        try (PrintWriter out = new PrintWriter(new FileWriter(recieverFile, true))) {
-            out.println(this.toString());
-        } catch (Exception e) {
-            e.printStackTrace();
+        synchronized (lock){
+            sentMessages.add(m);
+            String senderFile = String.format("%s.txt", m.getSender());
+            String recieverFile = String.format("%s.txt", m.getReciever());
+            try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
+                out.println(this.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            try (PrintWriter out = new PrintWriter(new FileWriter(recieverFile, true))) {
+                out.println(this.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 
 // this removes a specified message from both the sender and reciever's files
     @Override
     public void deleteMessage(Message m) {
-        int id = m.getMessageID();
-        sentMessages.remove(m);
-        //here I use the arraylist to generate the new list of messages after the delete, this means 
-        //the array list must be up to date before deleting.
-        try (BufferedWriter sender = new BufferedWriter(new FileWriter(filePath))) {
-            for (Message message : sentMessages) {
-                sender.write(message.toString());
-                sender.newLine();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        String receiver = m.getReciever();
-        String receiveFile = String.format("%s.txt", receiver);
-        ArrayList<Message> messagesToWrite = new ArrayList<>();
-        try (BufferedReader get = new BufferedReader(new FileReader(receiveFile))) {
-            String line;
-            while ((line = get.readLine()) != null) {
-                messagesToWrite.add(new Message(line));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } 
-        try (BufferedWriter put = new BufferedWriter(new FileWriter(receiveFile))) {
-            for (Message message : messagesToWrite) {
-                if (message.getMessageID() == id) {
-                    continue;
+        synchronized(lock){
+            int id = m.getMessageID();
+            sentMessages.remove(m);
+            //here I use the arraylist to generate the new list of messages after the delete, this means 
+            //the array list must be up to date before deleting.
+            try (BufferedWriter sender = new BufferedWriter(new FileWriter(filePath))) {
+                for (Message message : sentMessages) {
+                    sender.write(message.toString());
+                    sender.newLine();
                 }
-                put.write(message.toString());
-                put.newLine();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
+            String receiver = m.getReciever();
+            String receiveFile = String.format("%s.txt", receiver);
+            ArrayList<Message> messagesToWrite = new ArrayList<>();
+            try (BufferedReader get = new BufferedReader(new FileReader(receiveFile))) {
+                String line;
+                while ((line = get.readLine()) != null) {
+                    messagesToWrite.add(new Message(line));
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } 
+            try (BufferedWriter put = new BufferedWriter(new FileWriter(receiveFile))) {
+                for (Message message : messagesToWrite) {
+                    if (message.getMessageID() == id) {
+                        continue;
+                    }
+                    put.write(message.toString());
+                    put.newLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
     @Override
@@ -120,8 +127,10 @@ public class MessageDatabase extends Thread implements MData {
     //edits the message by creating a new one witht the same messageID and resending it. 
     @Override
     public void editMessage(Message m, Message n) {
-        n.setMessageID(m.getMessageID());
-        deleteMessage(m);
-        sendMessage(n);
+        synchronized(lock){
+            n.setMessageID(m.getMessageID());
+            deleteMessage(m);
+            sendMessage(n);
+        }
     }
 }
