@@ -13,7 +13,7 @@ import java.io.*;
  * 
  */
 
-public class MessageDatabase implements MData{
+public class MessageDatabase extends Thread implements MData {
     protected ArrayList<Message> recievedMessages;
     protected ArrayList<Message> sentMessages;
     private User user; // this will be the user who has sent or recieved the messages stored in said database object

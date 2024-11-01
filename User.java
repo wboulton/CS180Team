@@ -97,6 +97,26 @@ public class User {
         }
     }
 
+    public String getPassword() {
+        return password;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public ArrayList<User> getFriends() {
+        return friends;
+    }
+
+    public ArrayList<User> getBlockedUsers() {
+        return blockedUsers;
+    }
+
     public void changeUsername(String newUsername) {
         this.username = newUsername;
     }
