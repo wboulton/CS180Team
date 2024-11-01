@@ -102,9 +102,10 @@ public class User implements UserInt {
     }
     
     public String listToString(ArrayList<User> list) {
+        //only take the usernames and put it in a list which is comma separated
         StringBuilder sb = new StringBuilder();
         for (User user : list) {
-            sb.append(user.toString()).append(",");
+            sb.append(user.username).append(",");
         }
         return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
     }
@@ -131,6 +132,12 @@ public class User implements UserInt {
 
     public ArrayList<User> getFriends() {
         return friends;
+    }
+    public void setFriends(ArrayList<User> friends) {
+        this.friends = friends;
+    }
+    public void setBlockedUsers(ArrayList<User> blockedUsers) {
+        this.blockedUsers = blockedUsers;
     }
 
     public ArrayList<User> getBlockedUsers() {
