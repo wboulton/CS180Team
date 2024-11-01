@@ -16,7 +16,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private ArrayList<User> users;
     private static final String outputFile = "users.txt";
-    private static final String messageFile = "messages.txt";
+    private static final String messageFile = "messages.txt"; // this should probably be removed, it does nothing. 
 
     public UserDatabase() {
         // This is a constructor
