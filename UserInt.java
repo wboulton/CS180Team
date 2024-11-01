@@ -1,5 +1,7 @@
 import java.awt.image.BufferedImage;
+
 import java.util.*;
+
 
 public interface UserInt {
     boolean addFriend(User user);
