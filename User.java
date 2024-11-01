@@ -97,8 +97,18 @@ public class User implements UserInt {
         return this.username.equals(user.username);
     }
     public String toString() {
-        return username + "|" + password + "|" + firstName + "|" + lastName + "|" + Arrays.toString(profilePicture);
+        return String.format("%s|%s|%s|%s|%s|%s|%s", username, password, firstName,
+            lastName, listToString(friends), listToString(blockedUsers), Arrays.toString(profilePicture));
     }
+    
+    public String listToString(ArrayList<User> list) {
+        StringBuilder sb = new StringBuilder();
+        for (User user : list) {
+            sb.append(user.toString()).append(",");
+        }
+        return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
+    }
+    
     public BufferedImage getProfilePicture() {
         try {
             return ImageIO.read(new ByteArrayInputStream(profilePicture));

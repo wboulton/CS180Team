@@ -2,7 +2,7 @@ User Data storage is handled by two different files, User.java and UserDatabase.
 
 # User.java
 This file handles all of the creation and modification of the user object. This includes handling friendships, blockages, usernames, and password validation. When creating an object, the User class obtains a username, password, firstname, lastname, and profile from the constructor and sets it to the appropriate field (all of which are strings). None of these strings allow pipes. Every call to the constructor will have valid parameters passed to it, as all validation is done before creation of users. When users are stored in the database, they are stored in a pipe separated line (psv) with the following format:
-username|password|firstName|lastName|profilePicture
+username|password|firstName|lastName|friends|blockedUsers|profilePicture
 here is the breakdown of those fields:
 ```java
     private String username;
@@ -28,4 +28,5 @@ This file also contains all of the logic for the functions to handle and maintai
     String toString();
     BufferedImage getProfilePicture();
     void changeUsername(String newUsername);
+    String listToString(ArrayList<User> list);
 ```
