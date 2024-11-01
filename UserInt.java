@@ -1,4 +1,5 @@
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public interface UserInt {
     boolean addFriend(User user);
@@ -11,5 +12,5 @@ public interface UserInt {
     String toString();
     BufferedImage getProfilePicture();
     void changeUsername(String newUsername);
-    private String listToString(ArrayList<User> list);
+    String listToString(ArrayList<User> list);
 }

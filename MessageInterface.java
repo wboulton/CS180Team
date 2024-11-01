@@ -11,6 +11,9 @@
 
 public interface MessageInterface {
     String getSender();
+
+    void setMessageID(int id);
+
     String getReciever();
     String getContent();
     byte[] getPicture();
