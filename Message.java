@@ -12,7 +12,7 @@ public class Message implements MessageInterface {
     private String pictureFile;
     private final String PICTURE_NUMBERS = "picture.txt";
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse csv of some format, probably: sender,reciever,content,containsPicture,pictureFile
+//this should parse csv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         String[] info = data.split(",");
         sender = info[0];
