@@ -39,7 +39,7 @@ Per the interface, message.java has the following methods:
     void editPicture(byte[] pictureContent);
     void readMessage(); // this is not yet implemented.
 ```
-These methods work generally as expected. When addPicture() is called, a new picture file is created by finding the current number stored in the "picture.txt" file and using that number as the name of the file containing the picture. This then increments that number and stores it in the "picture.txt" file again to be used later. 
+These methods work generally as expected. When addPicture() is called, a new picture file is created by finding the current number stored in the "picture.txt" file and using that number as the name of the file containing the picture. This then increments that number and stores it in the "picture.txt" file again to be used later. All pictures are immediately stored as jpg files after being created. This again helps with memory persistance. 
 
 # MessageDatabase.java
 MessageDatabase.java is the file that handles each user's database of messages. It is intended to create a new text file for each user

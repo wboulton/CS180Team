@@ -1,6 +1,6 @@
 public interface UserDBInt {
     void createUser(String username, String password, String firstName, String lastName, String profilePicture)
-            throws BadDataException;
+        throws BadDataException;
     void removeFriend(User user, User friend);
     void blockUser(User user, User blockedUser);
     boolean unblockUser(User user, User blockedUser);
@@ -10,5 +10,4 @@ public interface UserDBInt {
     boolean legalPassword(String password);
     void writeDB(User user);
     void load();
-
 }

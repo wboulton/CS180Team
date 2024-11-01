@@ -30,3 +30,6 @@ This file also contains all of the logic for the functions to handle and maintai
     void changeUsername(String newUsername);
     String listToString(ArrayList<User> list);
 ```
+All methods generally work ase expected. The method listToString() is used as a helper method to convert arraylists to useable strings to be stored in the user database file. This is how the program stores the list of friends and list of blocked users (friends and blocked users are stored simply as their username). Currently, the verifyLogin() method just recieves a password and checks if it is the same string, however, it would be nice to implement some real password validation which does not send a password to the server (this is very insecure).
+
+# UserDatabase.java
