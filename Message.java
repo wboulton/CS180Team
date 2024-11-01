@@ -26,7 +26,7 @@ public class Message implements MessageInterface {
     //the file containing all sent and recieved messages for each user is just username.txt
 //this should parse csv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
-        String[] info = data.split(",");
+        String[] info = data.split("|");
         messageID = Integer.parseInt(info[0]);
         sender = info[1];
         reciever = info[2];
@@ -118,10 +118,10 @@ public class Message implements MessageInterface {
     }
     @Override
     public String toString() {
-        String result = String.format("%d,%s,%s,%s,%b", messageID, sender, reciever, content,
+        String result = String.format("%d|%s|%s|%s|%b", messageID, sender, reciever, content,
             containsPicture);
         if (containsPicture) {
-            result += "," + pictureFile;
+            result += "|" + pictureFile;
         }
         return result;
     }
