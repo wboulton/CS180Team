@@ -15,6 +15,7 @@ These files contain necessary methods for each of the classes that implement the
 Message handling is contained in two files, MessageDatabase.java and Message.java. Broadly, we store all of the messages that a user recieves and sends in a file named "username.txt" (where username is replaced with the username of the in-question user). Each message is stored as a single pipe separated value (psv) line of the format "messageID|sender|reciever|content|containsPicture|pictureFile" (It is important to note that the pictureFile string and preceding comma do not exist if containsPicture is false). For more information about this visit [Message Data](Docs/MessageDataStorage.md). 
 
 _Message.java_
+
 This class handles the creation and manipulation of the message object. It holds all of the information necessary to send a message to another user, including message content (text), an internal message id, the sender and reciever usernames, and (optionally) a picture. 
 Per the interface, it contains the following methods:
 ```java
@@ -34,6 +35,7 @@ Per the interface, it contains the following methods:
 Not all of which are currently under use. It contains two constructors, one for creating messages based on psv lines stored in the database files and one for creating new messages with the sending user, recieving user, and message content. Messages are not initiallized with a picture, they must be added after the creation of the message. For more information about this, visit [Message Data](Docs/MessageDataStorage.md).
 
 _MessageDatabase.java_
+
 This class handles all of the data storage for messages and allows for users to send, delete, and edit messages. Per the interface, it contains the following methods:
 ```java
     ArrayList getSentMessages();
@@ -58,6 +60,7 @@ username|password|firstName|lastName|friends|blockedUsers|profilePicture
 for more detials on what each field represents, see [User Data](Docs/UserDatabasing.md).
 
 _User.java_
+
 This class handles the user object, which is created for each person who uses the social media app. It stores all of the information regaurding a user's friends, blocked users, and account information. To handle this information, the file has the following methods:
 ```java
     boolean addFriend(User user);
@@ -76,6 +79,7 @@ This class handles the user object, which is created for each person who uses th
 Methods generally work as expected, more information on the methods can be found at [User Data](Docs/UserDatabasing.md). The verify login method checks if the user's inputted password matches the password that they have previously set for their account. This check directly using the String.equals() method. When the app is implemented over a network this will be insecure and is subject to change. The listToString method represents an ArrayList as a comma separated string similar to the way Arrays are represented using the Arrays.toString() method. 
 
 _UserDatabase.java_
+
 This class interacts with the User.java file in order to create and handle users contained within the database. It also handles all of the reading and writing to the "users.txt" file. To handle this, it contains the following methods: 
 ```java
     void createUser(String username, String password, String firstName, String lastName, String profilePicture)
