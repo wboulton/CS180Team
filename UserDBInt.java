@@ -1,5 +1,5 @@
 public interface UserDBInt {
-    void createUser(String username, String password, String firstName, String lastName, String profilePicture)
+    User createUser(String username, String password, String firstName, String lastName, String profilePicture)
         throws BadDataException;
     void removeFriend(User user, User friend);
     void blockUser(User user, User blockedUser);
