@@ -11,15 +11,13 @@
 
 public interface MessageInterface {
     String getSender();
-
-    void setMessageID(int id);
-
     String getReciever();
     String getContent();
     byte[] getPicture();
     boolean hasPicture();
     String toString();
     int getMessageID();
+    void setMessageID(int id);
     void editMessage(String content); //these void messages need signatures
     void addPicture(byte[] pictureContent);
     void editPicture(byte[] pictureContent);
