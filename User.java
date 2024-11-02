@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.io.*;
 import java.util.Arrays;
 public class User implements UserInt {
-    private static UserDatabase userDatabase;
     private String username;
     private String password;
     private String firstName;
@@ -20,9 +19,6 @@ public class User implements UserInt {
     public User(String username, String password, String firstName, String lastName, String profile) {
         //username rules - no commas, doesn't already exist, not empty
         //if userDatabase is null, create a new userDatabase
-        if (userDatabase == null) {
-            userDatabase = new UserDatabase();
-        }
         this.username = username;
         this.password = password;
         this.firstName = firstName;
@@ -76,7 +72,7 @@ public class User implements UserInt {
     public boolean unblockUser(User user) {
         //if user doesnt exist in blocked users or in the user database, return false
         synchronized(lock) {
-          if (!blockedUsers.contains(user) || !userDatabase.getUser(user.username).equals(user)) {
+          if (!blockedUsers.contains(user)) {
               return false;
           }
           blockedUsers.remove(user);
