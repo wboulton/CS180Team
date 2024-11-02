@@ -65,11 +65,14 @@ public class MessageDatabase extends Thread implements MData {
 //this handles sending messages by adding it immediately to the arraylist and the file for this user, it also adds it
 // to the file for the recieving user. I do this immediately so that if the program crashes later the messages are
 // not lost. 
-    public void sendMessage(Message m) {
+    public void sendMessage(Message m) throws BadDataException {
         UserDatabase database = new UserDatabase();
         //Here I simply check if they are blocked before sending the message
         User rUser = database.getUser(m.getReciever());
         User sUser = database.getUser(m.getSender());
+        if (rUser == null || sUser == null) {
+            throw new BadDataException("One of the users did not exist");
+        }
         if (rUser.getBlockedUsers().contains(sUser)) {
             return; //this intentionally says nothing because we do not want users to know that they are blocked
         }

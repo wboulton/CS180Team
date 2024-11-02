@@ -18,7 +18,7 @@ public interface MData {
     void recoverMessages();
     User getUser();
     String getFilePath();
-    void sendMessage(Message m);
+    void sendMessage(Message m) throws BadDataException;
     void deleteMessage(Message m);
     void editMessage(Message m, Message n);
 }

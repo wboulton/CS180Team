@@ -15,7 +15,7 @@ here is a breakdown of those fields:
     private int messageID;
     private String pictureFile;
 ```
-The message file contains two constructors, one that creates a message with two users and text content and one that takes a csv line
+The message file contains two constructors, one that creates a message with two users and text content and one that takes a pipe separated values (psv) line.
 and creates a message based on the psv data. There is no error handling in the psv type, so all data passed to it must be accurate. 
 ```java
 public Message(String data)
@@ -34,10 +34,11 @@ Per the interface, message.java has the following methods:
     boolean hasPicture();
     String toString();
     int getMessageID();
-    void editMessage(String content);
+    void setMessageID(int id);
+    void editMessage(String content); 
     void addPicture(byte[] pictureContent);
     void editPicture(byte[] pictureContent);
-    void readMessage(); // this is not yet implemented.
+    void readMessage();// currently not in use, will be for displaying messages to users. 
 ```
 These methods work generally as expected. When addPicture() is called, a new picture file is created by finding the current number stored in the "picture.txt" file and using that number as the name of the file containing the picture. This then increments that number and stores it in the "picture.txt" file again to be used later. All pictures are immediately stored as jpg files after being created. This again helps with memory persistance. 
 
@@ -61,16 +62,13 @@ This database is constructed with just the current user, and the object will con
 The program itself stores messages in two different arraylists, one for sent messages and one for recieved messages. Upon starting the 
 program for a user, the recoverMessages() function can be called to recover all sent and recieved messages from the current user's file. All functions are listed below:
 ```java
-    String getSender();
-    String getReciever();
-    String getContent();
-    byte[] getPicture();
-    boolean hasPicture();
-    String toString();
-    int getMessageID();
-    void setMessageID(int id);
-    void editMessage(String content); 
-    void addPicture(byte[] pictureContent);
-    void editPicture(byte[] pictureContent);
-    void readMessage();// currently not in use, will be for displaying messages to users. 
+    ArrayList getSentMessages();
+    ArrayList getRecievedMessages();
+    void recoverMessages();
+    User getUser();
+    String getFilePath();
+    void sendMessage(Message m);
+    void deleteMessage(Message m);
+    void editMessage(Message m, Message n); 
 ``` 
+The recoverMessages() method reads all of the messages currently in a user's file and adds them into the program memory as an array list of messages. This will use the first constructor from the Message.java file which parses the psv string for the information required to create the message object. Send, delete, and edit message actually handle adding messages to the sender and reciever's respective databases. Delete message assumes that a valid message will be passed to be deleted, but if an invalid message is passed it will simply print that the message did not exist. Send message ensures that the reciever can actually recieve messages from the sender (i.e. the sender is not blocked and, if the reciever only allows friends, the sender is a friend). If the sender is not allowed to send to the recieving user, the message does not get added to either database. With this system the message still gets created, which allows more flexibility with how we handle it after failure in later stages of the project, but may be changed. Currently this function also checks to make sure that both the sending and recieving user exist before sending the message. Generally, this should not be a problem as long as the server requires the message to be sent with a reciever and the sender is just taken from the current logged in user. 
