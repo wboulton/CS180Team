@@ -39,11 +39,13 @@ When designing your implementation, be sure to use methods appropriately. It wil
      */
     @Test(timeout = 1000)
     public void testMessage() {
-        Message m = new Message("1,sender,reciever,content,false");
+        User sender = new User("sender", "password", "first", "last", "false");
+        User reciever = new User("reciever", "password", "first", "last", "false");
+        Message m = new Message("0|sender|reciever|content|false");
         assertEquals("sender", m.getSender());
         assertEquals("reciever", m.getReciever());
         assertEquals("content", m.getContent());
-        assertEquals(1, m.getMessageID());
+        assertEquals(0, m.getMessageID());
         assertEquals(false, m.hasPicture());
         m.editMessage("new content");
         assertEquals("new content", m.getContent());
@@ -51,16 +53,16 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(true, m.hasPicture());
         m.editPicture(new byte[0]);
         assertEquals(true, m.hasPicture());
-        assertEquals(1, m.getMessageID());
-        assertEquals("1,sender,reciever,new content,true", m.toString());
+        assertEquals(0, m.getMessageID());
+        assertEquals("0|sender|reciever|new content|true|0.jpg", m.toString());
     }
     @Test(timeout = 1000)
     public void testMessageDatabase() {
-        User u = new User("username", "password", "first", "last", "false");
+        User u = new User("sender", "password", "first", "last", "false");
         MessageDatabase md = new MessageDatabase(u);
         assertEquals(0, md.getRecievedMessages().size());
         assertEquals(0, md.getSentMessages().size());
-        md.sendMessage(new Message("1,sender,reciever,content,false"));
+        md.sendMessage(new Message("0|sender|reciever|content|false"));
         assertEquals(1, md.getSentMessages().size());
         assertEquals(0, md.getRecievedMessages().size());
         md.recoverMessages();

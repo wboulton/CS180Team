@@ -16,8 +16,6 @@ Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private ArrayList<User> users;
     private static final String outputFile = "users.txt";
-    private static final String messageFile = "messages.txt"; // this should probably be removed, it does nothing. 
-
     public UserDatabase() {
         // This is a constructor
         //if the files do not exist, create them
@@ -26,18 +24,15 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             if (!file.exists()) {
                 file.createNewFile();
             }
-            file = new File(messageFile);
-            if (!file.exists()) {
-                file.createNewFile();
-            }
         } catch (Exception e) {
             e.printStackTrace();
         }
         users = new ArrayList<User>();
+        //if users file is not empty, load the database
         load();
 
     }
-    public void createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
+    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
         // This method creates a new user
         //if the username is not taken, create a new user
         //if user already exists, throw exception
@@ -51,19 +46,23 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         //if password is not legal, throw exception
         if (!legalPassword(password)) {
             throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one" +
-                    " number, at least one Capital letter and at least one lowercase letter. '|' not allowed");
+                    " number, at least one Capital letter and at least one lowercase letter. '|' and ',' not allowed");
         }
         //if the profile picture is not found, throw exception
-        try {
-            File imageFile = new File(profilePicture);
-            byte[] imageData = Files.readAllBytes(imageFile.toPath());
-        } catch (Exception e) {
-            throw new BadDataException("Profile picture not found");
+        //split the profile pic string by comma, and check if the file exists
+        if (!profilePicture.equals("false")) {
+            try {
+                File imageFile = new File(profilePicture);
+                byte[] imageData = Files.readAllBytes(imageFile.toPath());
+            } catch (Exception e) {
+                throw new BadDataException("Profile picture not found");
+            }
         }
         //create a new user
         User user = new User(username, password, firstName, lastName, profilePicture);
         users.add(user);
         writeDB(user);
+        return user;
         
     }
     //add to database
@@ -78,9 +77,15 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
 
     }
+    public void addFriend(User user, User friend) {
+        // This method adds a friend to a user
+        user.addFriend(friend);
+    }
     public void removeFriend(User user, User friend) {
-        // This method removes a friend from a user
-        user.removeFriend(friend);
+        //if the user is a friend, remove the friend
+        if (user.getFriends().contains(friend)) {
+            user.removeFriend(friend);
+        }
     }
     public void blockUser(User user, User blockedUser) {
         // This method blocks a user
@@ -130,32 +135,28 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     //load function for when the program starts
     public void load() {
         // This method loads the database
+        //make it not recursive
+        users.clear();
         try {
             Scanner scanner = new Scanner(new File(outputFile));
             while (scanner.hasNextLine()) {
-                String[] data = scanner.nextLine().split("|");
-                User user = new User(data[0], data[1], data[2], data[3], data[6]);
-                ArrayList<User> friends = new ArrayList<>();
-                //go through the data[4], split it by comma, and add to friends the users from getUser
-                for (String friend : data[4].split(",")) {
-                    User friendUser = getUser(friend);
-                    if (friendUser != null) {
-                        friends.add(friendUser);
-                    }
+                String[] info = scanner.nextLine().split("\\|");
+                User user = new User(info[0], info[1], info[2], info[3],info[6]);
+                //add friends
+                String[] friends = info[4].split(",");
+                for (String friend : friends) {
+                    user.addFriend(getUser(friend));
                 }
-                //same for blocked, data[5]
-                ArrayList<User> blocked = new ArrayList<>();
-                for (String blockedUser : data[5].split(",")) {
-                    User blockedUserUser = getUser(blockedUser);
-                    if (blockedUserUser != null) {
-                        blocked.add(blockedUserUser);
-                    }
+                //add blocked users
+                String[] blockedUsers = info[5].split(",");
+                for (String blockedUser : blockedUsers) {
+                    user.blockUser(getUser(blockedUser));
                 }
                 users.add(user);
             }
             scanner.close();
         } catch (Exception e) {
-            return;
+            e.printStackTrace();
         }
     }
     public boolean validateUser(String username) {
