@@ -73,6 +73,13 @@ public class MessageDatabase extends Thread implements MData {
         if (rUser.getBlockedUsers().contains(sUser)) {
             return; //this intentionally says nothing because we do not want users to know that they are blocked
         }
+        if (!rUser.isAllowAll()) {
+            if (!rUser.getFriends().contains(sUser)) {
+                System.out.println("This person only permits messages from friends");
+                return;
+            }
+        }
+        //this system allows illegal messages to be created but never sent, that is subject to change. 
         synchronized (lock) {
             sentMessages.add(m);
             String senderFile = String.format("%s.txt", m.getSender());
