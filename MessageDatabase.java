@@ -42,9 +42,16 @@ public class MessageDatabase extends Thread implements MData {
                 while ((line = bfr.readLine()) != null) {
                     Message newMessage = new Message(line);
                     if (newMessage.getSender().equals(user.getUsername())) {
-                        sentMessages.add(newMessage);
+                        //if the message isnt already in the sent messages arraylist, add it
+                        if (!sentMessages.contains(newMessage)) {
+                            sentMessages.add(newMessage);
+                            System.out.println(newMessage);
+                        }
                     } else if (newMessage.getReciever().equals(user.getUsername())){
-                        recievedMessages.add(newMessage);
+                        //if the message isnt already in the recieved messages arraylist, add it
+                        if (!recievedMessages.contains(newMessage)) {
+                            recievedMessages.add(newMessage);
+                        }
                     } else {
                         System.out.println("This message shouldn't be here");
                     }
@@ -64,12 +71,12 @@ public class MessageDatabase extends Thread implements MData {
             String senderFile = String.format("%s.txt", m.getSender());
             String recieverFile = String.format("%s.txt", m.getReciever());
             try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
-                out.println(this.toString());
+                out.println(m);
             } catch (Exception e) {
                 e.printStackTrace();
             }
             try (PrintWriter out = new PrintWriter(new FileWriter(recieverFile, true))) {
-                out.println(this.toString());
+                out.println(m);
             } catch (Exception e) {
                 e.printStackTrace();
             }

@@ -64,6 +64,8 @@ public class UserDatabaseThread extends Thread {
         }
         catch(IndexOutOfBoundsException e){
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
+        } catch (BadDataException e) {
+            System.out.println("BAD DATA, CHECK PARAMETERS");
         }
     }
 }

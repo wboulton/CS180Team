@@ -98,20 +98,20 @@ public class Message implements MessageInterface {
             try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
                 pictureLocation = Integer.parseInt(bfr.readLine());
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Error reading picture number");
             }
             pictureFile = String.format("%d.jpg", pictureLocation);
             try (BufferedWriter bwr = new BufferedWriter(new FileWriter(PICTURE_NUMBERS))) {
                 bwr.write(pictureLocation);
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Error writing picture number");
             }
             try {
                 ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent);
                 BufferedImage newImage = ImageIO.read(streamObj);
                 ImageIO.write(newImage, "jpg", new File(pictureFile)); 
             } catch (Exception e) {
-                e.printStackTrace();
+                System.out.println("Error writing picture");
             }
             containsPicture = true;
         }
@@ -136,5 +136,12 @@ public class Message implements MessageInterface {
         }
         return result;
     }
-
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof Message) {
+            Message m = (Message) o;
+            return m.getMessageID() == this.messageID;
+        }
+        return false;
+    }
 }
