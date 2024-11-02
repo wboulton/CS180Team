@@ -143,4 +143,7 @@ public class User implements UserInt {
     public void changeUsername(String newUsername) {
         this.username = newUsername;
     }
+    public void changePassword (String newPassword) {
+        this.password = newPassword;
+    }
 }

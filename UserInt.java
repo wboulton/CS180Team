@@ -14,5 +14,6 @@ public interface UserInt {
     String toString();
     BufferedImage getProfilePicture();
     void changeUsername(String newUsername);
+    void changePassword(String newPassword);
     String listToString(ArrayList<User> list);
 }
