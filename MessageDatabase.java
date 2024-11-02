@@ -38,7 +38,7 @@ public class MessageDatabase extends Thread implements MData {
     public void recoverMessages() { 
         try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
             String line;
-            synchronized (lock){
+            synchronized (lock) {
                 while ((line = bfr.readLine()) != null) {
                     Message newMessage = new Message(line);
                     if (newMessage.getSender().equals(user.getUsername())) {
@@ -66,7 +66,14 @@ public class MessageDatabase extends Thread implements MData {
 // to the file for the recieving user. I do this immediately so that if the program crashes later the messages are
 // not lost. 
     public void sendMessage(Message m) {
-        synchronized (lock){
+        UserDatabase database = new UserDatabase();
+        //Here I simply check if they are blocked before sending the message
+        User rUser = database.getUser(m.getReciever());
+        User sUser = database.getUser(m.getSender());
+        if (rUser.getBlockedUsers().contains(sUser)) {
+            return; //this intentionally says nothing because we do not want users to know that they are blocked
+        }
+        synchronized (lock) {
             sentMessages.add(m);
             String senderFile = String.format("%s.txt", m.getSender());
             String recieverFile = String.format("%s.txt", m.getReciever());
@@ -86,9 +93,14 @@ public class MessageDatabase extends Thread implements MData {
 // this removes a specified message from both the sender and reciever's files
     @Override
     public void deleteMessage(Message m) {
-        synchronized(lock){
+        synchronized(lock) {
             int id = m.getMessageID();
-            sentMessages.remove(m);
+            try {
+                sentMessages.remove(m);
+            } catch (Exception e) {
+                System.out.println("This message did not exist");
+                return;
+            }
             //here I use the arraylist to generate the new list of messages after the delete, this means 
             //the array list must be up to date before deleting.
             try (BufferedWriter sender = new BufferedWriter(new FileWriter(filePath))) {
@@ -134,7 +146,7 @@ public class MessageDatabase extends Thread implements MData {
     //edits the message by creating a new one witht the same messageID and resending it. 
     @Override
     public void editMessage(Message m, Message n) {
-        synchronized(lock){
+        synchronized(lock) {
             n.setMessageID(m.getMessageID());
             deleteMessage(m);
             sendMessage(n);

@@ -16,4 +16,6 @@ public interface UserInt {
     void changeUsername(String newUsername);
     void changePassword(String newPassword);
     String listToString(ArrayList<User> list);
+    boolean isAllowAll();
+    void setAllowAll(boolean newBoolean);
 }

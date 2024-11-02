@@ -14,6 +14,7 @@ public class User implements UserInt {
     public static final Object lock = new Object();
     //profile picture
     private byte[] profilePicture;
+    private boolean allowAll;
 
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profile) {
@@ -41,6 +42,8 @@ public class User implements UserInt {
                 this.profilePicture = null;
             }
         }
+        // allow all is set to true by default
+        allowAll = true;
     }
 
     public boolean addFriend(User user) {
@@ -93,8 +96,8 @@ public class User implements UserInt {
         return this.username.equals(user.username);
     }
     public String toString() {
-        return String.format("%s|%s|%s|%s|%s|%s|%s", username, password, firstName,
-            lastName, listToString(friends), listToString(blockedUsers), Arrays.toString(profilePicture));
+        return String.format("%s|%s|%s|%s|%s|%s|%s|%b", username, password, firstName,
+            lastName, listToString(friends), listToString(blockedUsers), Arrays.toString(profilePicture), allowAll);
     }
     
     public String listToString(ArrayList<User> list) {
@@ -145,5 +148,11 @@ public class User implements UserInt {
     }
     public void changePassword (String newPassword) {
         this.password = newPassword;
+    }
+    public boolean isAllowAll() {
+        return allowAll;
+    }
+    public void setAllowAll(boolean newBoolean) {
+        allowAll = newBoolean;
     }
 }

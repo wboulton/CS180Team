@@ -59,4 +59,18 @@ This database is constructed with just the current user, and the object will con
 ```
 
 The program itself stores messages in two different arraylists, one for sent messages and one for recieved messages. Upon starting the 
-program for a user, the recoverMessages() function can be called to recover all sent and recieved messages from the current user's file. 
+program for a user, the recoverMessages() function can be called to recover all sent and recieved messages from the current user's file. All functions are listed below:
+```java
+    String getSender();
+    String getReciever();
+    String getContent();
+    byte[] getPicture();
+    boolean hasPicture();
+    String toString();
+    int getMessageID();
+    void setMessageID(int id);
+    void editMessage(String content); 
+    void addPicture(byte[] pictureContent);
+    void editPicture(byte[] pictureContent);
+    void readMessage();// currently not in use, will be for displaying messages to users. 
+``` 
