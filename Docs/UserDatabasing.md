@@ -6,7 +6,7 @@ and password validation. When creating an object, the User class obtains a usern
 constructor and sets it to the appropriate field (all of which are strings). None of these strings allow pipes. Every call to the 
 constructor will have valid parameters passed to it, as all validation is done before creation of users. When users are stored in the 
 database, they are stored in a pipe separated line (psv) with the following format:
-username|password|firstName|lastName|friends|blockedUsers|profilePicture
+username|password|firstName|lastName|friends|blockedUsers|profilePicture|allowAll
 the Arraylists are represented as strings separated by a comma in stardard Array.toString() format. 
 here is the breakdown of those fields:
 ```java
@@ -14,28 +14,33 @@ here is the breakdown of those fields:
     private String password;
     private String firstName;
     private String lastName;
-    private ArrayList<User> friends;
-    private ArrayList<User> blockedUsers;
+    private ArrayList<String> friends;
+    private ArrayList<String> blockedUsers;
+    private boolean allAllowed;
 ```
-This file simply contains one constructor, as the handling for splitting lines read from the database is handled in the UserDatabase.java 
-file. This constructor handles all creation of user objects with the following signature:
+the ArrayLists of friends and users contains strings of the usernames of the blocked/friended users. allAllowed represents the people who are allowed to message the user, if it is true anyone who isn't blocked can message and if it is false only friends can message. 
+
+This file contains two constructors, one for creating new users by taking in all of the necessary information inputted by someone interacting with the app and another which reads a string line in the format of the Users.txt file and filling all of the necessary information:
 ```java
 public User(String username, String password, String firstName, String lastName, String profile)
+public User(String line)
 ```
+The only major difference between these two constructors is that the one designed to create new users based on user input intializes the friends and blockedUsers arraylists to null. The other constructor reads those array lists from the database and intializes it from that. 
+
 This file also contains all of the logic for the functions to handle and maintain friendships and user information. 
 Per the UserInterface, it contains the following methods:
 ```java
-    boolean addFriend(User user);
-    boolean removeFriend(User user);
-    boolean blockUser(User user);
-    boolean unblockUser(User user);
+    boolean addFriend(String user);
+    boolean removeFriend(String user);
+    boolean blockUser(String user);
+    boolean unblockUser(String user);
     String getUsername();
     boolean verifyLogin(String password);
     boolean equals(User user);
     String toString();
     BufferedImage getProfilePicture();
     void changeUsername(String newUsername);
-    String listToString(ArrayList<User> list);
+    String stringListToString(ArrayList<String> list);
 ```
 All methods generally work as expected. The method listToString() is used as a helper method to convert arraylists to useable strings to be 
 stored in the user database file. This is how the program stores the list of friends and list of blocked users 
@@ -70,12 +75,14 @@ the following methods:
     void changeUsername(User user, String newUsername);
     boolean legalPassword(String password);
     void writeDB(User user);
+    void updateDB();
     void load();
 ```
 The createUser() method throws the custom exception BadDataException when one of the strings passed to it is illegal. This could be 
 because it contains the illegal character "|" or it has no information. the load() method reads each line in users.txt and splits it 
 into multiple strings which then get passed to the createUser constructor. These created users then get added into the users arraylist. 
 The load method also directly adds the blocked users and friends to the user object using the block user/add friend functions in user.java. 
+The main differences between writeDB and updateDB is how they handle the file. updateDB() re-writes the entire file to handle changes in users, writeDB appends a new user to the database without changing anything else in the file. 
 
 Password validation only allows ascii characters and numbers: 
 ```java

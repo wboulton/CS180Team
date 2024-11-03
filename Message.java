@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
  *
  * This file creates the message objects for when each user sends a message
  *
- * @author William Boulton, 7
+ * @author William Boulton, Jai Menon, Alan Yi, Mukund Venkatesh
  *
  * @version November 1, 2024
  *
@@ -26,7 +26,7 @@ public class Message implements MessageInterface {
     private final String MESSAGE_ID = "MessageIDCounter.txt";
     public final static Object lock = new Object();
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse psv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
+//this should parse psv of some format, probably: messageID|sender|reciever|content|containsPicture|pictureFile
     public Message(String data) { 
         synchronized(lock){
             String[] info = data.split("|");

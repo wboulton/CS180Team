@@ -1,21 +1,26 @@
-import java.awt.image.BufferedImage;
-
 import java.util.*;
-
+/**
+ * Team Project -- UserInt
+ *
+ * This is the interface for User.java
+ * @author William Boulton, Mukund Venkatesh
+ * @version November 1, 2024
+ *
+ */
 
 public interface UserInt {
-    boolean addFriend(User user);
-    boolean removeFriend(User user);
-    boolean blockUser(User user);
-    boolean unblockUser(User user);
+    boolean addFriend(String user);
+    boolean removeFriend(String user);
+    boolean blockUser(String user);
+    boolean unblockUser(String user);
     String getUsername();
     boolean verifyLogin(String password);
     boolean equals(User user);
     String toString();
-    BufferedImage getProfilePicture();
+    byte[] getProfilePicture();
     void changeUsername(String newUsername);
     void changePassword(String newPassword);
-    String listToString(ArrayList<User> list);
+    String stringListToString(ArrayList<String> list);
     boolean isAllowAll();
     void setAllowAll(boolean newBoolean);
 }

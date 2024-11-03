@@ -43,9 +43,9 @@ This class handles all of the data storage for messages and allows for users to 
     void recoverMessages();
     User getUser();
     String getFilePath();
-    void sendMessage(Message m);
-    void deleteMessage(Message m);
-    void editMessage(Message m, Message n);
+    void sendMessage(Message m) throws BadDataExeption;
+    void deleteMessage(Message m) throws BadDataException;
+    void editMessage(Message m, Message n) throws BadDataException; 
 ``` 
 The most important methods in this file are recoverMessages(), which retrieves all of the user's sent and recieved messages and stores them in two different arrayLists, and the send, edit, and delete Message methods. This class also validates who messages can be sent to before making adjustments to a user's messages in the sendMessage file. It checks to make sure that the reciever has not blocked the sender, and if the reciever only allows friends to send messages it checks if the sender is a friend.
 Each MessageDatabase object represents the message data for an individual user. This user is stored in the field 
@@ -93,6 +93,7 @@ This class interacts with the User.java file in order to create and handle users
     void changeUsername(User user, String newUsername);
     boolean legalPassword(String password);
     void writeDB(User user);
+    void updateDB();
     void load();
 ```
 The load function handles reading through all of the users written to "users.txt" upon start up and storing them in the program once again. The writeDB function writes all of the users stored in program memory (an arraylist) to the "users.txt" file to be reused again later. Validating user creation happens in this file, where we ensure that the password and other user inputs are valid. Blocking, unblocking, Friending, and unfriending is all handled within this class as well. For more information on UserDatabase.java, see [User Data](Docs/UserDatabasing.md)
@@ -101,3 +102,7 @@ The load function handles reading through all of the users written to "users.txt
 This project has one custom exception: BadDataException. In general this exception is used when a user input passed contains an invalid character or does not fufill requriements (i.e. password requirements). This exception is very standard and just calls the constructor of the Exception class with the passed message. 
 
 # Threading
+Threading is handled by synchronizing all calls to shared resources (files and static variables) in each file. To handle the creation of new threads, this project creates two new files to call actions within the MessageDatabase and UserDatabse on a new thread. These files create a run method which uses a switch statement to determine which function from the database class to run. They are both passed a database object to run these methods from. All actions are contained in the [Action.java](Action.java) enumeration file. To read more about how threading is handled in this project, including information about the two classes involved in handling threading, visit the [Threading Docs](Docs/threading.md).
+
+# Testing
+Each class has it's own test file, each of which are listed and linked in the [testing](Docs/testing.md) file. 

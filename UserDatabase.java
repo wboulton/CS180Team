@@ -1,9 +1,20 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Files;
-
+/**
+ * Team Project -- UserDatabase
+ *
+ * This file handles the user data for each user.
+ * For more in depth documentation see Docs/UserDataStorage.md
+ *
+ * @author William Boulton, Mukund Venkatesh
+ *
+ * @version November 1, 2024
+ *
+ */
 public class UserDatabase implements UserDBInt {
     /*
     * User profiles.
@@ -14,7 +25,7 @@ User viewer.
 Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
-    private ArrayList<User> users;
+    private static ArrayList<User> users;
     private static final String outputFile = "users.txt";
     public UserDatabase() {
         // This is a constructor
@@ -32,7 +43,8 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         load();
 
     }
-    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
+    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)
+        throws BadDataException {
         // This method creates a new user
         //if the username is not taken, create a new user
         //if user already exists, throw exception
@@ -45,8 +57,8 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         //if password is not legal, throw exception
         if (!legalPassword(password)) {
-            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one" +
-                    " number, at least one Capital letter and at least one lowercase letter. '|' and ',' not allowed");
+            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one"
+                + " number, at least one Capital letter and at least one lowercase letter. '|' and ',' not allowed");
         }
         //if the profile picture is not found, throw exception
         //split the profile pic string by comma, and check if the file exists
@@ -77,27 +89,42 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
 
     }
-    public void addFriend(User user, User friend) {
-        // This method adds a friend to a user
-        user.addFriend(friend);
-    }
-    public void removeFriend(User user, User friend) {
-        //if the user is a friend, remove the friend
-        if (user.getFriends().contains(friend)) {
-            user.removeFriend(friend);
+    //re-write entire DB
+    public void updateDB() {
+        try (BufferedWriter bwr = new BufferedWriter(new FileWriter(outputFile))) {
+            for (User user : users) {
+                bwr.write(user.toString());
+                bwr.newLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
-    public void blockUser(User user, User blockedUser) {
+    public static void addFriend(User user, User friend) {
+        // This method adds a friend to a user
+        user.addFriend(friend.getUsername());
+    }
+    public static void removeFriend(User user, User friend) {
+        //if the user is a friend, remove the friend
+        if (user.getFriends().contains(friend.getUsername())) {
+            user.removeFriend(friend.getUsername());
+        }
+    }
+    public static void blockUser(User user, User blockedUser) {
         // This method blocks a user
-        user.blockUser(blockedUser);
+        user.blockUser(blockedUser.getUsername());
     }
     
-    public boolean unblockUser(User user, User blockedUser) {
+    public static boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        return user.unblockUser(blockedUser);
+        if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
+            user.unblockUser(blockedUser.getUsername());
+            return true;
+        }
+        return false;
     }
 
-    public User getUser(String username) {
+    public static User getUser(String username) {
         // This method gets a user by their username
         for (User user : users) {
             if (user.getUsername().equals(username)) {
@@ -142,18 +169,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         try {
             Scanner scanner = new Scanner(new File(outputFile));
             while (scanner.hasNextLine()) {
-                String[] info = scanner.nextLine().split("\\|");
-                User user = new User(info[0], info[1], info[2], info[3],info[6]);
-                //add friends
-                String[] friends = info[4].split(",");
-                for (String friend : friends) {
-                    user.addFriend(getUser(friend));
-                }
-                //add blocked users
-                String[] blockedUsers = info[5].split(",");
-                for (String blockedUser : blockedUsers) {
-                    user.blockUser(getUser(blockedUser));
-                }
+                User user = new User(scanner.nextLine());
                 users.add(user);
             }
             scanner.close();

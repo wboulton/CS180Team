@@ -1,10 +1,26 @@
 import org.junit.*;
 
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import static java.lang.Boolean.TRUE;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+/**
+ * Team Project -- UserTest
+ *
+ * This file tests the User class.
+ * For more in depth documentation see Docs/UserDataStorage.md
+ *
+ * @author Mukund Venkatesh, Kush Kodiya
+ *
+ * @version November 1, 2024
+ *
+ */
 
 public class UserTest {
     private User user1;
@@ -68,6 +84,11 @@ public class UserTest {
     }
 
     @Test
+    public void testUnblockUserNotInBlockedList() {
+        boolean result = user1.unblockUser(user2);
+        assertFalse(result, "Expected unblock to return false when user is not in blocked list");
+    }
+    @Test
     public void testEquals() {
         User user3 = new User("user1", "User1Password@", "User", "One", "pfp");
 
@@ -84,6 +105,24 @@ public class UserTest {
         assertEquals("Expected user1 password to be User1Password@", TRUE, new Boolean[]{user1.verifyLogin("User1Password@")});
     }
 
+    @Test
+    public void testChangeUsername() {
+        user1.changeUsername("newUsername");
+        assertEquals("Expected username to be updated", "newUsername", user1.getUsername());
+    }
+
+    @Test
+    public void testProfilePicturePresent() {
+        try {
+            // Assuming "sample.jpg" is a valid path to a test image file
+            byte[] sampleImage = Files.readAllBytes(Paths.get("sample.jpg"));
+            User userWithProfile = new User("userWithPFP", "Password123", "User", "Four", "true,sample.jpg");
+            assertNotNull("Expected profile picture to be loaded", userWithProfile.getProfilePicture());
+            assertArrayEquals("Expected loaded profile picture data to match original", sampleImage, userWithProfile.getProfilePicture());
+        } catch (IOException e) {
+            fail("Failed to read test profile picture: " + e.getMessage());
+        }
+    }
     
 
 }

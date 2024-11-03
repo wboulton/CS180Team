@@ -3,7 +3,7 @@
  *
  * This file handles the threads for the User Database
  *
- * @author Alan Yi, 7
+ * @author Alan Yi
  *
  * @version November 1, 2024
  *

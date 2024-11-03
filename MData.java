@@ -6,7 +6,7 @@ import java.io.*;
  *
  * This is simply the interface for MessageDatabase.java
  *
- * @author William Boulton, 7
+ * @author William Boulton
  *
  * @version November 1, 2024
  * 
@@ -19,6 +19,6 @@ public interface MData {
     User getUser();
     String getFilePath();
     void sendMessage(Message m) throws BadDataException;
-    void deleteMessage(Message m);
-    void editMessage(Message m, Message n);
+    void deleteMessage(Message m) throws BadDataException;
+    void editMessage(Message m, Message n) throws BadDataException;
 }

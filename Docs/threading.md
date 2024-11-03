@@ -1,4 +1,4 @@
-The threading is divided in into the message database thread and user database thread. The Action enum contains the actions that can be performed on the databases. 
+The threading is divided into the message database thread and user database thread. The Action enum contains the actions that can be performed on the databases. 
 
 Thread-safe procedures including creating a static object and using the synchronized keyword:
 
