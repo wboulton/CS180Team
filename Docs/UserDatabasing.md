@@ -14,28 +14,33 @@ here is the breakdown of those fields:
     private String password;
     private String firstName;
     private String lastName;
-    private ArrayList<User> friends;
-    private ArrayList<User> blockedUsers;
+    private ArrayList<String> friends;
+    private ArrayList<String> blockedUsers;
+    private boolean allAllowed;
 ```
-This file simply contains one constructor, as the handling for splitting lines read from the database is handled in the UserDatabase.java 
-file. This constructor handles all creation of user objects with the following signature:
+the ArrayLists of friends and users contains strings of the usernames of the blocked/friended users. allAllowed represents the people who are allowed to message the user, if it is true anyone who isn't blocked can message and if it is false only friends can message. 
+
+This file contains two constructors, one for creating new users by taking in all of the necessary information inputted by someone interacting with the app and another which reads a string line in the format of the Users.txt file and filling all of the necessary information:
 ```java
 public User(String username, String password, String firstName, String lastName, String profile)
+public User(String line)
 ```
+The only major difference between these two constructors is that the one designed to create new users based on user input intializes the friends and blockedUsers arraylists to null. The other constructor reads those array lists from the database and intializes it from that. 
+
 This file also contains all of the logic for the functions to handle and maintain friendships and user information. 
 Per the UserInterface, it contains the following methods:
 ```java
-    boolean addFriend(User user);
-    boolean removeFriend(User user);
-    boolean blockUser(User user);
-    boolean unblockUser(User user);
+    boolean addFriend(String user);
+    boolean removeFriend(String user);
+    boolean blockUser(String user);
+    boolean unblockUser(String user);
     String getUsername();
     boolean verifyLogin(String password);
     boolean equals(User user);
     String toString();
     BufferedImage getProfilePicture();
     void changeUsername(String newUsername);
-    String listToString(ArrayList<User> list);
+    String stringListToString(ArrayList<String> list);
 ```
 All methods generally work as expected. The method listToString() is used as a helper method to convert arraylists to useable strings to be 
 stored in the user database file. This is how the program stores the list of friends and list of blocked users 

@@ -9,10 +9,10 @@ import java.util.*;
  */
 
 public interface UserInt {
-    boolean addFriend(User user);
-    boolean removeFriend(User user);
-    boolean blockUser(User user);
-    boolean unblockUser(User user);
+    boolean addFriend(String user);
+    boolean removeFriend(String user);
+    boolean blockUser(String user);
+    boolean unblockUser(String user);
     String getUsername();
     boolean verifyLogin(String password);
     boolean equals(User user);
@@ -20,7 +20,7 @@ public interface UserInt {
     byte[] getProfilePicture();
     void changeUsername(String newUsername);
     void changePassword(String newPassword);
-    String listToString(ArrayList<User> list);
+    String stringListToString(ArrayList<String> list);
     boolean isAllowAll();
     void setAllowAll(boolean newBoolean);
 }

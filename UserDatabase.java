@@ -94,7 +94,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     public static void removeFriend(User user, User friend) {
         //if the user is a friend, remove the friend
         if (user.getFriends().contains(friend.getUsername())) {
-            user.removeFriend(friend);
+            user.removeFriend(friend.getUsername());
         }
     }
     public static void blockUser(User user, User blockedUser) {
@@ -105,7 +105,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     public static boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
         if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
-            user.unblockUser(blockedUser);
+            user.unblockUser(blockedUser.getUsername());
             return true;
         }
         return false;
