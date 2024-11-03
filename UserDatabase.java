@@ -62,7 +62,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         //if the profile picture is not found, throw exception
         //split the profile pic string by comma, and check if the file exists
-        if (!profilePicture.equals("false")) {
+        if (profilePicture != null && !profilePicture.equals("false")) {
             try {
                 File imageFile = new File(profilePicture);
                 byte[] imageData = Files.readAllBytes(imageFile.toPath());
@@ -71,10 +71,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             }
         }
         //create a new user
-        User user = new User(username, password, firstName, lastName, profilePicture);
-        users.add(user);
-        writeDB(user);
-        return user;
+        return new User(username, password, firstName, lastName, profilePicture);
         
     }
     //add to database
@@ -170,7 +167,10 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             Scanner scanner = new Scanner(new File(outputFile));
             while (scanner.hasNextLine()) {
                 User user = new User(scanner.nextLine());
-                users.add(user);
+                //if the user isnt already in the database, add it
+                if (!users.contains(user)) {
+                    users.add(user);
+                }
             }
             scanner.close();
         } catch (Exception e) {
@@ -181,5 +181,11 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         // This method validates a user
         //if username contains comma return false
         return !username.contains("|");
+    }
+    //add user
+    public void addUser(User user) {
+        // This method adds a user
+        users.add(user);
+        updateDB();
     }
 }

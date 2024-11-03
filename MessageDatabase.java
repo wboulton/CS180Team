@@ -24,6 +24,15 @@ public class MessageDatabase extends Thread implements MData {
     public MessageDatabase(User user) {
         this.user = user;
         filePath = String.format("%s.txt", user.getUsername());
+        //if a file does not exist for this user, create it
+        try {
+            File file = new File(filePath);
+            if (!file.exists()) {
+                file.createNewFile();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         recievedMessages = new ArrayList<>();
         sentMessages = new ArrayList<>();
     }
@@ -35,7 +44,10 @@ public class MessageDatabase extends Thread implements MData {
         return recievedMessages;
     }
 //this reads all of the messages in a user's file and adds them to the correct sent/recieved arraylist
-    public void recoverMessages() { 
+    public void recoverMessages() {
+        //clear the arraylists to avoid duplicates
+        recievedMessages.clear();
+        sentMessages.clear();
         try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
             String line;
             synchronized (lock) {
@@ -45,7 +57,6 @@ public class MessageDatabase extends Thread implements MData {
                         //if the message isnt already in the sent messages arraylist, add it
                         if (!sentMessages.contains(newMessage)) {
                             sentMessages.add(newMessage);
-                            System.out.println(newMessage);
                         }
                     } else if (newMessage.getReciever().equals(user.getUsername())){
                         //if the message isnt already in the recieved messages arraylist, add it
@@ -104,8 +115,12 @@ public class MessageDatabase extends Thread implements MData {
     public void deleteMessage(Message m) throws BadDataException {
         synchronized(lock) {
             int id = m.getMessageID();
+            System.out.println(id);
             try {
-                sentMessages.remove(m);
+                if (!sentMessages.remove(m)) {
+                    throw new BadDataException("This message did not exist");
+                }
+                System.out.println("removed");
             } catch (Exception e) {
                 throw new BadDataException("This message did not exist");
             }

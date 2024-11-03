@@ -43,7 +43,7 @@ public class Message implements MessageInterface {
 //This will be the direct creation of messages
     public Message(User sender, User reciever, String content) throws BadDataException {
         if (content.contains("|")) {
-            throw new BadDataException("Message content cannont conatain '|'");
+            throw new BadDataException("Message content cannot contain '|'");
         }
         synchronized(lock){
             this.sender = sender.getUsername();
