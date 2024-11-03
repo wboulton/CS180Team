@@ -3,7 +3,7 @@
  *
  * This is simply the interface for Message.java
  *
- * @author William Boulton, 7
+ * @author William Boulton
  *
  * @version November 1, 2024
  * 

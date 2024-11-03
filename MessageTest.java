@@ -1,9 +1,20 @@
+import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 
 import java.io.*;
-
+/**
+ * Team Project -- MessageTest
+ *
+ * This file tests the Message class.
+ * For more in depth documentation see Docs/MessageDataStorage.md
+ *
+ * @author Mukund Venkatesh, Jai Menon
+ *
+ * @version November 1, 2024
+ *
+ */
 public class MessageTest {
     //junit test case with the format given below
     /*
@@ -66,7 +77,7 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(false, a.equals(c));
     }
     @Test(timeout = 1000)
-    public void testMessageDatabase() {
+    public void testMessageDatabase() throws BadDataException {
         UserDatabase db = new UserDatabase();
         User you = db.createUser("you", "password", "first", "last", "false");
         User me = db.createUser("me", "password", "first", "last", "false");
@@ -91,7 +102,7 @@ When designing your implementation, be sure to use methods appropriately. It wil
         md.recoverMessages();
        // assertEquals(1, md.getSentMessages().size());
         assertEquals(0, md.getRecievedMessages().size());
-        assertEquals(true, );
+        assertEquals(true, md.getSentMessages().contains(tester));
         try {
             y.sendMessage(new Message("0|you|stranger|content|false"));
         } catch (Exception e) {
@@ -100,7 +111,7 @@ When designing your implementation, be sure to use methods appropriately. It wil
         
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws BadDataException {
         MessageTest mt = new MessageTest();
         mt.testMessage();
         mt.testMessageDatabase();

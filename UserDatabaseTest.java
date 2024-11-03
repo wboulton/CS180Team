@@ -8,7 +8,17 @@ import java.io.*;
 import java.nio.file.*;
 
 import static org.junit.Assert.*;
-
+/**
+ * Team Project -- UserDatabaseTest
+ *
+ * This file tests the UserDatabase class.
+ * For more in depth documentation see Docs/UserDataStorage.md
+ *
+ * @author Kush Kodiya, Mukund Venkatesh
+ *
+ * @version November 1, 2024
+ *
+ */
 public class UserDatabaseTest {
 
     private static UserDatabase userDatabase = new UserDatabase();

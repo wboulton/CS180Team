@@ -1,9 +1,20 @@
 import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.*;
 import java.util.Arrays;
+
+/**
+ * Team Project -- User
+ *
+ * This file handles the user data for each user.
+ * For more in depth documentation see Docs/UserDataStorage.md
+ *
+ * @author William Boulton, Mukund Venkatesh, Alan Yi, Jai Menon, Kush Kodiya
+ *
+ * @version November 1, 2024
+ *
+ */
 public class User implements UserInt {
     private String username;
     private String password;
@@ -129,9 +140,9 @@ public class User implements UserInt {
         return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
     }
     
-    public BufferedImage getProfilePicture() {
+    public byte[] getProfilePicture() {
         try {
-            return ImageIO.read(new ByteArrayInputStream(profilePicture));
+            return profilePicture;
         } catch (Exception e) {
             return null;
         }

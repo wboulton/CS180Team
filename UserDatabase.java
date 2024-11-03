@@ -3,7 +3,17 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Files;
-
+/**
+ * Team Project -- UserDatabase
+ *
+ * This file handles the user data for each user.
+ * For more in depth documentation see Docs/UserDataStorage.md
+ *
+ * @author William Boulton, Mukund Venkatesh
+ *
+ * @version November 1, 2024
+ *
+ */
 public class UserDatabase implements UserDBInt {
     /*
     * User profiles.
@@ -92,9 +102,13 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         user.blockUser(blockedUser);
     }
     
-    public static void unblockUser(User user, User blockedUser) {
+    public static boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        user.unblockUser(blockedUser);
+        if (user.getBlockedUsers().contains(blockedUser)) {
+            user.unblockUser(blockedUser);
+            return true;
+        }
+        return false;
     }
 
     public static User getUser(String username) {

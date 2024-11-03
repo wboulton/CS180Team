@@ -155,7 +155,7 @@ public class MessageDatabase extends Thread implements MData {
     }
     //edits the message by creating a new one witht the same messageID and resending it. 
     @Override
-    public void editMessage(Message m, Message n) {
+    public void editMessage(Message m, Message n) throws BadDataException {
         synchronized(lock) {
             n.setMessageID(m.getMessageID());
             deleteMessage(m);

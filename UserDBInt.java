@@ -1,3 +1,8 @@
+/**
+ * Interface for UserDB
+ * @author Mukund Venkatesh
+ * @version November 1, 2024
+ */
 public interface UserDBInt {
     User createUser(String username, String password, String firstName, String lastName, String profilePicture)
         throws BadDataException;
