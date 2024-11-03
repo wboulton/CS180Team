@@ -10,7 +10,7 @@ import java.io.*;
  * This file tests the Message class.
  * For more in depth documentation see Docs/MessageDataStorage.md
  *
- * @author Mukund Venkatesh, Jai Menon
+ * @author Mukund Venkatesh, Jai Menon, William Boulton
  *
  * @version November 1, 2024
  *
