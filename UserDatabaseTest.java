@@ -45,6 +45,10 @@ public class UserDatabaseTest {
         assertThrows(BadDataException.class, () -> {
             userDatabase.createUser("janeDoe", "short", "Jane", "Doe", "false");
         });
+
+        assertThrows(BadDataException.class, () -> {
+            userDatabase.createUser("johnDoe", "Password|123", "John", "Doe", "false");
+        });
     }
 
     @Test (timeout = 1000)
@@ -76,9 +80,83 @@ public class UserDatabaseTest {
 
     }
 
+    @Test (timeout = 1000)
+    public void testSaveAndLoadUsers() {
+        try {
+            // Create users and add to file
+            userDatabase.createUser("johnDoe", "Password123", "John", "Doe", "false");
+            userDatabase.createUser("janeDoe", "Password456", "Jane", "Doe", "false");
+
+            // Reload the database from the file
+            userDatabase = new UserDatabase();
+            assertNotNull(userDatabase.getUser("johnDoe"));
+            assertNotNull(userDatabase.getUser("janeDoe"));
+        } catch (BadDataException e) {
+            fail("Unexpected exception during save/load test: " + e.getMessage());
+        }
+    }
+
+    @Test (timeout = 1000)
+    public void testAddAndRemoveFriends() {
+        try {
+            User user1 = userDatabase.createUser("johnDoe", "Password123", "John", "Doe", "false");
+            User user2 = userDatabase.createUser("janeDoe", "Password456", "Jane", "Doe", "false");
+
+            // Add friend
+            userDatabase.addFriend(user1, user2);
+            assertTrue(user1.getFriends().contains(user2));
+
+            // Remove friend
+            userDatabase.removeFriend(user1, user2);
+            assertFalse(user1.getFriends().contains(user2));
+        } catch (BadDataException e) {
+            fail("Friend addition/removal test failed: " + e.getMessage());
+        }
+    }
+
+    @Test (timeout = 1000)
+    public void testBlockAndUnblockUser() {
+        try {
+            User user1 = userDatabase.createUser("johnDoe", "Password123", "John", "Doe", "false");
+            User user2 = userDatabase.createUser("janeDoe", "Password456", "Jane", "Doe", "false");
+
+            // Block user
+            userDatabase.blockUser(user1, user2);
+            assertTrue(user1.getBlockedUsers().contains(user2));
+
+            // Unblock user
+            boolean unblocked = userDatabase.unblockUser(user1, user2);
+            assertTrue(unblocked);
+            assertFalse(user1.getBlockedUsers().contains(user2));
+        } catch (BadDataException e) {
+            fail("Block/unblock test failed: " + e.getMessage());
+        }
+    }
+
+    @Test (timeout = 1000)
+    public void testChangeUsername() {
+        try {
+            User user = userDatabase.createUser("johnDoe", "Password123", "John", "Doe", "false");
+            userDatabase.changeUsername(user, "johnSmith");
+
+            assertNull(userDatabase.getUser("johnDoe"));
+            assertNotNull(userDatabase.getUser("johnSmith"));
+            assertEquals("johnSmith", user.getUsername());
+
+            // Attempt to change to an existing username
+            userDatabase.createUser("janeDoe", "Password456", "Jane", "Doe", "false");
+            userDatabase.changeUsername(user, "janeDoe");
+            assertEquals("johnSmith", user.getUsername(), "Username should not change to an existing username");
+        } catch (BadDataException e) {
+            fail("Unexpected exception during username change test: " + e.getMessage());
+        }
+    }
+
     @Test
     public void testUnblockUser() {
         // Block user2 first
 
     }
+
+
 }
