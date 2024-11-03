@@ -14,9 +14,8 @@ public class MessageDatabaseThread extends Thread{
     private String[] values;
     private MessageDatabase messageDatabase;
  
-    public MessageDatabaseThread(MessageDatabase messageDatabase, User user, Action action, String[] values) {
+    public MessageDatabaseThread(MessageDatabase messageDatabase, Action action, String[] values) {
         this.messageDatabase = messageDatabase;
-
         this.action = action;
         this.values = values;
     }
@@ -56,6 +55,9 @@ public class MessageDatabaseThread extends Thread{
         }
         catch(IndexOutOfBoundsException e){
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
+        }
+        catch (Exception e){
+            e.printStackTrace();
         }
     }
         
