@@ -2,6 +2,9 @@
 
 This readme gives a brief introduction to all of the classes and functions of our app so far. For more detailed documentation visit the Docs folder: [Documentation](Docs/). 
 
+# How to run
+At this stage in the project (phase 1) the project does not run 
+
 # Interfaces
 Our file contains four interfaces, one for each main file. This means we have an interface for users, the userDatabase, messages, and the messageDatabase. The interfaces pair with the java classes as follows:
  - UserDBInt.java : UserDatabase.java
@@ -105,4 +108,4 @@ This project has one custom exception: BadDataException. In general this excepti
 Threading is handled by synchronizing all calls to shared resources (files and static variables) in each file. To handle the creation of new threads, this project creates two new files to call actions within the MessageDatabase and UserDatabse on a new thread. These files create a run method which uses a switch statement to determine which function from the database class to run. They are both passed a database object to run these methods from. All actions are contained in the [Action.java](Action.java) enumeration file. To read more about how threading is handled in this project, including information about the two classes involved in handling threading, visit the [Threading Docs](Docs/threading.md).
 
 # Testing
-Each class has it's own test file, each of which are listed and linked in the [testing](Docs/testing.md) file. 
+Each class has it's own test file, each of which are listed and linked in the [testing](Docs/testing.md) file. Each test file includes multiple test cases for each method and constructor in the class that it is testing and a large test that tests how all of the methods work together and checks the data storage in a file. 

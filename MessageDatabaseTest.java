@@ -112,7 +112,7 @@ public class MessageDatabaseTest {
         try (BufferedReader send = new BufferedReader(new FileReader("sender.txt"));
              BufferedReader recieve = new BufferedReader(new FileReader("reciever.txt"))) {
             String sent = send.readLine();
-            String recieved = send.readLine();
+            String recieved = recieve.readLine();
             assertEquals("make sure messages are acutally being deleted from files", sent, otherSentMessage.toString());
             assertEquals("make sure messages are acutally being deleted from files", recieved, otherSentMessage.toString());
         } catch (IOException e) {
