@@ -76,9 +76,25 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(true, a.equals(b));
         assertEquals(false, a.equals(c));
     }
+
+    public void testID() {
+        User sender = new User("sender", "password", "first", "last", "false");
+        User reciever = new User("reciever", "password", "first", "last", "false");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("MessageIDCounter.txt"))) {
+            writer.write("0");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Message m = new Message(sender, reciever, "content here");
+        Message n = new Message(reciever, sender, "different content");
+        assertEquals(0, m.getMessageID());
+        assertEquals(1, n.getMessageID());
+    }
     
     public static void main(String[] args) throws BadDataException {
         MessageTest mt = new MessageTest();
         mt.testMessage();
+
+        mt.testID();
     }
 }
