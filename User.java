@@ -20,32 +20,50 @@ public class User implements UserInt {
     private String password;
     private String firstName;
     private String lastName;
-    private ArrayList<User> friends;
-    private ArrayList<User> blockedUsers;
+    private ArrayList<String> friends;
+    private ArrayList<String> blockedUsers;
     public static final Object lock = new Object();
     //profile picture
     private byte[] profilePicture;
     private boolean allowAll;
 
+//line format: username|password|firstName|lastName|friends|blockedUsers|profilePicture|allowAll
     public User(String line) {
-        String[] info = line.split("\\|");
-        this(info[0], info[1], info[2], info[3],info[6]);
+        String[] info = line.split("|");
+        username = info[0];
+        password = info[1];
+        firstName = info[2];
+        lastName = info[3];
         //add friends
         String[] friends = info[4].split(",");
         for (String friend : friends) {
-            User user = UserDatabase.getUser(friend);
-            if (user != null) {
-                this.friends.add(user);
+            if (friend != null) {
+                this.friends.add(friend);
             }
         }
         //add blocked users
         String[] blockedUsers = info[5].split(",");
         for (String blockedUser : blockedUsers) {
-            User user = UserDatabase.getUser(blockedUser);
-            if (user != null) {
-                this.blockedUsers.add(user);
+            if (blockedUser != null) {
+                this.blockedUsers.add(blockedUser);
             }
         }
+        if (!info[6].contains(",")) {
+            this.profilePicture = null;
+        } else {
+            //parse profile picture
+            String[] profileInfo = info[6].split(",");
+            boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
+            if (containsPicture) {
+                try {
+                    File imageFile = new File(profileInfo[1]);
+                    profilePicture = Files.readAllBytes(imageFile.toPath());
+                } catch (Exception e) {
+                    this.profilePicture = null;
+                }
+            }
+        }
+        allowAll = Boolean.parseBoolean(info[7]);
     }
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profile) {
@@ -55,29 +73,29 @@ public class User implements UserInt {
         this.password = password;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.friends = new ArrayList<User>();
-        this.blockedUsers = new ArrayList<User>();
+        this.friends = new ArrayList<String>();
+        this.blockedUsers = new ArrayList<String>();
         //if there is no comma in the profile, there is no profile picture
         if (!profile.contains(",")) {
             this.profilePicture = null;
-            return;
-        }
-        //parse profile picture
-        String[] profileInfo = profile.split(",");
-        boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
-        if (containsPicture) {
-            try {
-                File imageFile = new File(profileInfo[1]);
-                profilePicture = Files.readAllBytes(imageFile.toPath());
-            } catch (Exception e) {
-                this.profilePicture = null;
+        } else {
+            //parse profile picture
+            String[] profileInfo = profile.split(",");
+            boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
+            if (containsPicture) {
+                try {
+                    File imageFile = new File(profileInfo[1]);
+                    profilePicture = Files.readAllBytes(imageFile.toPath());
+                } catch (Exception e) {
+                    this.profilePicture = null;
+                }
             }
         }
         // allow all is set to true by default
         allowAll = true;
     }
 
-    public boolean addFriend(User user) {
+    public boolean addFriend(String user) {
         //if user is not blocked, add to friends
         synchronized(lock) {
           if (!blockedUsers.contains(user)) {
@@ -87,23 +105,23 @@ public class User implements UserInt {
           return false;
         }
     }
-    public boolean removeFriend(User user) {
+    public boolean removeFriend(String user) {
         synchronized(lock) {
-          return friends.remove(user);
+            return friends.remove(user);
         }
     }
-    public boolean blockUser(User user) {
+    public boolean blockUser(String user) {
         //if user doesnt exist at all, return false
         synchronized(lock) {
-          blockedUsers.add(user);
+            blockedUsers.add(user);
           //if user is a friend, remove from friends
-          if (friends.contains(user)) {
-              friends.remove(user);
-          }
-          return true;
+            if (friends.contains(user)) {
+                friends.remove(user);
+            }
+        return true;
         }
     }
-    public boolean unblockUser(User user) {
+    public boolean unblockUser(String user) {
         //if user doesnt exist in blocked users or in the user database, return false
         synchronized(lock) {
           if (!blockedUsers.contains(user)) {
@@ -128,14 +146,14 @@ public class User implements UserInt {
     }
     public String toString() {
         return String.format("%s|%s|%s|%s|%s|%s|%s|%b", username, password, firstName,
-            lastName, listToString(friends), listToString(blockedUsers), Arrays.toString(profilePicture), allowAll);
+            lastName, stringListToString(friends), stringListToString(blockedUsers), Arrays.toString(profilePicture), allowAll);
     }
     
-    public String listToString(ArrayList<User> list) {
+    public String stringListToString(ArrayList<String> list) {
         //only take the usernames and put it in a list which is comma separated
         StringBuilder sb = new StringBuilder();
-        for (User user : list) {
-            sb.append(user.username).append(",");
+        for (String user : list) {
+            sb.append(user).append(",");
         }
         return sb.length() > 0 ? sb.substring(0, sb.length() - 1) : "";
     }
@@ -160,17 +178,17 @@ public class User implements UserInt {
         return lastName;
     }
 
-    public ArrayList<User> getFriends() {
+    public ArrayList<String> getFriends() {
         return friends;
     }
-    public void setFriends(ArrayList<User> friends) {
+    public void setFriends(ArrayList<String> friends) {
         this.friends = friends;
     }
-    public void setBlockedUsers(ArrayList<User> blockedUsers) {
+    public void setBlockedUsers(ArrayList<String> blockedUsers) {
         this.blockedUsers = blockedUsers;
     }
 
-    public ArrayList<User> getBlockedUsers() {
+    public ArrayList<String> getBlockedUsers() {
         return blockedUsers;
     }
 

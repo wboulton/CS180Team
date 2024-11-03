@@ -89,22 +89,22 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     }
     public static void addFriend(User user, User friend) {
         // This method adds a friend to a user
-        user.addFriend(friend);
+        user.addFriend(friend.getUsername());
     }
     public static void removeFriend(User user, User friend) {
         //if the user is a friend, remove the friend
-        if (user.getFriends().contains(friend)) {
+        if (user.getFriends().contains(friend.getUsername())) {
             user.removeFriend(friend);
         }
     }
     public static void blockUser(User user, User blockedUser) {
         // This method blocks a user
-        user.blockUser(blockedUser);
+        user.blockUser(blockedUser.getUsername());
     }
     
     public static boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        if (user.getBlockedUsers().contains(blockedUser)) {
+        if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
             user.unblockUser(blockedUser);
             return true;
         }

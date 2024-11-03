@@ -28,10 +28,10 @@ public class MessageDatabase extends Thread implements MData {
         sentMessages = new ArrayList<>();
     }
     
-    public ArrayList getSentMessages() {
+    public ArrayList<Message> getSentMessages() {
         return sentMessages;
     }
-    public ArrayList getRecievedMessages() {
+    public ArrayList<Message> getRecievedMessages() {
         return recievedMessages;
     }
 //this reads all of the messages in a user's file and adds them to the correct sent/recieved arraylist
@@ -66,18 +66,18 @@ public class MessageDatabase extends Thread implements MData {
 // to the file for the recieving user. I do this immediately so that if the program crashes later the messages are
 // not lost. 
     public void sendMessage(Message m) throws BadDataException {
-        UserDatabase database = new UserDatabase();
         //Here I simply check if they are blocked before sending the message
-        User rUser = database.getUser(m.getReciever());
-        User sUser = database.getUser(m.getSender());
+        //Carefull, before this function can be called the database must be loaded and running
+        User rUser = UserDatabase.getUser(m.getReciever());
+        User sUser = UserDatabase.getUser(m.getSender());
         if (rUser == null || sUser == null) {
             throw new BadDataException("One of the users did not exist");
         }
-        if (rUser.getBlockedUsers().contains(sUser)) {
+        if (rUser.getBlockedUsers().contains(m.getSender())) {
             return; //this intentionally says nothing because we do not want users to know that they are blocked
         }
         if (!rUser.isAllowAll()) {
-            if (!rUser.getFriends().contains(sUser)) {
+            if (!rUser.getFriends().contains(m.getSender())) {
                 System.out.println("This person only permits messages from friends");
                 return;
             }

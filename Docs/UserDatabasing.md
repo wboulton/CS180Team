@@ -6,7 +6,7 @@ and password validation. When creating an object, the User class obtains a usern
 constructor and sets it to the appropriate field (all of which are strings). None of these strings allow pipes. Every call to the 
 constructor will have valid parameters passed to it, as all validation is done before creation of users. When users are stored in the 
 database, they are stored in a pipe separated line (psv) with the following format:
-username|password|firstName|lastName|friends|blockedUsers|profilePicture
+username|password|firstName|lastName|friends|blockedUsers|profilePicture|allowAll
 the Arraylists are represented as strings separated by a comma in stardard Array.toString() format. 
 here is the breakdown of those fields:
 ```java
