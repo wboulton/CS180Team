@@ -29,7 +29,7 @@ public class User implements UserInt {
 
 //line format: username|password|firstName|lastName|friends|blockedUsers|profilePicture|allowAll
     public User(String line) {
-        String[] info = line.split("|");
+        String[] info = line.split("\\|");
         username = info[0];
         password = info[1];
         firstName = info[2];
@@ -78,7 +78,7 @@ public class User implements UserInt {
         this.friends = new ArrayList<String>();
         this.blockedUsers = new ArrayList<String>();
         //if there is no comma in the profile, there is no profile picture
-        if (!profile.contains(",")) {
+        if (!profile.contains(",") || profile.equals("null")) {
             this.profilePicture = null;
         } else {
             //parse profile picture

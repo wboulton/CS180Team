@@ -45,7 +45,6 @@ public class MessageDatabase extends Thread implements MData {
                         //if the message isnt already in the sent messages arraylist, add it
                         if (!sentMessages.contains(newMessage)) {
                             sentMessages.add(newMessage);
-                            System.out.println(newMessage);
                         }
                     } else if (newMessage.getReciever().equals(user.getUsername())){
                         //if the message isnt already in the recieved messages arraylist, add it

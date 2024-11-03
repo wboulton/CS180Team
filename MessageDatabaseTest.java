@@ -1,7 +1,9 @@
 import org.junit.Assert;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+
 import java.io.*;
+
+import static org.junit.Assert.*;
 
 /**
  * Team Project -- MessageDatabaseTest
@@ -19,11 +21,11 @@ public class MessageDatabaseTest {
    @Test(timeout = 1000)
       public void testMessageDatabase() throws BadDataException {
           UserDatabase db = new UserDatabase();
-          User you = db.createUser("you", "password", "first", "last", null);
-          User me = db.createUser("me", "password", "first", "last", null);
+          User you = db.createUser("you", "Password12", "first", "last", "false");
+          User me = db.createUser("me", "Password12", "first", "last", "false");
           MessageDatabase y = new MessageDatabase(you);
           MessageDatabase m = new MessageDatabase(me);
-          User u = new User("sender", "password", "first", "last", null);
+          User u = new User("sender", "Password12", "first", "last", "false");
           MessageDatabase md = new MessageDatabase(u);
           assertEquals(0, md.getRecievedMessages().size());
           assertEquals(0, md.getSentMessages().size());
@@ -72,11 +74,11 @@ public class MessageDatabaseTest {
             db2.sendMessage(works);
             assertTrue("this message should be sent", true);
         } catch (Exception e) {
-            fail("this message should work, but threw an exception: ", e.getMessage());
+            fail("this message should work, but threw an exception: " + e.getMessage());
         }
     }
 
-    public void messageDeletionTest() {
+    public void messageDeletionTest() throws IOException {
         User sender = new User("sender|password|first|last|reciever|null|null|true");
         User reciever = new User("reciever|password|first|last|sender|null|null|true");
         Message sentMessage = new Message("0|sender|reciever|content|false");
@@ -97,7 +99,7 @@ public class MessageDatabaseTest {
         Message fakeMessage = new Message("2|sender|reciever|content|false");
         try {
             sd.deleteMessage(fakeMessage);
-            fail("this message should not have been deleted because it does not exist")
+            fail("this message should not have been deleted because it does not exist");
         } catch (Exception e) {
             Assert.assertEquals("Make sure BadDataException is thrown by sendMessage()",BadDataException.class, e.getClass());
         }
@@ -113,10 +115,12 @@ public class MessageDatabaseTest {
             String recieved = send.readLine();
             assertEquals("make sure messages are acutally being deleted from files", sent, otherSentMessage.toString());
             assertEquals("make sure messages are acutally being deleted from files", recieved, otherSentMessage.toString());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
-    public static void main(String[] args) throws BadDataException {
+    public static void main(String[] args) throws BadDataException, IOException {
         MessageDatabaseTest mdt = new MessageDatabaseTest();
         mdt.testMessageDatabase();
 

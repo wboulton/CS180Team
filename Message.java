@@ -29,7 +29,7 @@ public class Message implements MessageInterface {
 //this should parse psv of some format, probably: messageID|sender|reciever|content|containsPicture|pictureFile
     public Message(String data) { 
         synchronized(lock){
-            String[] info = data.split("|");
+            String[] info = data.split("\\|");
             messageID = Integer.parseInt(info[0]);
             sender = info[1];
             reciever = info[2];
@@ -43,7 +43,7 @@ public class Message implements MessageInterface {
 //This will be the direct creation of messages
     public Message(User sender, User reciever, String content) throws BadDataException {
         if (content.contains("|")) {
-            throw new BadDataException("Message content cannont conatain '|'");
+            throw new BadDataException("Message content cannot contain '|'");
         }
         synchronized(lock){
             this.sender = sender.getUsername();

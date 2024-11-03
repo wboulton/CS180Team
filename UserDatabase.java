@@ -62,7 +62,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         //if the profile picture is not found, throw exception
         //split the profile pic string by comma, and check if the file exists
-        if (!profilePicture.equals("false")) {
+        if (profilePicture != null && !profilePicture.equals("false")) {
             try {
                 File imageFile = new File(profilePicture);
                 byte[] imageData = Files.readAllBytes(imageFile.toPath());
