@@ -16,6 +16,7 @@ import java.util.Arrays;
  *
  */
 public class User implements UserInt {
+    private static UserDatabase userDatabase = new UserDatabase();
     private String username;
     private String password;
     private String firstName;
@@ -43,6 +44,7 @@ public class User implements UserInt {
                 this.friends.add(friend);
             }
         }
+        System.out.println("Friends for" + username + ":" + this.friends);
         //add blocked users
         String[] blockedUsers = info[5].split(",");
         for (String blockedUser : blockedUsers) {
@@ -50,6 +52,7 @@ public class User implements UserInt {
                 this.blockedUsers.add(blockedUser);
             }
         }
+        System.out.println("Blocked Users for " + username + ":"  + this.blockedUsers);
         if (!info[6].contains(",")) {
             this.profilePicture = null;
         } else {
@@ -66,6 +69,7 @@ public class User implements UserInt {
             }
         }
         allowAll = Boolean.parseBoolean(info[7]);
+        userDatabase.addUser(this);
     }
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profile) {
@@ -95,6 +99,7 @@ public class User implements UserInt {
         }
         // allow all is set to true by default
         allowAll = true;
+        userDatabase.addUser(this);
     }
 
     public boolean addFriend(String user) {
