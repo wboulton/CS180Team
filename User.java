@@ -34,6 +34,8 @@ public class User implements UserInt {
         password = info[1];
         firstName = info[2];
         lastName = info[3];
+        this.friends = new ArrayList<String>();
+        this.blockedUsers = new ArrayList<String>();
         //add friends
         String[] friends = info[4].split(",");
         for (String friend : friends) {
