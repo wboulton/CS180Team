@@ -102,3 +102,6 @@ This project has one custom exception: BadDataException. In general this excepti
 
 # Threading
 Threading is handled by synchronizing all calls to shared resources (files and static variables) in each file. To handle the creation of new threads, this project creates two new files to call actions within the MessageDatabase and UserDatabse on a new thread. These files create a run method which uses a switch statement to determine which function from the database class to run. They are both passed a database object to run these methods from. All actions are contained in the [Action.java](Action.java) enumeration file. To read more about how threading is handled in this project, including information about the two classes involved in handling threading, visit the [Threading Docs](Docs/threading.md).
+
+# Testing
+Each class has it's own test file, each of which are listed and linked in the [testing](Docs/testing.md) file. 
