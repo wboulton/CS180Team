@@ -70,9 +70,10 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals("0|sender|reciever|new content|true|0.jpg", m.toString());
         m.setMessageID(85);
         assertEquals(85, m.getMessageID());
+        //check equals() method
         Message a = new Message("0|sender|reciever|content|false");
         Message b = new Message("0|sender|reciever|content|false");
-        Message c = new Message("1|sender|stranger|something else|false");
+        Message c = new Message("1|sender|reciver|content|false");
         assertEquals(true, a.equals(b));
         assertEquals(false, a.equals(c));
     }
@@ -90,7 +91,20 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(0, m.getMessageID());
         assertEquals(1, n.getMessageID());
     }
-    
+
+    public void testString() {
+        User sender = new User("sender", "password", "first", "last", "false");
+        User reciever = new User("reciever", "password", "first", "last", "false");
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("MessageIDCounter.txt"))) {
+            writer.write("0");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Message m = new Message(sender, reciever, "content");
+        String expected = "0|sender|reciever|content|false";
+        assertTrue(expected.equals(m.toString()));
+    }
+
     public static void main(String[] args) throws BadDataException {
         MessageTest mt = new MessageTest();
         mt.testMessage();

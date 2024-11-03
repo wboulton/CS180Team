@@ -26,7 +26,7 @@ public class Message implements MessageInterface {
     private final String MESSAGE_ID = "MessageIDCounter.txt";
     public final static Object lock = new Object();
     //the file containing all sent and recieved messages for each user is just username.txt
-//this should parse psv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
+//this should parse psv of some format, probably: messageID|sender|reciever|content|containsPicture|pictureFile
     public Message(String data) { 
         synchronized(lock){
             String[] info = data.split("|");
