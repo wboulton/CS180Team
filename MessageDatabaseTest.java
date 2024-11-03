@@ -44,6 +44,36 @@ public class MessageDatabaseTest {
           }
           
       }
+// if this test case is not working it may be because the files for the users is not created yet
+    // try creating that file if you are getting io exceptions when sending messages.
+    public void messageSendingRules() {
+       User sender = new User("sender|password|first|last|reciever|sender2|null|true");
+       User sender2 = new User("sender2|password|first|last|sender|null|null|false");
+       User reciever = new User("reciever|password|first|last|sender2|null|null|false");
+       MessageDatabase db = new MessageDatabase(sender);
+       MessageDatabase db2 = new MessageDatabase(sender2);
+       try {
+           Message notFriends = new Message("0|sender|reciever|content|false");
+           db.sendMessage(notFriends);
+           fail("this message should not be sent");
+       } catch (Exception e) {
+           Assert.assertEquals("Make sure BadDataException is thrown by sendMessage()",BadDataException.class, e.getClass());
+       }
+        try {
+            Message blocked = new Message("0|sender2|sender|content|false");
+            db2.sendMessage(blocked);
+            fail("this message should not be sent");
+        } catch (Exception e) {
+            Assert.assertEquals("Make sure BadDataException is thrown by sendMessage()",BadDataException.class, e.getClass());
+        }
+        try {
+            Message works = new Message("0|sender2|reciever|content|false");
+            db2.sendMessage(works);
+            assertTrue("this message should be sent", true);
+        } catch (Exception e) {
+            fail("this message should work, but threw an exception: ", e.getMessage());
+        }
+    }
 
     public static void main(String[] args) throws BadDataException {
         MessageDatabaseTest mdt = new MessageDatabaseTest();

@@ -74,12 +74,11 @@ public class MessageDatabase extends Thread implements MData {
             throw new BadDataException("One of the users did not exist");
         }
         if (rUser.getBlockedUsers().contains(m.getSender())) {
-            return; //this intentionally says nothing because we do not want users to know that they are blocked
+            throw new BadDataException("This user is blocked");
         }
         if (!rUser.isAllowAll()) {
             if (!rUser.getFriends().contains(m.getSender())) {
-                System.out.println("This person only permits messages from friends");
-                return;
+                throw new BadDataException("This user only allows messages from friends");
             }
         }
         //this system allows illegal messages to be created but never sent, that is subject to change. 
