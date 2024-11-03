@@ -31,7 +31,7 @@ public class MessageDatabaseTest {
           y.sendMessage(tester);
           assertEquals(1, y.getSentMessages().size());
           assertEquals(1, m.getRecievedMessages().size());
-          m.deleteMessage(tester);
+          m.deleteMessage(tester); // delete message is tested once here
           assertEquals(0, m.getRecievedMessages().size());
           assertEquals(0, md.getRecievedMessages().size());
           md.recoverMessages();
@@ -75,9 +75,52 @@ public class MessageDatabaseTest {
         }
     }
 
+    public void messageDeletionTest() {
+        User sender = new User("sender|password|first|last|reciever|null|null|true");
+        User reciever = new User("reciever|password|first|last|sender|null|null|true");
+        Message sentMessage = new Message("0|sender|reciever|content|false");
+        Message otherSentMessage = new Message("1|sender|reciever|content|false");
+        try (BufferedWriter send = new BufferedWriter(new FileWriter("sender.txt"));
+             BufferedWriter recieve = new BufferedWriter(new FileWriter("reciever.txt"))) {
+            send.write(sentMessage.toString());
+            send.newLine();
+            send.write(otherSentMessage.toString());
+            recieve.write(sentMessage.toString());
+            recieve.newLine();
+            recieve.write(otherSentMessage.toString());
+        }
+        MessageDatabase sd = new MessageDatabase(sender);
+        sd.recoverMessages();
+        MessageDatabase rd = new MessageDatabase(reciever);
+        rd.recoverMessages();
+        Message fakeMessage = new Message("2|sender|reciever|content|false");
+        try {
+            sd.deleteMessage(fakeMessage);
+            fail("this message should not have been deleted because it does not exist")
+        } catch (Exception e) {
+            Assert.assertEquals("Make sure BadDataException is thrown by sendMessage()",BadDataException.class, e.getClass());
+        }
+        try {
+            sd.deleteMessage(sentMessage);
+        } catch (Exception e) {
+            e.printStackTrace();
+            fail("this message should be able to be deleted");
+        }
+        try (BufferedReader send = new BufferedReader(new FileReader("sender.txt"));
+             BufferedReader recieve = new BufferedReader(new FileReader("reciever.txt"))) {
+            String sent = send.readLine();
+            String recieved = send.readLine();
+            assertEquals("make sure messages are acutally being deleted from files", sent, otherSentMessage.toString());
+            assertEquals("make sure messages are acutally being deleted from files", recieved, otherSentMessage.toString());
+        }
+    }
+
     public static void main(String[] args) throws BadDataException {
         MessageDatabaseTest mdt = new MessageDatabaseTest();
         mdt.testMessageDatabase();
+
+        mdt.messageSendingRules();
+        mdt.messageDeletionTest();
     }
     
 }

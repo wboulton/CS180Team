@@ -43,9 +43,9 @@ This class handles all of the data storage for messages and allows for users to 
     void recoverMessages();
     User getUser();
     String getFilePath();
-    void sendMessage(Message m);
-    void deleteMessage(Message m);
-    void editMessage(Message m, Message n);
+    void sendMessage(Message m) throws BadDataExeption;
+    void deleteMessage(Message m) throws BadDataException;
+    void editMessage(Message m, Message n) throws BadDataException; 
 ``` 
 The most important methods in this file are recoverMessages(), which retrieves all of the user's sent and recieved messages and stores them in two different arrayLists, and the send, edit, and delete Message methods. This class also validates who messages can be sent to before making adjustments to a user's messages in the sendMessage file. It checks to make sure that the reciever has not blocked the sender, and if the reciever only allows friends to send messages it checks if the sender is a friend.
 Each MessageDatabase object represents the message data for an individual user. This user is stored in the field 

@@ -101,14 +101,13 @@ public class MessageDatabase extends Thread implements MData {
 
 // this removes a specified message from both the sender and reciever's files
     @Override
-    public void deleteMessage(Message m) {
+    public void deleteMessage(Message m) throws BadDataException {
         synchronized(lock) {
             int id = m.getMessageID();
             try {
                 sentMessages.remove(m);
             } catch (Exception e) {
-                System.out.println("This message did not exist");
-                return;
+                throw new BadDataException("This message did not exist");
             }
             //here I use the arraylist to generate the new list of messages after the delete, this means 
             //the array list must be up to date before deleting.
