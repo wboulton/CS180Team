@@ -19,17 +19,18 @@ public class MessageDatabaseTest {
    @Test(timeout = 1000)
       public void testMessageDatabase() throws BadDataException {
           UserDatabase db = new UserDatabase();
-          User you = db.createUser("you", "password", "first", "last", "false");
-          User me = db.createUser("me", "password", "first", "last", "false");
+          User you = db.createUser("you", "password", "first", "last", null);
+          User me = db.createUser("me", "password", "first", "last", null);
           MessageDatabase y = new MessageDatabase(you);
           MessageDatabase m = new MessageDatabase(me);
-          User u = new User("sender", "password", "first", "last", "false");
+          User u = new User("sender", "password", "first", "last", null);
           MessageDatabase md = new MessageDatabase(u);
           assertEquals(0, md.getRecievedMessages().size());
           assertEquals(0, md.getSentMessages().size());
           Message tester = new Message("0|you|me|content|false");
           y.sendMessage(tester);
           assertEquals(1, y.getSentMessages().size());
+          m.recoverMessages();
           assertEquals(1, m.getRecievedMessages().size());
           m.deleteMessage(tester); // delete message is tested once here
           assertEquals(0, m.getRecievedMessages().size());
