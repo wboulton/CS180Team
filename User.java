@@ -29,7 +29,7 @@ public class User implements UserInt {
 
 //line format: username|password|firstName|lastName|friends|blockedUsers|profilePicture|allowAll
     public User(String line) {
-        String[] info = line.split("|");
+        String[] info = line.split("\\|");
         username = info[0];
         password = info[1];
         firstName = info[2];

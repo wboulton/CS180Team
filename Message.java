@@ -29,7 +29,7 @@ public class Message implements MessageInterface {
 //this should parse psv of some format, probably: messageID|sender|reciever|content|containsPicture|pictureFile
     public Message(String data) { 
         synchronized(lock){
-            String[] info = data.split("|");
+            String[] info = data.split("\\|");
             messageID = Integer.parseInt(info[0]);
             sender = info[1];
             reciever = info[2];
