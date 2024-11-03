@@ -3,7 +3,10 @@
 This readme gives a brief introduction to all of the classes and functions of our app so far. For more detailed documentation visit the Docs folder: [Documentation](Docs/). 
 
 # How to run
-At this stage in the project (phase 1) the project does not run 
+At this stage in the project (phase 1) the project does not run as a social media app, to test it you can use the test cases contained in the [testing.md](Docs/testing.md) file. Compile all of the classes using javac ___ then run them that way.
+
+# Submissions
+
 
 # Interfaces
 Our file contains four interfaces, one for each main file. This means we have an interface for users, the userDatabase, messages, and the messageDatabase. The interfaces pair with the java classes as follows:
