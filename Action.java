@@ -1,7 +1,8 @@
 /**
- * Team Project -- Message
+ * Team Project -- Action
  *
- * This file contains the Actions
+ * This file contains the Actions for the Threads management
+ * For more in depth documentation see Docs/threading.md
  *
  * @author Alan Yi
  *

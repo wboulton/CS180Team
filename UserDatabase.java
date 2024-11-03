@@ -3,7 +3,17 @@ import java.io.FileWriter;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.nio.file.Files;
-
+/**
+ * Team Project -- UserDatabase
+ *
+ * This file handles the user data for each user.
+ * For more in depth documentation see Docs/UserDataStorage.md
+ *
+ * @author William Boulton, Mukund Venkatesh
+ *
+ * @version November 1, 2024
+ *
+ */
 public class UserDatabase implements UserDBInt {
     /*
     * User profiles.
@@ -14,7 +24,7 @@ User viewer.
 Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
-    private ArrayList<User> users;
+    private static ArrayList<User> users;
     private static final String outputFile = "users.txt";
     public UserDatabase() {
         // This is a constructor
@@ -77,27 +87,31 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
 
     }
-    public void addFriend(User user, User friend) {
+    public static void addFriend(User user, User friend) {
         // This method adds a friend to a user
         user.addFriend(friend);
     }
-    public void removeFriend(User user, User friend) {
+    public static void removeFriend(User user, User friend) {
         //if the user is a friend, remove the friend
         if (user.getFriends().contains(friend)) {
             user.removeFriend(friend);
         }
     }
-    public void blockUser(User user, User blockedUser) {
+    public static void blockUser(User user, User blockedUser) {
         // This method blocks a user
         user.blockUser(blockedUser);
     }
     
-    public boolean unblockUser(User user, User blockedUser) {
+    public static boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        return user.unblockUser(blockedUser);
+        if (user.getBlockedUsers().contains(blockedUser)) {
+            user.unblockUser(blockedUser);
+            return true;
+        }
+        return false;
     }
 
-    public User getUser(String username) {
+    public static User getUser(String username) {
         // This method gets a user by their username
         for (User user : users) {
             if (user.getUsername().equals(username)) {
@@ -142,18 +156,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         try {
             Scanner scanner = new Scanner(new File(outputFile));
             while (scanner.hasNextLine()) {
-                String[] info = scanner.nextLine().split("\\|");
-                User user = new User(info[0], info[1], info[2], info[3],info[6]);
-                //add friends
-                String[] friends = info[4].split(",");
-                for (String friend : friends) {
-                    user.addFriend(getUser(friend));
-                }
-                //add blocked users
-                String[] blockedUsers = info[5].split(",");
-                for (String blockedUser : blockedUsers) {
-                    user.blockUser(getUser(blockedUser));
-                }
+                User user = new User(scanner.nextLine());
                 users.add(user);
             }
             scanner.close();

@@ -7,7 +7,7 @@ import javax.imageio.ImageIO;
  *
  * This file creates the message objects for when each user sends a message
  *
- * @author William Boulton, 7
+ * @author William Boulton, Jai Menon, Alan Yi, Mukund Venkatesh
  *
  * @version November 1, 2024
  *

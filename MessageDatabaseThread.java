@@ -1,10 +1,10 @@
 import java.util.ArrayList;
 /**
- * Team Project -- Message
+ * Team Project -- MessageDatabaseThread
  *
  * This file handles the threads for the Message Database
  *
- * @author Alan Yi, 7
+ * @author Alan Yi
  *
  * @version November 1, 2024
  *
