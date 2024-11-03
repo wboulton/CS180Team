@@ -9,7 +9,7 @@ import java.util.ArrayList;
  * @version November 1, 2024
  *
  */
-public class MessageDatabaseThread extends Thread{
+public class MessageDatabaseThread extends Thread {
     private Action action;
     private String[] values;
     private MessageDatabase messageDatabase;
