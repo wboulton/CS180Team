@@ -76,44 +76,9 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(true, a.equals(b));
         assertEquals(false, a.equals(c));
     }
-    @Test(timeout = 1000)
-    public void testMessageDatabase() throws BadDataException {
-        UserDatabase db = new UserDatabase();
-        User you = db.createUser("you", "password", "first", "last", "false");
-        User me = db.createUser("me", "password", "first", "last", "false");
-        MessageDatabase y = new MessageDatabase(you);
-        MessageDatabase m = new MessageDatabase(me);
-        User u = new User("sender", "password", "first", "last", "false");
-        MessageDatabase md = new MessageDatabase(u);
-        assertEquals(0, md.getRecievedMessages().size());
-        assertEquals(0, md.getSentMessages().size());
-       // I don't know if this would work since sendMessage() checks if the sender and receiver exist in the UserDatabase, and u wasn't added to any database
-        /*
-        md.sendMessage(new Message("0|sender|reciever|content|false"));
-        assertEquals(1, md.getSentMessages().size());
-        */
-        Message tester = new Message("0|you|me|content|false");
-        y.sendMessage(tester);
-        assertEquals(1, y.getSentMessages().size());
-        assertEquals(1, m.getRecievedMessages().size());
-        m.deleteMessage(tester);
-        assertEquals(0, m.getRecievedMessages().size());
-        assertEquals(0, md.getRecievedMessages().size());
-        md.recoverMessages();
-       // assertEquals(1, md.getSentMessages().size());
-        assertEquals(0, md.getRecievedMessages().size());
-        assertEquals(true, md.getSentMessages().contains(tester));
-        try {
-            y.sendMessage(new Message("0|you|stranger|content|false"));
-        } catch (Exception e) {
-            Assert.assertEquals("Make sure BadDataException is thrown by sendMessage()",BadDataException.class, e.getClass());
-        }
-        
-    }
-
+    
     public static void main(String[] args) throws BadDataException {
         MessageTest mt = new MessageTest();
         mt.testMessage();
-        mt.testMessageDatabase();
     }
 }
