@@ -23,12 +23,13 @@ public class Message implements MessageInterface {
     private int messageID;
     private String pictureFile;
     private final String PICTURE_NUMBERS = "picture.txt";
+    private final String MESSAGE_ID = "MessageIDCounter.txt";
     public final static Object lock = new Object();
     //the file containing all sent and recieved messages for each user is just username.txt
 //this should parse psv of some format, probably: messageID,sender,reciever,content,containsPicture,pictureFile
     public Message(String data) { 
         synchronized(lock){
-            String[] info = data.split("\\|");
+            String[] info = data.split("|");
             messageID = Integer.parseInt(info[0]);
             sender = info[1];
             reciever = info[2];
@@ -40,17 +41,20 @@ public class Message implements MessageInterface {
         }
     }
 //This will be the direct creation of messages
-    public Message(User sender, User reciever, String content) { 
+    public Message(User sender, User reciever, String content) throws BadDataException {
+        if (content.contains("|")) {
+            throw new BadDataException("Message content cannont conatain '|'");
+        }
         synchronized(lock){
             this.sender = sender.getUsername();
             this.reciever = reciever.getUsername();
             this.content = content;
-            try (BufferedReader bfr = new BufferedReader(new FileReader("MessageIDCounter.txt"))) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(MESSAGE_ID))) {
                 messageID = Integer.parseInt(bfr.readLine());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            try (BufferedWriter bwr = new BufferedWriter(new FileWriter("MessageIDCounter.txt"))) {
+            try (BufferedWriter bwr = new BufferedWriter(new FileWriter(MESSAGE_ID))) {
                 bwr.write(messageID + 1);
             } catch (Exception e) {
                 e.printStackTrace();

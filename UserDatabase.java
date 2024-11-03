@@ -91,10 +91,12 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         // This method blocks a user
         user.blockUser(blockedUser);
     }
+    
     public boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
         return user.unblockUser(blockedUser);
     }
+
     public User getUser(String username) {
         // This method gets a user by their username
         for (User user : users) {
