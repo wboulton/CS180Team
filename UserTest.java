@@ -37,55 +37,55 @@ public class UserTest {
     @Test
     public void testAddFriendNotBlocked() {
         // Test adding a user that is not blocked
-        boolean result = user1.addFriend(user2);
+        boolean result = user1.addFriend(user2.getUsername());
 
         assertTrue(result, "Expected addFriend to return true when user is not blocked");
-        assertTrue(user1.getFriends().contains(user2), "Expected friends list to contain the new user");
+        assertTrue(user1.getFriends().contains(user2.getUsername()), "Expected friends list to contain the new user");
     }
 
     @Test
     public void testAddFriendBlocked() {
         // Add user2 to blocked list
-        user1.getBlockedUsers().add(user2);
+        user1.getBlockedUsers().add(user2.getUsername());
 
         // Try adding a blocked user
-        boolean result = user1.addFriend(user2);
+        boolean result = user1.addFriend(user2.getUsername());
 
         assertFalse(result, "Expected addFriend to return false when user is blocked");
-        assertFalse(user1.getFriends().contains(user2), "Expected friends list not to contain the blocked user");
+        assertFalse(user1.getFriends().contains(user2.getUsername()), "Expected friends list not to contain the blocked user");
     }
 
     @Test
     public void testRemoveFriend() {
-        user1.addFriend(user2);
+        user1.addFriend(user2.getUsername());
 
-        boolean result = user1.removeFriend(user2);
+        boolean result = user1.removeFriend(user2.getUsername());
 
         assertTrue(result, "Expected removeFriend to return true when user removed friend");
-        assertFalse(user1.getFriends().contains(user2), "Expected friends list not to contain the removed user");
+        assertFalse(user1.getFriends().contains(user2.getUsername()), "Expected friends list not to contain the removed user");
 
     }
 
     @Test
     public void testBlockUser() {
 
-        boolean result = user1.blockUser(user2);
+        boolean result = user1.blockUser(user2.getUsername());
 
         assertTrue(result, "Expected user to be added to block list");
     }
 
     @Test
     public void testUnblockUser() {
-        user1.blockUser(user2);
+        user1.blockUser(user2.getUsername());
 
-        boolean result = user1.unblockUser(user2);
+        boolean result = user1.unblockUser(user2.getUsername());
 
         assertTrue(result, "Expected user to be in blocked users");
     }
 
     @Test
     public void testUnblockUserNotInBlockedList() {
-        boolean result = user1.unblockUser(user2);
+        boolean result = user1.unblockUser(user2.getUsername());
         assertFalse(result, "Expected unblock to return false when user is not in blocked list");
     }
     @Test
@@ -97,12 +97,12 @@ public class UserTest {
 
     @Test
     public void testCheckPassword() {
-        assertEquals("Expected user1 password to be equal to User1Password@", TRUE, new Boolean[]{user1.checkPassword("User1Password@")});
+        assertEquals("Expected user1 password to be equal to User1Password@", TRUE,user1.checkPassword("User1Password@"));
     }
 
     @Test
     public void testVerifyLogin() {
-        assertEquals("Expected user1 password to be User1Password@", TRUE, new Boolean[]{user1.verifyLogin("User1Password@")});
+        assertEquals("Expected user1 password to be User1Password@", TRUE,user1.verifyLogin("User1Password@"));
     }
 
     @Test

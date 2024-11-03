@@ -185,10 +185,10 @@ public class UserDatabaseTest {
         UserDatabase.addFriend(UserDatabase.getUser("user1"), UserDatabase.getUser("user2"));
         aDatabase.updateDB();
         try (BufferedReader bfr = new BufferedReader(new FileReader(filepath))) {
-            line1 = bfr.readLine();
+            String line1 = bfr.readLine();
             assertEquals("user1|pass|will|youthought|user2|null|null|false", line1);
-            line2 = bfr.readLine();
-            assertEquals("user2|password|kush|something|null|null|null|true", line2)
+            String line2 = bfr.readLine();
+            assertEquals("user2|password|kush|something|null|null|null|true", line2);
         } catch (Exception e) {
             e.printStackTrace();
         }
