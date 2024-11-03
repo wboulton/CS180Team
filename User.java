@@ -146,7 +146,8 @@ public class User implements UserInt {
     }
     public String toString() {
         return String.format("%s|%s|%s|%s|%s|%s|%s|%b", username, password, firstName,
-            lastName, stringListToString(friends), stringListToString(blockedUsers), Arrays.toString(profilePicture), allowAll);
+            lastName, stringListToString(friends), stringListToString(blockedUsers),
+                Arrays.toString(profilePicture), allowAll);
     }
     
     public String stringListToString(ArrayList<String> list) {

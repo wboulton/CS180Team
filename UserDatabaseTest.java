@@ -85,7 +85,7 @@ public class UserDatabaseTest {
         // Add user2 as a friend to user1
         User user1 = userDatabase.createUser("user1", "Password1", "User", "One", "false");
         User user2 = userDatabase.createUser("user2", "Password2", "User", "Two", "false");
-        user1.blockUser(user2);
+        UserDatabase.blockUser(user1, user2);
         assertTrue("User2 should be blocked by user1.", user1.getBlockedUsers().contains(user2));
 
     }

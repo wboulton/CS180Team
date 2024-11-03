@@ -42,7 +42,8 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         load();
 
     }
-    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)  throws BadDataException {
+    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)
+        throws BadDataException {
         // This method creates a new user
         //if the username is not taken, create a new user
         //if user already exists, throw exception
@@ -55,8 +56,8 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         //if password is not legal, throw exception
         if (!legalPassword(password)) {
-            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one" +
-                    " number, at least one Capital letter and at least one lowercase letter. '|' and ',' not allowed");
+            throw new BadDataException("Password is not legal. It must be at least 8 characters, contain at least one"
+                + " number, at least one Capital letter and at least one lowercase letter. '|' and ',' not allowed");
         }
         //if the profile picture is not found, throw exception
         //split the profile pic string by comma, and check if the file exists
