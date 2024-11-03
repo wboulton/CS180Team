@@ -168,5 +168,31 @@ public class UserDatabaseTest {
 
     }
 
+//Here is a test case for file writing as an example
+    @Test
+    public void testFileWriting() {
+        //create a users.txt file that contains the lines of two users, friend them, then write again
+        String filepath = "users.txt";
+        try (BufferedWriter bwr = new BufferedWriter(new FileWriter(filepath))) {
+//line format: username|password|firstName|lastName|friends|blockedUsers|profilePicture|allowAll
+            bwr.write("user1|pass|will|youthought|null|null|null|false");
+            bwr.newLine();
+            bwr.write("user2|password|kush|something|null|null|null|true");
+        } catch (Exception e) {
+            System.out.println("preparation failed");
+        }
+        UserDatabase aDatabase = new UserDatabase();
+        UserDatabase.addFriend(UserDatabase.getUser("user1"), UserDatabase.getUser("user2"));
+        aDatabase.updateDB();
+        try (BufferedReader bfr = new BufferedReader(new FileReader(filepath))) {
+            line1 = bfr.readLine();
+            assertEquals("user1|pass|will|youthought|user2|null|null|false", line1);
+            line2 = bfr.readLine();
+            assertEquals("user2|password|kush|something|null|null|null|true", line2)
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 }

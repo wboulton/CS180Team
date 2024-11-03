@@ -75,12 +75,14 @@ the following methods:
     void changeUsername(User user, String newUsername);
     boolean legalPassword(String password);
     void writeDB(User user);
+    void updateDB();
     void load();
 ```
 The createUser() method throws the custom exception BadDataException when one of the strings passed to it is illegal. This could be 
 because it contains the illegal character "|" or it has no information. the load() method reads each line in users.txt and splits it 
 into multiple strings which then get passed to the createUser constructor. These created users then get added into the users arraylist. 
 The load method also directly adds the blocked users and friends to the user object using the block user/add friend functions in user.java. 
+The main differences between writeDB and updateDB is how they handle the file. updateDB() re-writes the entire file to handle changes in users, writeDB appends a new user to the database without changing anything else in the file. 
 
 Password validation only allows ascii characters and numbers: 
 ```java

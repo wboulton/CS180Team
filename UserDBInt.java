@@ -31,5 +31,6 @@ public interface UserDBInt {
     void changeUsername(User user, String newUsername);
     boolean legalPassword(String password);
     void writeDB(User user);
+    void updateDB();
     void load();
 }

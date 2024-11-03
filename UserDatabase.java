@@ -1,3 +1,4 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -87,6 +88,17 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             e.printStackTrace();
         }
 
+    }
+    //re-write entire DB
+    public void updateDB() {
+        try (BufferedWriter bwr = new BufferedWriter(new FileWriter(outputFile))) {
+            for (User user : users) {
+                bwr.write(user.toString());
+                bwr.newLine();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
     public static void addFriend(User user, User friend) {
         // This method adds a friend to a user
