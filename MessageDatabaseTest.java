@@ -3,6 +3,17 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import java.io.*;
 
+/**
+ * Team Project -- MessageDatabaseTest
+ *
+ * This file tests methods found in MessageDatabase.java 
+ *
+ * @author William Boulton, Jai Menon, Alan Yi, Mukund Venkatesh
+ *
+ * @version November 2, 2024
+ *
+ */
+
 public class MessageDatabaseTest {
 
    @Test(timeout = 1000)
