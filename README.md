@@ -6,7 +6,7 @@ This readme gives a brief introduction to all of the classes and functions of ou
 At this stage in the project (phase 1) the project does not run as a social media app, to test it you can use the test cases contained in the [testing.md](Docs/testing.md) file. Compile all of the classes using javac ___ then run them that way.
 
 # Submissions
-
+William Boulton - Phase 1 submitted on Vocarium on November 3. 
 
 # Interfaces
 Our file contains four interfaces, one for each main file. This means we have an interface for users, the userDatabase, messages, and the messageDatabase. The interfaces pair with the java classes as follows:
@@ -14,8 +14,11 @@ Our file contains four interfaces, one for each main file. This means we have an
  - UserInt.java : User.java
  - MData.java : MessageDatabase.java
  - MessageInterface.java : Message.java
+ - ExceptionInterface.java: BadDataException
 
 These files contain necessary methods for each of the classes that implement them. At this point, none of them contain any global variables that get used by the implementing classes and none of them are implemented in more than one class. This does not mean that there will not be implementations for more classes later. 
+
+The ExceptionInterface is just an empty interface as teh BadDataException exception is a simple call to the Exception class. 
 
 # Messages
 Message handling is contained in two files, MessageDatabase.java and Message.java. Broadly, we store all of the messages that a user recieves and sends in a file named "username.txt" (where username is replaced with the username of the in-question user). Each message is stored as a single pipe separated value (psv) line of the format "messageID|sender|reciever|content|containsPicture|pictureFile" (It is important to note that the pictureFile string and preceding comma do not exist if containsPicture is false). For more information about this visit [Message Data](Docs/MessageDataStorage.md). 
