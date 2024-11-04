@@ -159,12 +159,6 @@ public class UserDatabaseTest {
         }
     }
 
-    @Test
-    public void testUnblockUser() {
-        // Block user2 first
-
-    }
-
 //Here is a test case for file writing as an example
     @Test
     public void testFileWriting() {
