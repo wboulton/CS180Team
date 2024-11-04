@@ -26,12 +26,12 @@ Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private static ArrayList<User> users;
-    private static final String outputFile = "users.txt";
+    private static final String OUTPUT_FILE = "users.txt";
     public UserDatabase() {
         // This is a constructor
         //if the files do not exist, create them
         try {
-            File file = new File(outputFile);
+            File file = new File(OUTPUT_FILE);
             if (!file.exists()) {
                 file.createNewFile();
             }
@@ -78,7 +78,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     public void writeDB(User user) {
         // append user to database
         try {
-            FileWriter writer = new FileWriter(outputFile, true);
+            FileWriter writer = new FileWriter(OUTPUT_FILE, true);
             writer.write(user.toString() + "\n");
             writer.close();
         } catch (Exception e) {
@@ -88,7 +88,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     }
     //re-write entire DB
     public void updateDB() {
-        try (BufferedWriter bwr = new BufferedWriter(new FileWriter(outputFile))) {
+        try (BufferedWriter bwr = new BufferedWriter(new FileWriter(OUTPUT_FILE))) {
             for (User user : users) {
                 bwr.write(user.toString());
                 bwr.newLine();
@@ -155,7 +155,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             return false;
         }
         return password.length() >= 8 && password.matches(".*[0-9].*") 
-        && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*");
+            && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*");
     }
 
     //load function for when the program starts
@@ -164,7 +164,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         //make it not recursive
         users.clear();
         try {
-            Scanner scanner = new Scanner(new File(outputFile));
+            Scanner scanner = new Scanner(new File(OUTPUT_FILE));
             while (scanner.hasNextLine()) {
                 User user = new User(scanner.nextLine());
                 //if the user isnt already in the database, add it

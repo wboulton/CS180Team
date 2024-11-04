@@ -23,7 +23,7 @@ public class User implements UserInt {
     private String lastName;
     private ArrayList<String> friends;
     private ArrayList<String> blockedUsers;
-    public static final Object lock = new Object();
+    public static final Object LOCK = new Object();
     //profile picture
     private byte[] profilePicture;
     private boolean allowAll;
@@ -38,16 +38,16 @@ public class User implements UserInt {
         this.friends = new ArrayList<String>();
         this.blockedUsers = new ArrayList<String>();
         //add friends
-        String[] friends = info[4].split(",");
-        for (String friend : friends) {
+        String[] friendGroup = info[4].split(",");
+        for (String friend : friendGroup) {
             if (friend != null) {
                 this.friends.add(friend);
             }
         }
         System.out.println("Friends for" + username + ":" + this.friends);
         //add blocked users
-        String[] blockedUsers = info[5].split(",");
-        for (String blockedUser : blockedUsers) {
+        String[] blockedPeople = info[5].split(",");
+        for (String blockedUser : blockedPeople) {
             if (blockedUser != null) {
                 this.blockedUsers.add(blockedUser);
             }
@@ -104,49 +104,48 @@ public class User implements UserInt {
 
     public boolean addFriend(String user) {
         //if user is not blocked, add to friends
-        synchronized(lock) {
-          if (!blockedUsers.contains(user)) {
-              friends.add(user);
-              return true;
-          }
-          return false;
+        synchronized (LOCK) {
+            if (!blockedUsers.contains(user)) {
+                friends.add(user);
+                return true;
+            }
+            return false;
         }
     }
     public boolean removeFriend(String user) {
-        synchronized(lock) {
+        synchronized (LOCK) {
             return friends.remove(user);
         }
     }
     public boolean blockUser(String user) {
         //if user doesnt exist at all, return false
-        synchronized(lock) {
+        synchronized (LOCK) {
             blockedUsers.add(user);
           //if user is a friend, remove from friends
             if (friends.contains(user)) {
                 friends.remove(user);
             }
-        return true;
+            return true;
         }
     }
     public boolean unblockUser(String user) {
         //if user doesnt exist in blocked users or in the user database, return false
-        synchronized(lock) {
-          if (!blockedUsers.contains(user)) {
-              return false;
-          }
-          blockedUsers.remove(user);
-          return true;
+        synchronized (LOCK) {
+            if (!blockedUsers.contains(user)) {
+                return false;
+            }
+            blockedUsers.remove(user);
+            return true;
         }
-
     }
     public String getUsername() {
         return username;
     }
-    public boolean checkPassword(String password) {
-        return this.password.equals(password);
+    public boolean checkPassword(String inputPassword) {
+        return this.password.equals(inputPassword);
     }
-    public boolean verifyLogin(String password) {
-        return checkPassword(password);
+    public boolean verifyLogin(String enteredPassword) {
+        return checkPassword(enteredPassword);
     }
     public boolean equals(User user) {
         return this.username.equals(user.username);
@@ -154,7 +153,7 @@ public class User implements UserInt {
     public String toString() {
         return String.format("%s|%s|%s|%s|%s|%s|%s|%b", username, password, firstName,
             lastName, stringListToString(friends), stringListToString(blockedUsers),
-                Arrays.toString(profilePicture), allowAll);
+            Arrays.toString(profilePicture), allowAll);
     }
     
     public String stringListToString(ArrayList<String> list) {
@@ -203,7 +202,7 @@ public class User implements UserInt {
     public void changeUsername(String newUsername) {
         this.username = newUsername;
     }
-    public void changePassword (String newPassword) {
+    public void changePassword(String newPassword) {
         this.password = newPassword;
     }
     public boolean isAllowAll() {

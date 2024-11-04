@@ -21,7 +21,7 @@ public class UserDatabaseThread extends Thread {
 
     @Override
     public void run() {
-        try{
+        try {
             switch (action) {
                 case CREATE_USER:
                     this.userDB.createUser(values[0], values[1], values[2], values[3], values[4]);
@@ -60,11 +60,9 @@ public class UserDatabaseThread extends Thread {
                 default:
                     break;
             }
-        }
-        catch(IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

@@ -52,7 +52,8 @@ public class UserTest {
         boolean result = user1.addFriend(user2.getUsername());
 
         assertFalse(result, "Expected addFriend to return false when user is blocked");
-        assertFalse(user1.getFriends().contains(user2.getUsername()), "Expected friends list not to contain the blocked user");
+        assertFalse(user1.getFriends().contains(user2.getUsername()),
+            "Expected friends list not to contain the blocked user");
     }
 
     @Test
@@ -62,7 +63,8 @@ public class UserTest {
         boolean result = user1.removeFriend(user2.getUsername());
 
         assertTrue(result, "Expected removeFriend to return true when user removed friend");
-        assertFalse(user1.getFriends().contains(user2.getUsername()), "Expected friends list not to contain the removed user");
+        assertFalse(user1.getFriends().contains(user2.getUsername()),
+            "Expected friends list not to contain the removed user");
 
     }
 
@@ -97,12 +99,13 @@ public class UserTest {
 
     @Test
     public void testCheckPassword() {
-        assertEquals("Expected user1 password to be equal to User1Password@", TRUE,user1.checkPassword("User1Password@"));
+        assertEquals("Expected user1 password to be equal to User1Password@", TRUE,
+            user1.checkPassword("User1Password@"));
     }
 
     @Test
     public void testVerifyLogin() {
-        assertEquals("Expected user1 password to be User1Password@", TRUE,user1.verifyLogin("User1Password@"));
+        assertEquals("Expected user1 password to be User1Password@", TRUE, user1.verifyLogin("User1Password@"));
     }
 
     @Test
@@ -118,7 +121,8 @@ public class UserTest {
             byte[] sampleImage = Files.readAllBytes(Paths.get("sample.jpg"));
             User userWithProfile = new User("userWithPFP", "Password123", "User", "Four", "true,sample.jpg");
             assertNotNull("Expected profile picture to be loaded", userWithProfile.getProfilePicture());
-            assertArrayEquals("Expected loaded profile picture data to match original", sampleImage, userWithProfile.getProfilePicture());
+            assertArrayEquals("Expected loaded profile picture data to match original", sampleImage,
+                userWithProfile.getProfilePicture());
         } catch (IOException e) {
             fail("Failed to read test profile picture: " + e.getMessage());
         }

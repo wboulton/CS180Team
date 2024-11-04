@@ -31,6 +31,6 @@ public class BadDataExceptionTest {
     @Test
     public void testThrowingError() {
         BadDataException e = new BadDataException("failure");
-        Assert.assertEquals("Exception of wrong type",BadDataException.class, e.getClass());
+        Assert.assertEquals("Exception of wrong type", BadDataException.class, e.getClass());
     }
 }
