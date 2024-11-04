@@ -3,7 +3,7 @@
  * @author Mukund Venkatesh
  * @version November 1, 2024
  */
-public class BadDataException extends Exception {
+public class BadDataException extends Exception implements ExceptionInterface {
     public BadDataException(String message) {
         super(message);
     }
