@@ -179,7 +179,8 @@ public class UserDatabaseTest {
             System.out.println("preparation failed");
         }
         UserDatabase aDatabase = new UserDatabase();
-        UserDatabase.addFriend(Objects.requireNonNull(UserDatabase.getUser("user1")), Objects.requireNonNull(UserDatabase.getUser("user2")));
+        UserDatabase.addFriend(Objects.requireNonNull(UserDatabase.getUser("user1")), 
+            Objects.requireNonNull(UserDatabase.getUser("user2")));
         aDatabase.updateDB();
         try (BufferedReader bfr = new BufferedReader(new FileReader(filepath))) {
             String line1 = bfr.readLine();

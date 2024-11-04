@@ -9,6 +9,8 @@ import static org.junit.Assert.*;
  * Team Project -- MessageDatabaseTest
  *
  * This file tests methods found in MessageDatabase.java 
+ * It tests every method more than once and also in the second and third test cases involves reading and 
+ * writing the database file to get a more wholistic view of the class functioning
  *
  * @author William Boulton, Jai Menon, Alan Yi, Mukund Venkatesh
  *
@@ -50,6 +52,8 @@ public class MessageDatabaseTest {
       }
 // if this test case is not working it may be because the files for the users is not created yet
     // try creating that file if you are getting io exceptions when sending messages.
+    // the next two tests are relatively wholistic because they cover the reading and writing of files and updating after
+    // edits have been made. 
     @Test(timeout = 1000)
     public void messageSendingRules() {
        UserDatabase udb = new UserDatabase();
