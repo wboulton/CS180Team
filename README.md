@@ -14,7 +14,7 @@ Our file contains four interfaces, one for each main file. This means we have an
  - UserInt.java : User.java
  - MData.java : MessageDatabase.java
  - MessageInterface.java : Message.java
- - ExceptionInterface.java: BadDataException
+ - BadDataExceptionInt.java: BadDataException
 
 These files contain necessary methods for each of the classes that implement them. At this point, none of them contain any global variables that get used by the implementing classes and none of them are implemented in more than one class. This does not mean that there will not be implementations for more classes later. 
 
