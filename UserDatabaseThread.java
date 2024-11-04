@@ -30,31 +30,31 @@ public class UserDatabaseThread extends Thread {
                     boolean login = this.userDB.verifyLogin(values[0], values[1]);
                     break;
                 case CHANGE_USERNAME:
-                    User userToModify = this.userDB.getUser(values[0]);
+                    User userToModify = UserDatabase.getUser(values[0]);
                     this.userDB.changeUsername(userToModify, values[1]);
                     break;
                 case SEARCH:
-                    this.userDB.getUser(this.values[0]);
+                    UserDatabase.getUser(this.values[0]);
                     break;
                 case ADD_FRIEND:
-                    User user = this.userDB.getUser(this.values[0]);
-                    User otherUser = this.userDB.getUser(this.values[1]);
-                    this.userDB.addFriend(user,otherUser);
+                    User user = UserDatabase.getUser(this.values[0]);
+                    User otherUser = UserDatabase.getUser(this.values[1]);
+                    UserDatabase.addFriend(user,otherUser);
                     break;
                 case REMOVE_FRIEND:
-                    User user2 = this.userDB.getUser(this.values[0]);
-                    User otherUser2 = this.userDB.getUser(this.values[1]);
-                    this.userDB.removeFriend(user2, otherUser2);
+                    User user2 = UserDatabase.getUser(this.values[0]);
+                    User otherUser2 = UserDatabase.getUser(this.values[1]);
+                    UserDatabase.removeFriend(user2, otherUser2);
                     break;
                 case BLOCK:
-                    User user3 = this.userDB.getUser(this.values[0]);
-                    User otherUser3 = this.userDB.getUser(this.values[1]);
-                    this.userDB.blockUser(user3, otherUser3);
+                    User user3 = UserDatabase.getUser(this.values[0]);
+                    User otherUser3 = UserDatabase.getUser(this.values[1]);
+                    UserDatabase.blockUser(user3, otherUser3);
                     break;
                 case UNBLOCK:
-                    User user4 = this.userDB.getUser(this.values[0]);
-                    User otherUser4 = this.userDB.getUser(this.values[1]);
-                    this.userDB.unblockUser(user4, otherUser4);
+                    User user4 = UserDatabase.getUser(this.values[0]);
+                    User otherUser4 = UserDatabase.getUser(this.values[1]);
+                    UserDatabase.unblockUser(user4, otherUser4);
                     break;
                 
                 default:
