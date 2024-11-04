@@ -22,13 +22,13 @@ public class Message implements MessageInterface {
     private static int pictureLocation;
     private int messageID;
     private String pictureFile;
-    private final String PICTURE_NUMBERS = "picture.txt";
-    private final String MESSAGE_ID = "MessageIDCounter.txt";
-    public final static Object lock = new Object();
+    private final String pictureNumbers = "picture.txt";
+    private final String messageIDFile = "MessageIDCounter.txt";
+    public final static Object LOCK = new Object();
     //the file containing all sent and recieved messages for each user is just username.txt
 //this should parse psv of some format, probably: messageID|sender|reciever|content|containsPicture|pictureFile
     public Message(String data) { 
-        synchronized(lock){
+        synchronized (LOCK) {
             String[] info = data.split("\\|");
             messageID = Integer.parseInt(info[0]);
             sender = info[1];
@@ -45,16 +45,16 @@ public class Message implements MessageInterface {
         if (content.contains("|")) {
             throw new BadDataException("Message content cannot contain '|'");
         }
-        synchronized(lock){
+        synchronized (LOCK) {
             this.sender = sender.getUsername();
             this.reciever = reciever.getUsername();
             this.content = content;
-            try (BufferedReader bfr = new BufferedReader(new FileReader(MESSAGE_ID))) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(messageIDFile))) {
                 messageID = Integer.parseInt(bfr.readLine());
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            try (BufferedWriter bwr = new BufferedWriter(new FileWriter(MESSAGE_ID))) {
+            try (BufferedWriter bwr = new BufferedWriter(new FileWriter(messageIDFile))) {
                 bwr.write(messageID + 1);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -88,30 +88,30 @@ public class Message implements MessageInterface {
         return this.content;
     }
     @Override
-    public void editMessage(String content) {
-        synchronized(lock){
-            this.content = content;
+    public void editMessage(String newContent) {
+        synchronized (LOCK) {
+            this.content = newContent;
         }
     }
     //I removed the send message and delete message functions. I think these would be
     //better placed in the Message Database file
     
     @Override
-    public void addPicture(byte[] pictureContent) {
-        synchronized(lock){
-            try (BufferedReader bfr = new BufferedReader(new FileReader(PICTURE_NUMBERS))) {
+    public void addPicture(byte[] newPictureContent) {
+        synchronized (LOCK) {
+            try (BufferedReader bfr = new BufferedReader(new FileReader(pictureNumbers))) {
                 pictureLocation = Integer.parseInt(bfr.readLine());
             } catch (Exception e) {
                 System.out.println("Error reading picture number");
             }
             pictureFile = String.format("%d.jpg", pictureLocation);
-            try (BufferedWriter bwr = new BufferedWriter(new FileWriter(PICTURE_NUMBERS))) {
+            try (BufferedWriter bwr = new BufferedWriter(new FileWriter(pictureNumbers))) {
                 bwr.write(pictureLocation);
             } catch (Exception e) {
                 System.out.println("Error writing picture number");
             }
             try {
-                ByteArrayInputStream streamObj = new ByteArrayInputStream(pictureContent);
+                ByteArrayInputStream streamObj = new ByteArrayInputStream(newPictureContent);
                 BufferedImage newImage = ImageIO.read(streamObj);
                 ImageIO.write(newImage, "jpg", new File(pictureFile)); 
             } catch (Exception e) {
@@ -126,9 +126,9 @@ public class Message implements MessageInterface {
         //future for gui's possibly
     }
     @Override
-    public void editPicture(byte[] pictureContent) {
-        synchronized(lock){
-            this.pictureContent = pictureContent;
+    public void editPicture(byte[] newPictureContent) {
+        synchronized (LOCK) {
+            this.pictureContent = newPictureContent;
         }
     }
     @Override

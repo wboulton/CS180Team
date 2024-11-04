@@ -22,7 +22,7 @@ public class MessageDatabaseThread extends Thread {
 
     @Override
     public void run() {
-        try{
+        try {
             switch (action) {
                 case GET_SENT_MESSAGES:
                     ArrayList sentMessages = this.messageDatabase.getSentMessages();
@@ -52,13 +52,10 @@ public class MessageDatabaseThread extends Thread {
                 default:
                     break;
             }
-        }
-        catch(IndexOutOfBoundsException e){
+        } catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
-    }
-        
+    }    
 }

@@ -18,7 +18,7 @@ public class MessageDatabase extends Thread implements MData {
     protected ArrayList<Message> sentMessages;
     private User user; // this will be the user who has sent or recieved the messages stored in said database object
     private String filePath;
-    public static final Object lock = new Object();
+    public static final Object LOCK = new Object();
 
 //this creates a message database for the specified user, which is a csv file with name "username.txt"
     public MessageDatabase(User user) {
@@ -50,7 +50,7 @@ public class MessageDatabase extends Thread implements MData {
         sentMessages.clear();
         try (BufferedReader bfr = new BufferedReader(new FileReader(this.filePath))) {
             String line;
-            synchronized (lock) {
+            synchronized (LOCK) {
                 while ((line = bfr.readLine()) != null) {
                     Message newMessage = new Message(line);
                     if (newMessage.getSender().equals(user.getUsername())) {
@@ -58,7 +58,7 @@ public class MessageDatabase extends Thread implements MData {
                         if (!sentMessages.contains(newMessage)) {
                             sentMessages.add(newMessage);
                         }
-                    } else if (newMessage.getReciever().equals(user.getUsername())){
+                    } else if (newMessage.getReciever().equals(user.getUsername())) {
                         //if the message isnt already in the recieved messages arraylist, add it
                         if (!recievedMessages.contains(newMessage)) {
                             recievedMessages.add(newMessage);
@@ -93,7 +93,7 @@ public class MessageDatabase extends Thread implements MData {
             }
         }
         //this system allows illegal messages to be created but never sent, that is subject to change. 
-        synchronized (lock) {
+        synchronized (LOCK) {
             sentMessages.add(m);
             String senderFile = String.format("%s.txt", m.getSender());
             String recieverFile = String.format("%s.txt", m.getReciever());
@@ -113,7 +113,7 @@ public class MessageDatabase extends Thread implements MData {
 // this removes a specified message from both the sender and reciever's files
     @Override
     public void deleteMessage(Message m) throws BadDataException {
-        synchronized(lock) {
+        synchronized (LOCK) {
             int id = m.getMessageID();
             System.out.println(id);
             try {
@@ -169,7 +169,7 @@ public class MessageDatabase extends Thread implements MData {
     //edits the message by creating a new one witht the same messageID and resending it. 
     @Override
     public void editMessage(Message m, Message n) throws BadDataException {
-        synchronized(lock) {
+        synchronized (LOCK) {
             n.setMessageID(m.getMessageID());
             deleteMessage(m);
             sendMessage(n);
