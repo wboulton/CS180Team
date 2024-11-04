@@ -23,8 +23,8 @@ import static org.junit.Assert.*;
 public class BadDataExceptionTest {
     @Test
     public void testUserImplementsUserInt() {
-        Class<?>[] interfaces = User.class.getInterfaces();
-        boolean implementsUserInt = Arrays.asList(interfaces).contains(MessageInterface.class);
+        Class<?>[] interfaces = BadDataException.class.getInterfaces();
+        boolean implementsUserInt = Arrays.asList(interfaces).contains(BadDataExceptionInt.class);
         assertTrue("User class should implement UserInt interface", implementsUserInt);
     }
 
