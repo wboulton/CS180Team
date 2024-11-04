@@ -2,6 +2,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.*;
 /**
@@ -78,7 +79,7 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(false, a.equals(c));
     }
 
-    public void testID() {
+    public void testID() throws BadDataException {
         User sender = new User("sender", "password", "first", "last", "false");
         User reciever = new User("reciever", "password", "first", "last", "false");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("MessageIDCounter.txt"))) {
@@ -92,7 +93,7 @@ When designing your implementation, be sure to use methods appropriately. It wil
         assertEquals(1, n.getMessageID());
     }
 
-    public void testString() {
+    public void testString() throws BadDataException {
         User sender = new User("sender", "password", "first", "last", "false");
         User reciever = new User("reciever", "password", "first", "last", "false");
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("MessageIDCounter.txt"))) {
