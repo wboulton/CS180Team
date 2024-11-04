@@ -97,7 +97,7 @@ public class MessageDatabaseTest {
         Message fakeMessage = new Message("2|sender|reciever|content|false");
         try {
             sd.deleteMessage(fakeMessage);
-            fail("this message should not have been deleted because it does not exist")
+            fail("this message should not have been deleted because it does not exist");
         } catch (Exception e) {
             Assert.assertEquals("Make sure BadDataException is thrown by sendMessage()",BadDataException.class, e.getClass());
         }
