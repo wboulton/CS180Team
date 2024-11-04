@@ -23,8 +23,8 @@ public class MessageInterfaceTest {
 //this test case pulls the interfaces that the User class implements and stores them in the interfaces array
 //it then checks if it implements userInt and uses assertTrue
     @Test
-    public void testUserImplementsUserInt() {
-        Class<?>[] interfaces = User.class.getInterfaces();
+    public void testMessageImplementsUserInt() {
+        Class<?>[] interfaces = Message.class.getInterfaces();
         boolean implementsUserInt = Arrays.asList(interfaces).contains(MessageInterface.class);
         assertTrue("User class should implement UserInt interface", implementsUserInt);
     }
