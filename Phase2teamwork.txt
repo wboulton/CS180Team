@@ -18,3 +18,6 @@ Server:
  - verify user
  - find user in userdatabase and open user database
  - send messages from queried users to client
+
+TEST CASES
+INTERFACES
