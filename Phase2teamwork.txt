@@ -5,3 +5,4 @@ TODO:
  - Client stores no information locally (I am taking this loosly because it needs to store enough to display messages)
  - Updates to phase 1 may be necessary
  - Test cases 
+ - implement server io and stuff
