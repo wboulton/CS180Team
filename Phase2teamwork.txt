@@ -1,0 +1,7 @@
+TODO:
+ - multiple client support
+ - Server/Database interaction is thread safe
+ - Extend runnable in order to create a new thread for every logged in user
+ - Client stores no information locally (I am taking this loosly because it needs to store enough to display messages)
+ - Updates to phase 1 may be necessary
+ - Test cases 
