@@ -19,5 +19,5 @@ Server: Alan, William
  - find user in userdatabase and open user database
  - send messages from queried users to client
 
-TEST CASES
+TEST CASES: Jai
 INTERFACES
