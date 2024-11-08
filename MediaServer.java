@@ -5,8 +5,8 @@ import java.net.*;
 
 public class MediaServer extends Thread {
     private static UserDatabase database;
-    private static MessageDatabase messageDatabase;
     public static final Object lock = new Object();
+
     private static void run(Socket client, ServerSocket server) {
         Timer timer = new Timer();
         User user = null;
@@ -45,7 +45,7 @@ public class MediaServer extends Thread {
                     return;
             }
 
-            messageDatabase = new MessageDatabase(user);
+            MessageDatabase messageDatabase = new MessageDatabase(user);
             TimerTask task = new TimerTask() {
                 public void run() {
                     //update messages

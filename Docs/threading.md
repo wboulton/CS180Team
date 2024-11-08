@@ -56,4 +56,4 @@ Likewise, the Values variable contains the particular parameters to be performed
 If there are not enough elements passed into the Values parameter for the particular action, an IndexOutOfBoundsException will be thrown and program will print a notice to check the parameters. Other exceptions will have their stack traces printed. 
 
 # Network threads
-The Server creates a thread to interact with each client trying to connect with it 
+The Server creates a thread to interact with each client trying to connect with it. To do this, we use lambda functions which create the new thread with a run method defined in the same class and pass final variables with it. This way we do not need to create another class or another object that needs to be passed to the Thread object. 
