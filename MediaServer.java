@@ -4,7 +4,7 @@ import java.net.*;
 
 public class MediaServer extends Thread {
     private static UserDatabase database;
-    
+
     private static void run(Socket client, ServerSocket server) {
         BufferedReader reader = null;
         PrintWriter writer = null;
@@ -72,6 +72,8 @@ public class MediaServer extends Thread {
                 final Socket newSocket = server.accept();
                 if (!socket.contains(newSocket)) {
                     socket.add(newSocket);
+// so this uses lambda functions to create a new thread with the run method dynamically set to the method above named
+// run. This way we can create threads without needing to create another class. 
                     Thread clientThread = new Thread(() -> run(newSocket, server));
                     clientThread.start();
                 }
