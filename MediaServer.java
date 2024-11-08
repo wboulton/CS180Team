@@ -46,6 +46,9 @@ public class MediaServer extends Thread {
             }
 
             messageDatabase = new MessageDatabase(user);
+            
+            //update DMs periodically
+            final int updateDelay = 3000; // 3 seconds
             TimerTask task = new TimerTask() {
                 public void run() {
                     //update messages
@@ -60,10 +63,11 @@ public class MediaServer extends Thread {
                     }
                 }
             };
+            timer.scheduleAtFixedRate(task,updateDelay,updateDelay);
+
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
-                timer.schedule(null, MAX_PRIORITY);
                 if (line.equals("77288937499272")) {
                     break;
                 }
