@@ -3,17 +3,46 @@ import java.io.*;
 import java.net.*;
 
 public class MediaServer extends Thread {
-    
+    private static UserDatabase database;
+
     private static void run(Socket client, ServerSocket server) {
         BufferedReader reader = null;
         PrintWriter writer = null;
+        User user = null;
         try {
             reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             writer = new PrintWriter(client.getOutputStream()); 
             System.out.println("connected");
             String line = reader.readLine();
+            switch (line) {
+                case "login":
+                    while (true) {
+                        //login
+                        String username = reader.readLine();
+                        String password = reader.readLine();
+                        boolean allowed = database.verifyLogin(username, password);
+                        if (allowed) {
+                            user = UserDatabase.getUser(username);
+                            break;
+                        } else {
+                            writer.println("could not log in");
+                            writer.flush();
+                            continue;
+                        }
+                    }
+                    break;
+                case "new user":
+                    String username = reader.readLine();
+                    String password = reader.readLine();
+                    String firstname = reader.readLine();
+                    String lastname = reader.readLine();
+                    String pfp = reader.readLine();
+                    user = database.createUser(username, password, firstname, lastname, pfp);
+                    break;
+                default:
+                    throw new BadDataException(line + " Was not a valid action");
+            }
             // this stuff is just in testing state rn
-            System.out.printf("Received '%s' from server\n", line);
             while (true) {
                 line = reader.readLine();
                 if (line.equals("77288937499272")) {
@@ -27,6 +56,7 @@ public class MediaServer extends Thread {
         }
     }
     public static void main(String[] args) {
+        database = new UserDatabase();
         int port;
         try {
         port = Integer.parseInt(args[0]);
