@@ -49,13 +49,12 @@ public class MediaServer extends Thread {
             MessageDatabase messageDatabase = new MessageDatabase(user);
             //update DMs periodically
             final int updateDelay = 3000; // 3 seconds
-
             TimerTask task = new TimerTask() {
                 public void run() {
                     //update messages
                     ArrayList<Message> recievedMessages = messageDatabase.getRecievedMessages();
-                    for (Message message: recievedMessages){
-                        if (message.getMessageID() > recentID.get()){
+                    for (Message message: recievedMessages) {
+                        if (message.getMessageID() > recentID.get()) {
                             writer.write(message.toString());
                             writer.println();
                             writer.flush();   
