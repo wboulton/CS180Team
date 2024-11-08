@@ -8,15 +8,12 @@ public interface UserClientInt {
     ArrayList getSentMessages();
     ArrayList getRecievedMessages();
     User getUser();
-    String getFilePath();
     void blockUser(User u);
-    void unblockUser(User u);
-    void addFriend(User u);
-    void removeFriend(User u);
+    boolean unblockUser(User u);
+    boolean addFriend(User u);
+    boolean removeFriend(User u);
     String getUserName();
-    void setUserName(String name);
-    void setPassword(String password);
-    void setFilePath(String path);
-
+    boolean setUserName(String name);
+    boolean setPassword(String password);
 
 }

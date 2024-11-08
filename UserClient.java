@@ -1,6 +1,3 @@
-import javax.imageio.ImageIO;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
@@ -53,7 +50,6 @@ public class UserClient implements UserClientInt {
                 throw new BadDataException("Picture not found");
             }
         }
-
     }
 
     public void deleteMessage(Message m) throws BadDataException {
@@ -80,36 +76,63 @@ public class UserClient implements UserClientInt {
         return null;
     }
 
-    public String getFilePath() {
-        return "";
-    }
 
     public void blockUser(User u) {
-
+        //if the user is already blocked, return
+        if (user.getBlockedUsers().contains(u.getUsername())) {
+            return;
+        }
+        //block the user
+        UserDatabase.blockUser(user, u);
     }
 
-    public void unblockUser(User u) {
-
+    public boolean unblockUser(User u) {
+        //if the user is blocked, unblock the user
+        return UserDatabase.unblockUser(user, u);
     }
 
-    public void addFriend(User u) {
-
+    public boolean addFriend(User u) {
+        //if the user is blocked, return false
+        if (user.getBlockedUsers().contains(u.getUsername())) {
+            return false;
+        }
+        //if the user is already a friend, return false
+        if (user.getFriends().contains(u.getUsername())) {
+            return false;
+        }
+        //add the user to the friends list
+        user.addFriend(u.getUsername());
+        return true;
     }
 
-    public void removeFriend(User u) {
-
+    public boolean removeFriend(User u) {
+        if (user.getFriends().contains(u.getUsername())) {
+            user.removeFriend(u.getUsername());
+            return true;
+        }
+        return false;
     }
 
     public String getUserName() {
-        return null;
+        return user.getUsername();
     }
 
-    public void setUserName(String name) {
-
+    public boolean setUserName(String name) {
+        //check if the username is already taken
+        if (UserDatabase.getUser(name) != null) {
+            return false;
+        }
+        user.changeUsername(name);
+        return true;
     }
 
-    public void setPassword(String password) {
-
+    public boolean setPassword(String password) {
+        //validate the password
+        if (!UserDatabase.legalPassword(password)) {
+            return false;
+        }
+        user.changePassword(password);
+        return true;
     }
 
     public void setFilePath(String path) {

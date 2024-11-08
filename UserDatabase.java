@@ -151,7 +151,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
     }
     //legal password
-    public boolean legalPassword(String password) {
+    public static boolean legalPassword(String password) {
 
         // This method checks if a password is legal - at least 8 characters, 
         //at least one number, at least one Capital letter and at least one lowercase letter
