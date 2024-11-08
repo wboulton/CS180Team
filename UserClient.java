@@ -56,8 +56,14 @@ public class UserClient implements UserClientInt {
 
     }
 
-    public void deleteMessage(Message m) throws BadDataException {
+    public void deleteMessage(String sender, Message m) throws BadDataException {
+        User senderUser = UserDatabase.getUser(sender);
+        //if the receiver does not exist, throw exception
+        if (senderUser == null) {
+            throw new BadDataException("Sender does not exist");
+        }
 
+        messageDatabase.deleteMessage(m);
     }
 
     public void editMessage(Message m, Message n) throws BadDataException {
