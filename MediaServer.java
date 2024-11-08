@@ -4,11 +4,14 @@ import java.net.*;
 
 public class MediaServer extends Thread {
     private static UserDatabase database;
-
+    private static MessageDatabase messageDatabase;
+    public static final Object lock = new Object();
     private static void run(Socket client, ServerSocket server) {
         BufferedReader reader = null;
         PrintWriter writer = null;
+        Timer timer = new Timer();
         User user = null;
+        int recentID = 0;
         try {
             reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             writer = new PrintWriter(client.getOutputStream()); 
@@ -42,9 +45,26 @@ public class MediaServer extends Thread {
                 default:
                     throw new BadDataException(line + " Was not a valid action");
             }
+
+            messageDatabase = new MessageDatabase(user);
+            TimerTask task = new TimerTask() {
+                public void run() {
+                    //update messages
+                    ArrayList<Message> recievedMessages = messageDatabase.getRecievedMessages();
+                    for (Message message: recievedMessages){
+                        if (message.getMessageID() > recentID){
+                            writer.write(message.toString());
+                            writer.println();
+                            writer.flush();   
+                            recentID = message.getMessageID();
+                        }
+                    }
+                }
+            };
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
+                timer.schedule(null, MAX_PRIORITY);
                 if (line.equals("77288937499272")) {
                     break;
                 }
