@@ -2,7 +2,7 @@ import java.util.*;
 import java.io.*;
 import java.net.*;
 
-public class MediaServer extends Thread implements ServerInterface {
+public class MediaServer extends Thread {
     
     private static void run(Socket client, ServerSocket server) {
         BufferedReader reader = null;
@@ -10,6 +10,13 @@ public class MediaServer extends Thread implements ServerInterface {
         try {
             reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             writer = new PrintWriter(client.getOutputStream()); 
+            System.out.println("connected");
+            String line = reader.readLine();
+            System.out.printf("Received '%s' from server\n", line);
+            while (true) {
+                line = reader.readLine();
+                System.out.println(line);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
