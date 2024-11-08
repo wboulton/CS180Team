@@ -86,6 +86,11 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
 
     }
+    //get users list
+    public ArrayList<User> getUsers() {
+        // This method gets the list of users
+        return users;
+    }
     //re-write entire DB
     public void updateDB() {
         try (BufferedWriter bwr = new BufferedWriter(new FileWriter(OUTPUT_FILE))) {
