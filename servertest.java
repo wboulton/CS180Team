@@ -15,11 +15,16 @@ public class servertest {
             writer.flush();
             Scanner sc = new Scanner(System.in);
             while (true) {
-                System.out.println("What do you want to send to server?\n");
+                System.out.println("What do you want to send to server?");
                 String recieved = sc.nextLine();
                 writer.write(recieved);
                 writer.println();
                 writer.flush();
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    writer.write("77288937499272"); // random quit code
+                    writer.println();
+                    writer.flush();
+                }));
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -16,8 +16,12 @@ public class MediaServer extends Thread {
             System.out.printf("Received '%s' from server\n", line);
             while (true) {
                 line = reader.readLine();
-                System.out.println(line);
+                if (line.equals("77288937499272")) {
+                    break;
+                }
+                System.out.printf("Recieved '%s' from %s\n", line, client.toString());
             }
+            System.out.printf("Client %s disconnected\n", client);
         } catch (Exception e) {
             e.printStackTrace();
         }
