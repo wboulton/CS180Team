@@ -4,7 +4,7 @@ import java.net.*;
 
 public class MediaServer extends Thread {
     private static UserDatabase database;
-
+    
     private static void run(Socket client, ServerSocket server) {
         BufferedReader reader = null;
         PrintWriter writer = null;
@@ -40,7 +40,7 @@ public class MediaServer extends Thread {
                     user = database.createUser(username, password, firstname, lastname, pfp);
                     break;
                 default:
-                    throw new BadDataException(line + " Was not a valid action");
+                    return;
             }
             // this stuff is just in testing state rn
             while (true) {
@@ -55,6 +55,7 @@ public class MediaServer extends Thread {
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         database = new UserDatabase();
         int port;
