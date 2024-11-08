@@ -43,7 +43,7 @@ public class MediaServer extends Thread {
                     user = database.createUser(username, password, firstname, lastname, pfp);
                     break;
                 default:
-                    throw new BadDataException(line + " Was not a valid action");
+                    return;
             }
 
             messageDatabase = new MessageDatabase(user);
@@ -75,6 +75,7 @@ public class MediaServer extends Thread {
             e.printStackTrace();
         }
     }
+
     public static void main(String[] args) {
         database = new UserDatabase();
         int port;
@@ -91,6 +92,8 @@ public class MediaServer extends Thread {
                 final Socket newSocket = server.accept();
                 if (!socket.contains(newSocket)) {
                     socket.add(newSocket);
+// so this uses lambda functions to create a new thread with the run method dynamically set to the method above named
+// run. This way we can create threads without needing to create another class. 
                     Thread clientThread = new Thread(() -> run(newSocket, server));
                     clientThread.start();
                 }
