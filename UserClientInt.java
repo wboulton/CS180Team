@@ -2,7 +2,7 @@ import java.util.ArrayList;
 
 public interface UserClientInt {
     void sendMessage(String receiver, String content, String picture) throws BadDataException;
-    void deleteMessage(Message m) throws BadDataException;
+    void deleteMessage(String sender, Message m) throws BadDataException;
     void editMessage(Message m, Message n) throws BadDataException;
     void recoverMessages();
     ArrayList getSentMessages();
