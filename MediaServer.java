@@ -12,6 +12,7 @@ public class MediaServer extends Thread {
             writer = new PrintWriter(client.getOutputStream()); 
             System.out.println("connected");
             String line = reader.readLine();
+            // this stuff is just in testing state rn
             System.out.printf("Received '%s' from server\n", line);
             while (true) {
                 line = reader.readLine();
