@@ -1,4 +1,5 @@
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.io.*;
 import java.net.*;
 
@@ -7,14 +8,12 @@ public class MediaServer extends Thread {
     private static MessageDatabase messageDatabase;
     public static final Object lock = new Object();
     private static void run(Socket client, ServerSocket server) {
-        BufferedReader reader = null;
-        PrintWriter writer = null;
         Timer timer = new Timer();
         User user = null;
-        int recentID = 0;
+        AtomicInteger recentID = new AtomicInteger(0);
         try {
-            reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            writer = new PrintWriter(client.getOutputStream()); 
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
+            final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             System.out.println("connected");
             String line = reader.readLine();
             switch (line) {
@@ -52,11 +51,11 @@ public class MediaServer extends Thread {
                     //update messages
                     ArrayList<Message> recievedMessages = messageDatabase.getRecievedMessages();
                     for (Message message: recievedMessages){
-                        if (message.getMessageID() > recentID){
+                        if (message.getMessageID() > recentID.get()){
                             writer.write(message.toString());
                             writer.println();
                             writer.flush();   
-                            recentID = message.getMessageID();
+                            recentID.set(message.getMessageID());
                         }
                     }
                 }
