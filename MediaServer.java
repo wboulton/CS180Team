@@ -45,7 +45,6 @@ public class MediaServer extends Thread {
                     return;
             }
 
-
             MessageDatabase messageDatabase = new MessageDatabase(user);
             //update DMs periodically
             final int updateDelay = 3000; // 3 seconds
@@ -77,6 +76,14 @@ public class MediaServer extends Thread {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void messageHandling() {
+
+    }
+
+    public void userHandling() {
+        
     }
 
     public static void main(String[] args) {
