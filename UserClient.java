@@ -62,8 +62,14 @@ public class UserClient implements UserClientInt {
         messageDatabase.deleteMessage(m);
     }
 
-    public void editMessage(Message m, Message n) throws BadDataException {
+    public void editMessage(String sender, Message m, Message n) throws BadDataException {
+        User senderUser = UserDatabase.getUser(sender);
+        //if the sender does not exist, throw exception
+        if (senderUser == null) {
+            throw new BadDataException("Sender does not exist");
+        }
 
+        messageDatabase.editMessage(m, n);
     }
 
     public void recoverMessages() {
@@ -71,11 +77,11 @@ public class UserClient implements UserClientInt {
     }
 
     public ArrayList getSentMessages() {
-        return null; //
+        return messageDatabase.getSentMessages();
     }
 
     public ArrayList getRecievedMessages() {
-        return null;
+        return messageDatabase.getRecievedMessages;
     }
 
     public User getUser() {
