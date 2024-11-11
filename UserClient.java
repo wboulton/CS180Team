@@ -77,11 +77,11 @@ public class UserClient implements UserClientInt {
     }
 
     public ArrayList getSentMessages() {
-        return null; //
+        return messageDatabase.getSentMessages();
     }
 
     public ArrayList getRecievedMessages() {
-        return null;
+        return messageDatabase.getRecievedMessages;
     }
 
     public User getUser() {
