@@ -55,7 +55,7 @@ public class UserClientTest {
   
     public static void main(String[] args) throws Exception {
         // I guess what we can do is make a client socket here and make a server socket in server tests and then run them simultaneously to test both at once 
-        Socket socket = new Socket(4242);
+        Socket socket = new Socket("localhost", 4242);
         //This is assumed clien socket: Socket socket = new Socket("localhost", 4242);
         
     }
