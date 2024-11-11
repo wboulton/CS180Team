@@ -71,6 +71,7 @@ public class MediaServer extends Thread {
                     break;
                 }
                 System.out.printf("Recieved '%s' from %s\n", line, client.toString());
+                
             }
             System.out.printf("Client %s disconnected\n", client);
         } catch (Exception e) {
@@ -82,8 +83,51 @@ public class MediaServer extends Thread {
 
     }
 
-    public void userHandling() {
-        
+    public void userHandling(PrintWriter writer, String line) {
+        try{
+            String[] inputs = line.split("\\|");
+            Action action = Action.valueOf(inputs[0]);
+
+            switch (action){
+                case SEARCH: 
+                    User userFound = UserDatabase.getUser(inputs[1]);
+                    writer.write("USER\\|"+userFound.toString());
+                    writer.println();
+                    writer.flush();   
+                    break;
+                case ADD_FRIEND:
+                    User user = UserDatabase.getUser(inputs[1]);
+                    User otherUser = UserDatabase.getUser(inputs[2]);
+                    UserDatabase.addFriend(user,otherUser);
+                    break;
+                case REMOVE_FRIEND:
+                    User user2 = UserDatabase.getUser(inputs[1]);
+                    User otherUser2 = UserDatabase.getUser(inputs[2]);
+                    UserDatabase.removeFriend(user2, otherUser2);
+                    break;
+                case CHANGE_USERNAME:
+                    User userToModify = UserDatabase.getUser(inputs[1]);
+                    database.changeUsername(userToModify, inputs[2]);
+                    break;
+                case BLOCK:
+                    User user3 = UserDatabase.getUser(inputs[1]);
+                    User otherUser3 = UserDatabase.getUser(inputs[2]);
+                    UserDatabase.blockUser(user3, otherUser3);
+                    break;
+                case UNBLOCK:
+                    User user4 = UserDatabase.getUser(inputs[1]);
+                    User otherUser4 = UserDatabase.getUser(inputs[2]);
+                    UserDatabase.unblockUser(user4, otherUser4);
+                    break;
+                default:
+                    break;
+            }            
+
+        }catch (IndexOutOfBoundsException e) {
+            System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
+        }catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
