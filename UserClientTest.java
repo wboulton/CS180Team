@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.io.*;
+import java.net.Socket;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Objects;
@@ -25,12 +26,12 @@ public class UserClientTest {
 
     private static UserDatabase userDatabase = new UserDatabase();
     private static final String OUTPUT_FILE = "users.txt";
-  
+
     @Test(timeout = 1000)
-    public void testClientConstructor() {
+    public void testClientConstructor() throws BadDataException, IOException {
         // Tests if regular UserClient can be created
         UserClient someone = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
-        User user = database.getUser("johnDoe");
+        User user = userDatabase.getUser("johnDoe");
         assertNotNull(user);
         assertEquals("johnDoe", user.getUsername());
         // Tests to make sure no 2 UserClient objects have the same first name
@@ -47,19 +48,19 @@ public class UserClientTest {
             userDatabase.createUser("johnDoe", "Password|123", "John", "Doe", "false");
         });
         boolean invalidUser = false;
-          try {
-              UserClient client = new UserClient("test", "Testers123!", "test", "test", "false");
-          } catch (BadDataException e) {
-              invalidUser = true;
+        try {
+            UserClient client = new UserClient("test", "Testers123!", "test", "test", "false");
+        } catch (BadDataException e) {
+            invalidUser = true;
+        }
     }
-  
     public static void main(String[] args) throws Exception {
-        // I guess what we can do is make a client socket here and make a server socket in server tests and then run them simultaneously to test both at once 
+        // I guess what we can do is make a client socket here and make a server socket in server tests and then run
+        // them simultaneously to test both at once
         Socket socket = new Socket("localhost", 4242);
         //This is assumed clien socket: Socket socket = new Socket("localhost", 4242);
-        
+
     }
-  
-    
-    
+
+
 }
