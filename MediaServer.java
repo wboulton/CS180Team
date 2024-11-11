@@ -145,11 +145,11 @@ public class MediaServer extends Thread {
     }
 
     public void userHandling(PrintWriter writer, String line) {
-        try{
+        try {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
 
-            switch (action){
+            switch (action) {
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
                     writer.write("USER\\|"+userFound.toString());
@@ -182,11 +182,10 @@ public class MediaServer extends Thread {
                     break;
                 default:
                     break;
-            }            
-
-        }catch (IndexOutOfBoundsException e) {
+            }
+        } catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
-        }catch(Exception e){
+        } catch(Exception e) {
             e.printStackTrace();
         }
     }
