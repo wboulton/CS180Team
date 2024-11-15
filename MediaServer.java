@@ -98,9 +98,11 @@ public class MediaServer extends Thread {
                     }
                     messages.sort(Comparator.comparingInt(Message::getMessageID));
                     for (Message item : messages) {
-                        writer.write(item.toString());
-                        writer.println();
-                        writer.flush();
+                        if (item.getReciever().equals(information) || item.getReciever().equals(information)) {
+                            writer.write(item.toString());
+                            writer.println();
+                            writer.flush();
+                        }
                     }
                     break;
 //public Message(User sender, User reciever, String content)
