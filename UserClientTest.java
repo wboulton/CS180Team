@@ -25,8 +25,11 @@ import static org.junit.Assert.*;
 public class UserClientTest {
 
     private static UserDatabase userDatabase = new UserDatabase();
-    private user = new User("johnDoe", "Password1", "John", "Doe", "false");
+    private User user = new User("johnDoe", "Password1", "John", "Doe", "false");
     private static final String OUTPUT_FILE = "users.txt";
+    private BufferedReader reader;
+    private PrintWriter writer;
+    private Message m = new Message("0|sender|reciever|content|false");
 
     @Test(timeout = 1000)
     public void testLogin() throws BadDataException, IOException {
@@ -71,45 +74,19 @@ public class UserClientTest {
     }
 
     @Test(timeout = 1000)
-    public void testSendMessage() throws BadDataException, IOException {
-        
+    public void testClientOutput() throws BadDataException, IOException {
         sendMessage("johnDoe|Password1|John|Doe|null|null|null|true", "Hi, how are you?", "false");
-        
-    }
+        deleteMessage("johnDoe|Password1|John|Doe|null|null|null|true", m);
+        editMessage(m, "new content");
+        blockUser("johnDoe");
+        unblockUser("johnDoe");
+        addFriend("johnDoe");
+        removeFriend("johnDoe");
+        setUserName("johnDoe");
+        setPassword("newPassword");
+    } // Figure out how to get messages back from server
 
-/*
-User user = userDatabase.getUser("johnDoe");
-        assertNotNull(user);
-        assertEquals("johnDoe", user.getUsername());
-        // Tests to make sure no 2 UserClient objects have the same first name
-        assertThrows(BadDataException.class, () -> {
-            UserClient some1 = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
-            UserClient some2 = new UserClient("johnDoe", "Password2", "Johnny", "Doe", "false");
-        });
-        // Tests to make sure UserClient passwors is valid
-        assertThrows(BadDataException.class, () -> {
-            UserClient some3 = new UserClient("janeDoe", "short", "Jane", "Doe", "false");
-        });
-        // Tests to make sure pipes aren't used in any of the constructor field
-        assertThrows(BadDataException.class, () -> {
-            userDatabase.createUser("johnDoe", "Password|123", "John", "Doe", "false");
-        });
-        boolean invalidUser = false;
-        try {
-            UserClient client = new UserClient("test", "Testers123!", "test", "test", "false");
-        } catch (BadDataException e) {
-            invalidUser = true;
-        }
-    */
-
-
-
-
-
-
-
-
-
+    
     
     public static void main(String[] args) throws Exception {
         userDatabase.createUser("johnDoe", "Password1", "John", "Doe", "false");
@@ -124,14 +101,57 @@ User user = userDatabase.getUser("johnDoe");
         serverWriter.println("could not log in");
         serverWriter.flush();
         testNewUser();
-        testSendMessage();
+        testClientOutput();
+        boolean outputChecker = true;
+        // Checks if sendMessage works
         String confirmation = serverReader.readLine();
-        if (confirmation.equals()) {
-            serverWriter.println();
-            serverWriter.flush();
+        if (!confirmation.equals("SEND_MESSAGE|" + "johnDoe" + "|" + "johnDoe" + "|" + "Hi, how are you?")) {
+            outputChecker = false;
+        }
+        // Checks if deleteMessage works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("DELETE_MESSAGE|" + "johnDoe|Password1|John|Doe|null|null|null|true" + "|" + "0")) {
+            outputChecker = false;
+        }
+        // Checks if editMessage works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("EDIT_MESSAGE|" + "0" + "|" + "new content")) {
+            outputChecker = false;
+        }
+        // Checks if blockUser works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("BLOCK|" + "johnDoe" + "|" + "johnDoe")) {
+            outputChecker = false;
+        }
+        // Checks if unblockUser works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("UNBLOCK|" + "johnDoe" + "|" + "johnDoe")) {
+            outputChecker = false;
+        }
+        // Checks if addFriend works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("ADD_FRIEND|" + "johnDoe" + "|" + "johnDoe")) {
+            outputChecker = false;
+        }
+        // Checks if removeFriend works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("REMOVE_FRIEND|" + "johnDoe" + "|" + "johnDoe")) {
+            outputChecker = false;
+        }
+        // Checks if setUserName works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("CHANGE_USERNAME|" + "johnDoe" + "|" + "johnDoe")) {
+            outputChecker = false;
+        }
+        // Checks if setPassword works
+        confirmation = serverReader.readLine();
+        if (!confirmation.equals("CHANGE_PASSWORD|" + "johnDoe" + "|" + "newPassword")) {
+            outputChecker = false;
+        }
+        if (outputChecker) {
+            System.out.println("All test cases passed successfully!");
         } else {
-            serverWriter.println("false");
-            serverWriter.flush();
+            System.out.println("Something went wrong in the client output test cases");
         }
     }
 
