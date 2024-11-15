@@ -17,7 +17,10 @@ import java.net.*;
 public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
     public static final Object lock = new Object();
-
+//run method used to control each thread that is made. There is some weird stuff going on with 
+//atomic references and atomic integers to make sure these threads work properly with final values
+//and lambda functions. It seems atomic types are effectively final so we can use them in more threaded
+//formats. 
     private static void run(Socket client, ServerSocket server) {
         Timer timer = new Timer();
         User user = null;
@@ -60,6 +63,10 @@ public class MediaServer extends Thread implements ServerInterface {
             
             //update DMs periodically
             final int updateDelay = 3000; // 3 seconds
+//this uses the TimerTask object included in the java.util package. Essentially what this does is 
+//it creates a timer on another thread that waits a set amount of time then runs the function after each interval
+//with how we have it set up this timertask will run recover messages then write new messages to the user every
+//three seconds. This allows "real time messaging". 
             TimerTask task = new TimerTask() {
                 public void run() {
                     //update messages
@@ -83,6 +90,8 @@ public class MediaServer extends Thread implements ServerInterface {
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
+                //random numbers for kill message, this should not be vulnerable because all other lines
+                //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     break;
                 }
@@ -99,7 +108,7 @@ public class MediaServer extends Thread implements ServerInterface {
             e.printStackTrace();
         }
     }
-
+//handle all message related functions sent by the client
     public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing) {
 //GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
         try {
@@ -169,7 +178,7 @@ public class MediaServer extends Thread implements ServerInterface {
         }
     }
 
-
+//handle all user related functions sent by the client.
     public static void userHandling(PrintWriter writer, String line) {
         try {
             String[] inputs = line.split("\\|");
@@ -178,14 +187,14 @@ public class MediaServer extends Thread implements ServerInterface {
             switch (action) {
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
-                    writer.write("USER\\|"+userFound.toString());
+                    writer.write("USER\\|" + userFound.toString());
                     writer.println();
                     writer.flush();   
                     break;
                 case ADD_FRIEND:
                     User user = UserDatabase.getUser(inputs[1]);
                     User otherUser = UserDatabase.getUser(inputs[2]);
-                    UserDatabase.addFriend(user,otherUser);
+                    UserDatabase.addFriend(user, otherUser);
                     break;
                 case REMOVE_FRIEND:
                     User user2 = UserDatabase.getUser(inputs[1]);
