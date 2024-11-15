@@ -25,7 +25,7 @@ import static org.junit.Assert.*;
 public class UserClientTest {
 
     private static UserDatabase userDatabase = new UserDatabase();
-    private user = new User("johnDoe", "Password1", "John", "Doe", "false");
+    private User user = new User("johnDoe", "Password1", "John", "Doe", "false");
     private static final String OUTPUT_FILE = "users.txt";
 
     @Test(timeout = 1000)
