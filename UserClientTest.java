@@ -116,7 +116,7 @@ User user = userDatabase.getUser("johnDoe");
         // I guess what we can do is make a client socket here and make a server socket in server tests and then run
         // them simultaneously to test both at once
         ServerSocket server = new ServerSocket(1010);
-        Socket socket = serverSocket.accept();
+        Socket socket = server.accept();
         serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         serverWriter = new PrintWriter(socket.getOutputStream(), true);
         testLogin();
@@ -126,8 +126,8 @@ User user = userDatabase.getUser("johnDoe");
         testNewUser();
         testSendMessage();
         String confirmation = serverReader.readLine();
-        if (confirmation.equals()) {
-            serverWriter.println();
+        if (confirmation.equals("SEND_MESSAGE|" + "johnDoe" + "|" + "johnDoe" + "|" + "Hi, how are you?")) {
+            serverWriter.println("true");
             serverWriter.flush();
         } else {
             serverWriter.println("false");
