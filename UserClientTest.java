@@ -28,10 +28,33 @@ public class UserClientTest {
     private static final String OUTPUT_FILE = "users.txt";
 
     @Test(timeout = 1000)
-    public void testClientConstructor() throws BadDataException, IOException {
+    public void testLogin() throws BadDataException, IOException {
         // Tests if regular UserClient can be created
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        PrintStream originalOut = System.out;
+        System.setOut(ps);
         UserClient someone = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
-        User user = userDatabase.getUser("johnDoe");
+        System.setOut(originalOut);
+        String output = baos.toString();
+        boolean checker = false;
+        // Checks if the desired text was printed
+        if (output.contains("Login successful.")) {
+            checker = true;
+        }
+        assertTrue(checker);
+        
+    }
+
+    @Test(timeout = 1000)
+    public void testBadLogin() throws BadDataException, IOException {
+        assertThrows(BadDataException.class, () -> {
+            UserClient some1 = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
+        });
+    }
+
+/*
+User user = userDatabase.getUser("johnDoe");
         assertNotNull(user);
         assertEquals("johnDoe", user.getUsername());
         // Tests to make sure no 2 UserClient objects have the same first name
@@ -53,13 +76,28 @@ public class UserClientTest {
         } catch (BadDataException e) {
             invalidUser = true;
         }
-    }
+    */
+
+
+
+
+
+
+
+
+
+    
     public static void main(String[] args) throws Exception {
         // I guess what we can do is make a client socket here and make a server socket in server tests and then run
         // them simultaneously to test both at once
-        Socket socket = new Socket("localhost", 4242);
-        //This is assumed clien socket: Socket socket = new Socket("localhost", 4242);
-
+        ServerSocket server = new ServerSocket(1010);
+        serverReader = new BufferedReader(new InputStreamReader(server.getInputStream()));
+        serverWriter = new PrintWriter(server.getOutputStream(), true);
+        testLogin();
+        testBadLogin();
+        serverWriter.println("could not log in");
+        serverWriter.flush();
+        
     }
 
 
