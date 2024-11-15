@@ -67,7 +67,8 @@ public class MediaServer extends Thread implements ServerInterface {
                     ArrayList<Message> recievedMessages = messageDatabase.getRecievedMessages();
                     for (Message message: recievedMessages) {
                         if (message.getMessageID() > recentID.get()) {
-                            if (currentlyViewing.get() != null && message.getSender().equals(currentlyViewing.get().getUsername())) {
+                            if (currentlyViewing.get() != null && 
+                                message.getSender().equals(currentlyViewing.get().getUsername())) {
                                 writer.write("INCOMING\\|" + message.toString());
                                 writer.println();
                                 writer.flush();   
@@ -174,7 +175,7 @@ public class MediaServer extends Thread implements ServerInterface {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
 
-            switch (action){
+            switch (action) {
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
                     writer.write("USER\\|"+userFound.toString());
