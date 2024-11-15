@@ -4,11 +4,10 @@ Thread-safe procedures including creating a static object and using the synchron
 
 ```java
 public static final Object lock = new Object();
-synchronized(lock){
+synchronized (lock) {
     //thread-safe action
 }
 ```
-
 
 # MessageDatabaseThread.java
 This class handles the threading for Message Database. The actions for the message database include getting sent messages, getting recieved messages, recovering messages, getting a user, sending a message, deleting a message, and editting a message.
