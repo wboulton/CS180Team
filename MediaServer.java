@@ -136,6 +136,7 @@ public class MediaServer extends Thread {
                             database.editMessage(item, editedMessage);
                         }
                     }
+                    break;
                 default:
                     return;
             }
@@ -169,6 +170,10 @@ public class MediaServer extends Thread {
                 case CHANGE_USERNAME:
                     User userToModify = UserDatabase.getUser(inputs[1]);
                     database.changeUsername(userToModify, inputs[2]);
+                    break;
+                case CHANGE_PASSWORD:
+                    User userToModify2 = UserDatabase.getUser(inputs[1]);
+                    database.changePassword(userToModify2, inputs[2]);
                     break;
                 case BLOCK:
                     User user3 = UserDatabase.getUser(inputs[1]);

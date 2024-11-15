@@ -1,7 +1,6 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.ArrayList;
 import java.util.Scanner;
 
 public class UserClient implements UserClientInt {
@@ -121,13 +120,13 @@ public class UserClient implements UserClientInt {
     }
 
     @Override
-    public boolean setUserName(String name) {
-        return false;
+    public void setUserName(String name) {
+        writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
     }
 
     @Override
-    public boolean setPassword(String password) {
-        return false;
+    public void setPassword(String password) {
+        writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
     public static void main(String[] args) {

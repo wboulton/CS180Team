@@ -7,7 +7,7 @@ public interface UserClientInt {
     void unblockUser(String u) throws IOException;
     void addFriend(String u) throws IOException;
     void removeFriend(String u) throws IOException;
-    boolean setUserName(String name);
-    boolean setPassword(String password);
+    void setUserName(String name);
+    void setPassword(String password);
 
 }

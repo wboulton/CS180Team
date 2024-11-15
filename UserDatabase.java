@@ -150,6 +150,13 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             user.changeUsername(newUsername);
         }
     }
+    //change password
+    public void changePassword(User user, String newPassword) {
+        //if the password is legal, change the password
+        if (legalPassword(newPassword)) {
+            user.changePassword(newPassword);
+        }
+    }
     //legal password
     public static boolean legalPassword(String password) {
 
