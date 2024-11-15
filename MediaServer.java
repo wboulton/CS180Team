@@ -3,8 +3,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.*;
 import java.io.*;
 import java.net.*;
+/**
+ * Team Project -- MediaServer
+ *
+ * This is server for handling multiple clients with threading
+ *
+ * @author William Boulton, Alan Yi
+ *
+ * @version November 15, 2024
+ * 
+ */
 
-public class MediaServer extends Thread {
+public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
     public static final Object lock = new Object();
 
@@ -158,12 +168,13 @@ public class MediaServer extends Thread {
         }
     }
 
+
     public static void userHandling(PrintWriter writer, String line) {
         try {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
 
-            switch (action) {
+            switch (action){
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
                     writer.write("USER\\|"+userFound.toString());
@@ -196,10 +207,11 @@ public class MediaServer extends Thread {
                     break;
                 default:
                     break;
-            }
-        } catch (IndexOutOfBoundsException e) {
+            }            
+
+        }catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
-        } catch(Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
