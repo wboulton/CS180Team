@@ -25,16 +25,16 @@ import static org.junit.Assert.*;
 public class UserClientTest {
 
     private static UserDatabase userDatabase = new UserDatabase();
+    private user = new User("johnDoe", "Password1", "John", "Doe", "false");
     private static final String OUTPUT_FILE = "users.txt";
 
     @Test(timeout = 1000)
     public void testLogin() throws BadDataException, IOException {
-        // Tests if regular UserClient can be created
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
         PrintStream originalOut = System.out;
         System.setOut(ps);
-        UserClient someone = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
+        UserClient someone = new UserClient("johnDoe", "Password1");
         System.setOut(originalOut);
         String output = baos.toString();
         boolean checker = false;
@@ -49,8 +49,32 @@ public class UserClientTest {
     @Test(timeout = 1000)
     public void testBadLogin() throws BadDataException, IOException {
         assertThrows(BadDataException.class, () -> {
-            UserClient some1 = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
+            UserClient some1 = new UserClient("johnDoe", "Password1");
         });
+    }
+
+    @Test(timeout = 1000)
+    public void testNewUser() throws BadDataException, IOException {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        PrintStream ps = new PrintStream(baos);
+        PrintStream originalOut = System.out;
+        System.setOut(ps);
+        UserClient someone = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
+        System.setOut(originalOut);
+        String output = baos.toString();
+        boolean checker = false;
+        // Checks if the desired text was printed
+        if (output.contains("New user created.")) {
+            checker = true;
+        }
+        assertTrue(checker);
+    }
+
+    @Test(timeout = 1000)
+    public void testSendMessage() throws BadDataException, IOException {
+        
+        sendMessage("johnDoe|Password1|John|Doe|null|null|null|true", "Hi, how are you?", "false");
+        
     }
 
 /*
@@ -88,16 +112,27 @@ User user = userDatabase.getUser("johnDoe");
 
     
     public static void main(String[] args) throws Exception {
+        userDatabase.createUser("johnDoe", "Password1", "John", "Doe", "false");
         // I guess what we can do is make a client socket here and make a server socket in server tests and then run
         // them simultaneously to test both at once
         ServerSocket server = new ServerSocket(1010);
-        serverReader = new BufferedReader(new InputStreamReader(server.getInputStream()));
-        serverWriter = new PrintWriter(server.getOutputStream(), true);
+        Socket socket = serverSocket.accept();
+        serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        serverWriter = new PrintWriter(socket.getOutputStream(), true);
         testLogin();
         testBadLogin();
         serverWriter.println("could not log in");
         serverWriter.flush();
-        
+        testNewUser();
+        testSendMessage();
+        String confirmation = serverReader.readLine();
+        if (confirmation.equals()) {
+            serverWriter.println();
+            serverWriter.flush();
+        } else {
+            serverWriter.println("false");
+            serverWriter.flush();
+        }
     }
 
 
