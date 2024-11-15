@@ -122,9 +122,7 @@ public class User implements UserInt {
         synchronized (LOCK) {
             blockedUsers.add(user);
           //if user is a friend, remove from friends
-            if (friends.contains(user)) {
-                friends.remove(user);
-            }
+            friends.remove(user);
             return true;
         }
     }

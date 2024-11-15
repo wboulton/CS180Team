@@ -1,22 +1,13 @@
-import java.util.ArrayList;
-
+import java.io.IOException;
 public interface UserClientInt {
-    void sendMessage(Message m) throws BadDataException;
-    void deleteMessage(Message m) throws BadDataException;
-    void editMessage(Message m, Message n) throws BadDataException;
-    void recoverMessages();
-    ArrayList getSentMessages();
-    ArrayList getRecievedMessages();
-    User getUser();
-    String getFilePath();
-    void blockUser(User u);
-    void unblockUser(User u);
-    void addFriend(User u);
-    void removeFriend(User u);
-    String getUserName();
+    void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
+    void deleteMessage(String sender, Message m) throws BadDataException, IOException;
+    void editMessage(Message m, String newContent) throws IOException;
+    void blockUser(String u) throws IOException;
+    void unblockUser(String u) throws IOException;
+    void addFriend(String u) throws IOException;
+    void removeFriend(String u) throws IOException;
     void setUserName(String name);
     void setPassword(String password);
-    void setFilePath(String path);
-
 
 }

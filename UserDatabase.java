@@ -86,6 +86,11 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
 
     }
+    //get users list
+    public ArrayList<User> getUsers() {
+        // This method gets the list of users
+        return users;
+    }
     //re-write entire DB
     public void updateDB() {
         try (BufferedWriter bwr = new BufferedWriter(new FileWriter(OUTPUT_FILE))) {
@@ -145,8 +150,15 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             user.changeUsername(newUsername);
         }
     }
+    //change password
+    public void changePassword(User user, String newPassword) {
+        //if the password is legal, change the password
+        if (legalPassword(newPassword)) {
+            user.changePassword(newPassword);
+        }
+    }
     //legal password
-    public boolean legalPassword(String password) {
+    public static boolean legalPassword(String password) {
 
         // This method checks if a password is legal - at least 8 characters, 
         //at least one number, at least one Capital letter and at least one lowercase letter
