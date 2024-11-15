@@ -67,13 +67,13 @@ public class UserClient implements UserClientInt {
         if (receiverUser.getBlockedUsers().contains(user.getUsername())) throw new BadDataException("You are blocked by this user");
 
         // Send SEND_MESSAGE command to the server
-        writer.println("SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
+        writer.println("message|SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
             File imageFile = new File(picture);
             try {
                 byte[] imageData = Files.readAllBytes(imageFile.toPath());
-                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + content + "|" + byteArrayToString(imageData));
+                writer.println("message|SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + content + "|" + byteArrayToString(imageData));
             } catch (IOException e) {
                 throw new BadDataException("Picture not found");
             }
@@ -82,7 +82,7 @@ public class UserClient implements UserClientInt {
 
     public void deleteMessage(String sender, Message m) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
+        writer.println("message|DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
     }
 
     public void editMessage(Message m, String newContent) throws IOException {
@@ -92,22 +92,22 @@ public class UserClient implements UserClientInt {
 
     public void blockUser(String usernameToBlock) throws IOException {
         // Send BLOCK command
-        writer.println("BLOCK|" + user.getUsername() + "|" + usernameToBlock);
+        writer.println("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
     }
 
     public void unblockUser(String usernameToUnblock) throws IOException {
         // Send UNBLOCK command
-        writer.println("UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+        writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
     }
 
     public void addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
-        writer.println("ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     public void removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
-        writer.println("REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     // Helper method to convert byte array to string format for transmission
@@ -121,12 +121,12 @@ public class UserClient implements UserClientInt {
 
     @Override
     public void setUserName(String name) {
-        writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
+        writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
     }
 
     @Override
     public void setPassword(String password) {
-        writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
+        writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
     public static void main(String[] args) {
