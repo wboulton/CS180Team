@@ -25,6 +25,7 @@ import static org.junit.Assert.*;
 public class UserClientTest {
 
     private static UserDatabase userDatabase = new UserDatabase();
+ 
     private User user = new User("johnDoe", "Password1", "John", "Doe", "false");
     private static final String OUTPUT_FILE = "users.txt";
     private BufferedReader reader;
@@ -93,7 +94,11 @@ public class UserClientTest {
         // I guess what we can do is make a client socket here and make a server socket in server tests and then run
         // them simultaneously to test both at once
         ServerSocket server = new ServerSocket(1010);
+
+        Socket socket = server.accept();
+
         Socket socket = serverSocket.accept();
+
         serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         serverWriter = new PrintWriter(socket.getOutputStream(), true);
         testLogin();
