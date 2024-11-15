@@ -28,3 +28,6 @@ The enum operations for the message handler include (from Action.java): GET_CONV
 The user handler takes in the writer and the input line recieved from the client. It can perform the operations of searching for a user, adding a friend, removing a friend, blocking a user, changing a username, and unblocking a user
 
 The enum operations for the user handler include (from Action.java): SEARCH, ADD_FRIEND, REMOVE_FRIEND, BLOCK, CHANGE_USERNAME, UNBLOCK
+
+# Threading 
+Threading in this class is handled slightly differently than threading from previous homeworks/projects. To avoid making a new object each time a client connects to the server and handling interactions within that object (in another java class), we use lambda functions to create a new thread directly with the run method included in the MediaServer.java class. More about this is described here [threading.md](threading.md).
