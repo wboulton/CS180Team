@@ -1,18 +1,32 @@
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.*;
 import java.io.*;
 import java.net.*;
+/**
+ * Team Project -- MediaServer
+ *
+ * This is server for handling multiple clients with threading
+ *
+ * @author William Boulton, Alan Yi
+ *
+ * @version November 15, 2024
+ * 
+ */
 
-public class MediaServer extends Thread {
+public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
     public static final Object lock = new Object();
-
+//run method used to control each thread that is made. There is some weird stuff going on with 
+//atomic references and atomic integers to make sure these threads work properly with final values
+//and lambda functions. It seems atomic types are effectively final so we can use them in more threaded
+//formats. 
     private static void run(Socket client, ServerSocket server) {
         Timer timer = new Timer();
         User user = null;
         AtomicInteger recentID = new AtomicInteger(0);
         MessageDatabase messageDatabase;
-        User currentlyViewing = null; 
+        AtomicReference<User> currentlyViewing = new AtomicReference<>(null); 
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
@@ -49,6 +63,10 @@ public class MediaServer extends Thread {
             
             //update DMs periodically
             final int updateDelay = 3000; // 3 seconds
+//this uses the TimerTask object included in the java.util package. Essentially what this does is 
+//it creates a timer on another thread that waits a set amount of time then runs the function after each interval
+//with how we have it set up this timertask will run recover messages then write new messages to the user every
+//three seconds. This allows "real time messaging". 
             TimerTask task = new TimerTask() {
                 public void run() {
                     //update messages
@@ -56,7 +74,8 @@ public class MediaServer extends Thread {
                     ArrayList<Message> recievedMessages = messageDatabase.getRecievedMessages();
                     for (Message message: recievedMessages) {
                         if (message.getMessageID() > recentID.get()) {
-                            if (message.getSender().equals(currentlyViewing.getUsername())) {
+                            if (currentlyViewing.get() != null && 
+                                message.getSender().equals(currentlyViewing.get().getUsername())) {
                                 writer.write("INCOMING\\|" + message.toString());
                                 writer.println();
                                 writer.flush();   
@@ -71,19 +90,26 @@ public class MediaServer extends Thread {
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
+                //random numbers for kill message, this should not be vulnerable because all other lines
+                //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     break;
                 }
                 System.out.printf("Recieved '%s' from %s\n", line, client.toString());
-                
+                if (line.split("\\|")[0].equals("user")) {
+                    userHandling(writer, line.substring(line.indexOf("\\|")));
+                } else if (line.split("\\|")[0].equals("message")) {
+                    currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("\\|")),
+                        messageDatabase, currentlyViewing.get()));
+                }
             }
             System.out.printf("Client %s disconnected\n", client);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
-    public void messageHandling(PrintWriter writer, String line, MessageDatabase database, User viewing) {
+//handle all message related functions sent by the client
+    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing) {
 //GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
         try {
             String temp = line.split("\\|")[0];
@@ -91,25 +117,28 @@ public class MediaServer extends Thread {
             Action task = Action.valueOf(temp);
             switch (task) {
                 case GET_CONVERSATION:
-                    database.recoverMessages();
-                    ArrayList<Message> messages = database.getSentMessages();
-                    for (Message message : database.getRecievedMessages()) {
+                    messageDatabase.recoverMessages();
+                    ArrayList<Message> messages = messageDatabase.getSentMessages();
+                    for (Message message : messageDatabase.getRecievedMessages()) {
                         messages.add(message);
                     }
                     messages.sort(Comparator.comparingInt(Message::getMessageID));
                     for (Message item : messages) {
-                        writer.write(item.toString());
-                        writer.println();
-                        writer.flush();
+                        if (viewing.getUsername().equals(item.getSender()) || 
+                            viewing.getUsername().equals(item.getReciever())) {
+                            writer.write(item.toString());
+                            writer.println();
+                            writer.flush();
+                        }
                     }
-                    break;
+                    return viewing;
 //public Message(User sender, User reciever, String content)
                 case SEND_MESSAGE:
                     String[] messageInfo = information.split("\\|");
                     User sender = UserDatabase.getUser(messageInfo[0]);
                     User reciever = UserDatabase.getUser(messageInfo[1]);
                     Message message = new Message(sender, reciever, messageInfo[2]);
-                    database.sendMessage(message);
+                    messageDatabase.sendMessage(message);
                     if (messageInfo.length > 3) {
                         String[] pictureStrings = messageInfo[4].split(",");
                         byte[] picture = new byte[pictureStrings.length];
@@ -118,34 +147,39 @@ public class MediaServer extends Thread {
                         }
                         message.addPicture(picture);
                     }
-                    break;
+                    return viewing;
                 case DELETE_MESSAGE:
-                    ArrayList<Message> sent = database.getSentMessages();
+                    ArrayList<Message> sent = messageDatabase.getSentMessages();
                     int id = Integer.parseInt(information.split("\\|")[0]);
                     for (Message item : sent) {
                         if (item.getMessageID() == id) {
-                            database.deleteMessage(item);
+                            messageDatabase.deleteMessage(item);
                         }
                     }
-                    break;
+                    return viewing;
                 case EDIT_MESSAGE:
-                    ArrayList<Message> sentMessages = database.getSentMessages();
+                    ArrayList<Message> sentMessages = messageDatabase.getSentMessages();
                     Message editedMessage = new Message(information);
                     for (Message item : sentMessages) {
                         if (item.getMessageID() == editedMessage.getMessageID()) {
-                            database.editMessage(item, editedMessage);
+                            messageDatabase.editMessage(item, editedMessage);
                         }
                     }
-                    break;
+                    return viewing;
+                case SET_VIEWING:
+                    viewing = UserDatabase.getUser(information);
+                    return viewing;
                 default:
-                    return;
+                    return viewing;
             }
         } catch (Exception e) {
             e.printStackTrace();
+            return viewing;
         }
     }
 
-    public void userHandling(PrintWriter writer, String line) {
+//handle all user related functions sent by the client.
+    public static void userHandling(PrintWriter writer, String line) {
         try {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
@@ -153,14 +187,14 @@ public class MediaServer extends Thread {
             switch (action) {
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
-                    writer.write("USER\\|"+userFound.toString());
+                    writer.write("USER\\|" + userFound.toString());
                     writer.println();
                     writer.flush();   
                     break;
                 case ADD_FRIEND:
                     User user = UserDatabase.getUser(inputs[1]);
                     User otherUser = UserDatabase.getUser(inputs[2]);
-                    UserDatabase.addFriend(user,otherUser);
+                    UserDatabase.addFriend(user, otherUser);
                     break;
                 case REMOVE_FRIEND:
                     User user2 = UserDatabase.getUser(inputs[1]);
@@ -187,10 +221,11 @@ public class MediaServer extends Thread {
                     break;
                 default:
                     break;
-            }
-        } catch (IndexOutOfBoundsException e) {
+            }            
+
+        }catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
-        } catch(Exception e) {
+        }catch(Exception e){
             e.printStackTrace();
         }
     }
