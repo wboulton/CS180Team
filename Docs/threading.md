@@ -9,7 +9,7 @@ synchronized (lock) {
 }
 ```
 
-# MessageDatabaseThread.java
+# MessageDatabaseThread.java (removed)
 This class handles the threading for Message Database. The actions for the message database include getting sent messages, getting recieved messages, recovering messages, getting a user, sending a message, deleting a message, and editting a message.
 
 The parameters for constructing a MessageDatabaseThread are:
@@ -31,7 +31,7 @@ GET_USER, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
 
 If there are not enough elements passed into the Values parameter for the particular action, an IndexOutOfBoundsException will be thrown and program will print a notice to check the parameters. Other exceptions will have their stack traces printed. 
 
-# UserDatabaseThread.java
+# UserDatabaseThread.java (removed)
 
 The UserDatabaseThread handles the threading for the user database class. The actions for the userdatabase thread include creating a user, verifying login, changing a username, searching for a user, adding a friend, removing a friend, blocking a user, and unblocking a user.
 
