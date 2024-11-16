@@ -37,16 +37,20 @@ public class MediaServer extends Thread implements ServerInterface {
                     //login
                     String username = reader.readLine();
                     String password = reader.readLine();
+                    System.out.println(username);
+                    System.out.println(password);
                     boolean allowed = database.verifyLogin(username, password);
                     if (allowed) {
                         user = UserDatabase.getUser(username);
                         messageDatabase = new MessageDatabase(user);
                         messageDatabase.recoverMessages();
+                        writer.println("Logged in!");
+                        writer.flush();
                         break;
                     } else {
                         writer.println("could not log in");
                         writer.flush();
-                        continue;
+                        return;
                     }
                 }
             } else if (line.equals("new user")) {
@@ -89,17 +93,20 @@ public class MediaServer extends Thread implements ServerInterface {
 
             // this stuff is just in testing state rn
             while (true) {
+                reader.readLine();
                 line = reader.readLine();
+                System.out.println(line);
                 //random numbers for kill message, this should not be vulnerable because all other lines
                 //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     break;
                 }
                 System.out.printf("Recieved '%s' from %s\n", line, client.toString());
+                System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
                     userHandling(writer, line.substring(line.indexOf("\\|")));
                 } else if (line.split("\\|")[0].equals("message")) {
-                    currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("\\|")),
+                    currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
                         messageDatabase, currentlyViewing.get()));
                 }
             }

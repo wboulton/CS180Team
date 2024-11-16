@@ -25,7 +25,7 @@ public class UserClient implements UserClientInt {
     }
 
     private void connectToServer() throws IOException {
-        socket = new Socket("localhost", 1010);
+        socket = new Socket("localhost", 8080);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         scanner = new Scanner(System.in);
@@ -43,7 +43,6 @@ public class UserClient implements UserClientInt {
 
         System.out.println("Login successful.");
         this.user = UserDatabase.getUser(username);
-        this.messageDatabase = new MessageDatabase(user);
     }
 
     private void createNewUser(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
@@ -67,13 +66,13 @@ public class UserClient implements UserClientInt {
         if (receiverUser.getBlockedUsers().contains(user.getUsername())) throw new BadDataException("You are blocked by this user");
 
         // Send SEND_MESSAGE command to the server
-        writer.println("message|SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
+        writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
             File imageFile = new File(picture);
             try {
                 byte[] imageData = Files.readAllBytes(imageFile.toPath());
-                writer.println("message|SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + content + "|" + byteArrayToString(imageData));
+                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + content + "|" + byteArrayToString(imageData));
             } catch (IOException e) {
                 throw new BadDataException("Picture not found");
             }
@@ -82,7 +81,7 @@ public class UserClient implements UserClientInt {
 
     public void deleteMessage(String sender, Message m) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("message|DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
+        writer.println("DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
     }
 
     public void editMessage(Message m, String newContent) throws IOException {
@@ -92,22 +91,22 @@ public class UserClient implements UserClientInt {
 
     public void blockUser(String usernameToBlock) throws IOException {
         // Send BLOCK command
-        writer.println("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
+        writer.println("BLOCK|" + user.getUsername() + "|" + usernameToBlock);
     }
 
     public void unblockUser(String usernameToUnblock) throws IOException {
         // Send UNBLOCK command
-        writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+        writer.println("UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
     }
 
     public void addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
-        writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     public void removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
-        writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     // Helper method to convert byte array to string format for transmission
@@ -121,20 +120,33 @@ public class UserClient implements UserClientInt {
 
     @Override
     public void setUserName(String name) {
-        writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
+        writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
     }
 
     @Override
     public void setPassword(String password) {
-        writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
+        writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
     public static void main(String[] args) {
-        try {
-            UserClient client = new UserClient("test", "Testers123!");
-            client.sendMessage("receiver", "Hello!", null);  // Example of sending a message
-        } catch (Exception e) {
-            e.printStackTrace();
+        database = new UserDatabase();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("new or existing user?");
+        String existance = sc.nextLine();
+        if (existance.equalsIgnoreCase("existing")) {
+            System.out.println("Username: ");
+            
+            String username = sc.nextLine();
+            System.out.println("Password: ");
+            String password = sc.nextLine();
+            try {
+                UserClient client = new UserClient(username, password);
+                System.out.println("Write a message");
+                String message = sc.nextLine();
+                client.sendMessage("name", message, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
