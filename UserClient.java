@@ -86,32 +86,35 @@ public class UserClient implements UserClientInt {
 
     public void deleteMessage(String sender, Message m) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
+        writer.println("message|DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
     }
 
     public void editMessage(Message m, String newContent) throws IOException {
         // Send EDIT_MESSAGE command
-        writer.println("EDIT_MESSAGE|" + m.getMessageID() + "|" + newContent);
+        writer.println("message|EDIT_MESSAGE|" + m.getMessageID() + "|" + newContent);
     }
-
+    public void getConversation(String username) throws IOException {
+        // Send GET_CONVERSATION command
+        writer.println("user|SET_VIEWING|" + username);
+        writer.println("message|GET_CONVERSATION|");
+    }
     public void blockUser(String usernameToBlock) throws IOException {
         // Send BLOCK command
-        writer.println("BLOCK|" + user.getUsername() + "|" + usernameToBlock);
+        writer.println("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
     }
-
     public void unblockUser(String usernameToUnblock) throws IOException {
         // Send UNBLOCK command
-        writer.println("UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+        writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
     }
 
     public void addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
-        writer.println("ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     public void removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
-        writer.println("REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     // Helper method to convert byte array to string format for transmission
@@ -125,12 +128,12 @@ public class UserClient implements UserClientInt {
 
     @Override
     public void setUserName(String name) {
-        writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
+        writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
     }
 
     @Override
     public void setPassword(String password) {
-        writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
+        writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
     public static void main(String[] args) {
