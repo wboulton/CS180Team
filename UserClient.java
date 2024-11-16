@@ -89,9 +89,9 @@ public class UserClient implements UserClientInt {
         writer.println("DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
     }
 
-    public void editMessage(Message m, String newContent) throws IOException {
+    public void editMessage(int id, String newContent) throws IOException {
         // Send EDIT_MESSAGE command
-        writer.println("EDIT_MESSAGE|" + m.getMessageID() + "|" + newContent);
+        writer.println("message|" + "EDIT_MESSAGE|" + id + "|" + newContent);
     }
 
     public void blockUser(String usernameToBlock) throws IOException {
@@ -146,10 +146,26 @@ public class UserClient implements UserClientInt {
             String password = sc.nextLine();
             try {
                 UserClient client = new UserClient(username, password);
-                System.out.println("Write a message");
-                String message = sc.nextLine();
-                client.sendMessage("name", message, null);
-                client.kill();
+                System.out.println("write or edit?");
+                String choice = sc.nextLine();
+                if (choice.equalsIgnoreCase("write")) {
+                    System.out.println("Write a message");
+                    String message = sc.nextLine();
+                    client.sendMessage("name", message, null);
+                    client.kill();
+                } else if (choice.equalsIgnoreCase("edit")) {
+                    System.out.println("What message do you want to edit? (id)");
+                    String idString = sc.nextLine();
+                    int id = Integer.parseInt(idString);
+                    try {
+                        System.out.println("what do you want to say?");
+                        String content = sc.nextLine();
+                        client.editMessage(id, content);
+                    } catch (Exception e) {
+                        System.out.println("put it good id's you bozo");
+                    }
+                    client.kill();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
