@@ -24,6 +24,11 @@ public class UserClient implements UserClientInt {
         createNewUser(username, password, firstName, lastName, profilePicture);
     }
 
+    private void kill() {
+        writer.println("77288937499272");
+        writer.flush();
+    }
+
     private void connectToServer() throws IOException {
         socket = new Socket("localhost", 8080);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -144,6 +149,7 @@ public class UserClient implements UserClientInt {
                 System.out.println("Write a message");
                 String message = sc.nextLine();
                 client.sendMessage("name", message, null);
+                client.kill();
             } catch (Exception e) {
                 e.printStackTrace();
             }

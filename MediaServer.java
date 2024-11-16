@@ -93,7 +93,6 @@ public class MediaServer extends Thread implements ServerInterface {
 
             // this stuff is just in testing state rn
             while (true) {
-                reader.readLine();
                 line = reader.readLine();
                 System.out.println(line);
                 //random numbers for kill message, this should not be vulnerable because all other lines
@@ -106,6 +105,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 if (line.split("\\|")[0].equals("user")) {
                     userHandling(writer, line.substring(line.indexOf("\\|")));
                 } else if (line.split("\\|")[0].equals("message")) {
+                    System.out.println(line);
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
                         messageDatabase, currentlyViewing.get()));
                 }
