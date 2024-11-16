@@ -27,6 +27,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private static ArrayList<User> users;
     private static final String OUTPUT_FILE = "users.txt";
+    private static final Object LOCK = new Object();
     public UserDatabase() {
         // This is a constructor
         //if the files do not exist, create them
@@ -77,12 +78,18 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     //add to database
     public void writeDB(User user) {
         // append user to database
-        try {
-            FileWriter writer = new FileWriter(OUTPUT_FILE, true);
-            writer.write(user.toString() + "\n");
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
+        synchronized (LOCK) {
+            try {
+                FileWriter writer = new FileWriter(OUTPUT_FILE, true);
+                writer.write(user.toString() + "\n");
+                //if the user is not already in the database, add it
+                if (!users.contains(user)) {
+                    users.add(user);
+                }
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -92,38 +99,54 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         return users;
     }
     //re-write entire DB
-    public void updateDB() {
-        try (BufferedWriter bwr = new BufferedWriter(new FileWriter(OUTPUT_FILE))) {
-            for (User user : users) {
-                bwr.write(user.toString());
-                bwr.newLine();
+    public static void updateDB() {
+        synchronized (LOCK) {
+            try (BufferedWriter bwr = new BufferedWriter(new FileWriter(OUTPUT_FILE))) {
+                for (User user : users) {
+                    bwr.write(user.toString());
+                    bwr.newLine();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
     public static void addFriend(User user, User friend) {
         // This method adds a friend to a user
-        user.addFriend(friend.getUsername());
+        synchronized (LOCK) {
+            //if the user is not already a friend, add the friend
+            if (!user.getFriends().contains(friend.getUsername())) {
+                user.addFriend(friend.getUsername());
+            }
+            updateDB();
+        }
     }
     public static void removeFriend(User user, User friend) {
         //if the user is a friend, remove the friend
-        if (user.getFriends().contains(friend.getUsername())) {
-            user.removeFriend(friend.getUsername());
+        synchronized (LOCK) {
+            if (user.getFriends().contains(friend.getUsername())) {
+                user.removeFriend(friend.getUsername());
+            }
+            updateDB();
         }
     }
     public static void blockUser(User user, User blockedUser) {
         // This method blocks a user
-        user.blockUser(blockedUser.getUsername());
+        synchronized (LOCK) {
+            user.blockUser(blockedUser.getUsername());
+            updateDB();
+        }
     }
     
     public static boolean unblockUser(User user, User blockedUser) {
         // This method unblocks a user
-        if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
-            user.unblockUser(blockedUser.getUsername());
-            return true;
+        synchronized (LOCK) {
+            if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
+                user.unblockUser(blockedUser.getUsername());
+                return true;
+            }
+            return false;
         }
-        return false;
     }
 
     public static User getUser(String username) {
@@ -137,24 +160,31 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     }
     public boolean verifyLogin(String username, String password) {
         // This method verifies a user's login
-        User user = getUser(username);
-        if (user == null) {
-            return false;
+        synchronized (LOCK) {
+            User user = getUser(username);
+            if (user == null) {
+                return false;
+            }
+            return user.verifyLogin(password);
         }
-        return user.verifyLogin(password);
     }
     //change username
     public void changeUsername(User user, String newUsername) {
         //if the username is not taken, change the username
-        if (getUser(newUsername) == null) {
-            user.changeUsername(newUsername);
+        synchronized (LOCK) {
+            if (getUser(newUsername) == null) {
+                user.changeUsername(newUsername);
+            }
+            updateDB();
         }
     }
     //change password
     public void changePassword(User user, String newPassword) {
         //if the password is legal, change the password
-        if (legalPassword(newPassword)) {
-            user.changePassword(newPassword);
+        synchronized (LOCK) {
+            if (legalPassword(newPassword)) {
+                user.changePassword(newPassword);
+            }
         }
     }
     //legal password
@@ -166,27 +196,28 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         if (password.contains("|")) {
             return false;
         }
-        return password.length() >= 8 && password.matches(".*[0-9].*") 
+        return password.length() >= 8 && password.matches(".*[0-9].*")
             && password.matches(".*[A-Z].*") && password.matches(".*[a-z].*");
     }
 
     //load function for when the program starts
     public void load() {
         // This method loads the database
-        //make it not recursive
-        users.clear();
-        try {
-            Scanner scanner = new Scanner(new File(OUTPUT_FILE));
-            while (scanner.hasNextLine()) {
-                User user = new User(scanner.nextLine());
-                //if the user isnt already in the database, add it
-                if (!users.contains(user)) {
-                    users.add(user);
+        synchronized (LOCK) {
+            users.clear();
+            try {
+                Scanner scanner = new Scanner(new File(OUTPUT_FILE));
+                while (scanner.hasNextLine()) {
+                    User user = new User(scanner.nextLine());
+                    //if the user isnt already in the database, add it
+                    if (!users.contains(user)) {
+                        users.add(user);
+                    }
                 }
+                scanner.close();
+            } catch (Exception e) {
+                e.printStackTrace();
             }
-            scanner.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
     }
     public boolean validateUser(String username) {
@@ -197,7 +228,11 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     //add user
     public void addUser(User user) {
         // This method adds a user
-        users.add(user);
-        updateDB();
+        synchronized (LOCK) {
+            if (!users.contains(user)) {
+                users.add(user);
+                updateDB();
+            }
+        }
     }
 }

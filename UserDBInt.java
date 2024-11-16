@@ -29,10 +29,16 @@ public interface UserDBInt {
 
     boolean verifyLogin(String username, String password);
     void changeUsername(User user, String newUsername);
+
     static boolean legalPassword(String password) {
         return false;
     }
+
     void writeDB(User user);
-    void updateDB();
+
+    static void updateDB() {
+
+    }
+
     void load();
 }

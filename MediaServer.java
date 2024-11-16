@@ -215,10 +215,6 @@ public class MediaServer extends Thread implements ServerInterface {
                     User userToModify = UserDatabase.getUser(inputs[1]);
                     database.changeUsername(userToModify, inputs[2]);
                     break;
-                case CHANGE_PASSWORD:
-                    User userToModify2 = UserDatabase.getUser(inputs[1]);
-                    database.changePassword(userToModify2, inputs[2]);
-                    break;
                 case BLOCK:
                     User user3 = UserDatabase.getUser(inputs[1]);
                     User otherUser3 = UserDatabase.getUser(inputs[2]);

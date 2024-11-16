@@ -103,7 +103,10 @@ public class UserClient implements UserClientInt {
         // Send UNBLOCK command
         writer.println("UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
     }
-
+    public void getConeversation(String username) throws IOException {
+        writer.println("message|SET_VIEWING|" + user.getUsername());
+        writer.println("message|GET_CONVERSATION|" + username);
+    }
     public void addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
         writer.println("ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
