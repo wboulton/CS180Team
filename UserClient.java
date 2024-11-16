@@ -86,35 +86,35 @@ public class UserClient implements UserClientInt {
 
     public void deleteMessage(String sender, Message m) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("message|DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
+        writer.println("DELETE_MESSAGE|" + sender + "|" + m.getMessageID());
     }
 
-    public void editMessage(Message m, String newContent) throws IOException {
+    public void editMessage(int id, String newContent) throws IOException {
         // Send EDIT_MESSAGE command
-        writer.println("message|EDIT_MESSAGE|" + m.getMessageID() + "|" + newContent);
+        writer.println("message|" + "EDIT_MESSAGE|" + id + "|" + newContent);
     }
-    public void getConversation(String username) throws IOException {
-        // Send GET_CONVERSATION command
-        writer.println("user|SET_VIEWING|" + username);
-        writer.println("message|GET_CONVERSATION|");
-    }
+
     public void blockUser(String usernameToBlock) throws IOException {
         // Send BLOCK command
-        writer.println("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
-    }
-    public void unblockUser(String usernameToUnblock) throws IOException {
-        // Send UNBLOCK command
-        writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+        writer.println("BLOCK|" + user.getUsername() + "|" + usernameToBlock);
     }
 
+    public void unblockUser(String usernameToUnblock) throws IOException {
+        // Send UNBLOCK command
+        writer.println("UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+    }
+    public void getConeversation(String username) throws IOException {
+        writer.println("message|SET_VIEWING|" + user.getUsername());
+        writer.println("message|GET_CONVERSATION|" + username);
+    }
     public void addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
-        writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     public void removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
-        writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
     }
 
     // Helper method to convert byte array to string format for transmission
@@ -128,12 +128,12 @@ public class UserClient implements UserClientInt {
 
     @Override
     public void setUserName(String name) {
-        writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
+        writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
     }
 
     @Override
     public void setPassword(String password) {
-        writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
+        writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
     public static void main(String[] args) {
@@ -149,10 +149,26 @@ public class UserClient implements UserClientInt {
             String password = sc.nextLine();
             try {
                 UserClient client = new UserClient(username, password);
-                System.out.println("Write a message");
-                String message = sc.nextLine();
-                client.sendMessage("name", message, null);
-                client.kill();
+                System.out.println("write or edit?");
+                String choice = sc.nextLine();
+                if (choice.equalsIgnoreCase("write")) {
+                    System.out.println("Write a message");
+                    String message = sc.nextLine();
+                    client.sendMessage("name", message, null);
+                    client.kill();
+                } else if (choice.equalsIgnoreCase("edit")) {
+                    System.out.println("What message do you want to edit? (id)");
+                    String idString = sc.nextLine();
+                    int id = Integer.parseInt(idString);
+                    try {
+                        System.out.println("what do you want to say?");
+                        String content = sc.nextLine();
+                        client.editMessage(id, content);
+                    } catch (Exception e) {
+                        System.out.println("put it good id's you bozo");
+                    }
+                    client.kill();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }

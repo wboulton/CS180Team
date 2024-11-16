@@ -170,6 +170,7 @@ public class MessageDatabase extends Thread implements MData {
     @Override
     public void editMessage(Message m, Message n) throws BadDataException {
         synchronized (LOCK) {
+            System.out.println("EDITING MESSAGE");
             n.setMessageID(m.getMessageID());
             deleteMessage(m);
             sendMessage(n);
