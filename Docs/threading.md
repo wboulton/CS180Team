@@ -4,13 +4,12 @@ Thread-safe procedures including creating a static object and using the synchron
 
 ```java
 public static final Object lock = new Object();
-synchronized(lock){
+synchronized (lock) {
     //thread-safe action
 }
 ```
 
-
-# MessageDatabaseThread.java
+# MessageDatabaseThread.java (removed)
 This class handles the threading for Message Database. The actions for the message database include getting sent messages, getting recieved messages, recovering messages, getting a user, sending a message, deleting a message, and editting a message.
 
 The parameters for constructing a MessageDatabaseThread are:
@@ -32,7 +31,7 @@ GET_USER, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
 
 If there are not enough elements passed into the Values parameter for the particular action, an IndexOutOfBoundsException will be thrown and program will print a notice to check the parameters. Other exceptions will have their stack traces printed. 
 
-# UserDatabaseThread.java
+# UserDatabaseThread.java (removed)
 
 The UserDatabaseThread handles the threading for the user database class. The actions for the userdatabase thread include creating a user, verifying login, changing a username, searching for a user, adding a friend, removing a friend, blocking a user, and unblocking a user.
 
@@ -56,4 +55,4 @@ Likewise, the Values variable contains the particular parameters to be performed
 If there are not enough elements passed into the Values parameter for the particular action, an IndexOutOfBoundsException will be thrown and program will print a notice to check the parameters. Other exceptions will have their stack traces printed. 
 
 # Network threads
-The Server creates a thread to interact with each client trying to connect with it. To do this, we use lambda functions which create the new thread with a run method defined in the same class and pass final variables with it. This way we do not need to create another class or another object that needs to be passed to the Thread object. 
+The Server creates a thread to interact with each client trying to connect with it. To do this, we use lambda functions which create the new thread with a run method defined in the same class and pass necessary variables with it. This way we do not need to create another class or another object that needs to be passed to the Thread object. The downside of running threads this way is that all information passed to the thread must be effectively final and the threads cannot access object fields. This limits our flexibility with datatypes and structure. To get around this, we define a new final variable socket each time a user tries to connect and create the thread with that final socket. With each thread a TimerTask from the java.util package is created in order to update messages and alow for real time messaging. This also works as another thread which updates the messages that have been sent to the user each time it gets run (every three seconds). The run method for this class also needs effectively final variables to run, so it uses an atomic variable currentlyViewing which represents the user that the client is currently looking at messages from. 
