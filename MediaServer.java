@@ -133,7 +133,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     for (Message item : messages) {
                         if (viewing.getUsername().equals(item.getSender()) || 
                             viewing.getUsername().equals(item.getReciever())) {
-                            writer.write(item.toString());
+                            writer.write("MESSAGE|"+item.toString());
                             writer.println();
                             writer.flush();
                         }
