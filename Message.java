@@ -55,7 +55,8 @@ public class Message implements MessageInterface {
                 e.printStackTrace();
             }
             try (BufferedWriter bwr = new BufferedWriter(new FileWriter(messageIDFile))) {
-                bwr.write(messageID + 1);
+                String idLocation = String.format("%d", messageID + 1);
+                bwr.write(idLocation);
             } catch (Exception e) {
                 e.printStackTrace();
             }

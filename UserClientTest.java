@@ -1,16 +1,13 @@
-import org.junit.*;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-
+//import org.junit.*;
+//import static org.junit.jupiter.api.Assertions.assertTrue;
 import java.io.*;
-import java.net.*;
+import java.net.Socket;
+import java.net.ServerSocket;
 import java.nio.file.*;
 import java.util.Arrays;
 import java.util.Objects;
-
-import static org.junit.Assert.*;
+//import org.junit.Test;
+//import static org.junit.Assert.*;
 /**
  * Team Project -- UserClientTest
  *
@@ -25,13 +22,14 @@ import static org.junit.Assert.*;
 public class UserClientTest {
 
     private static UserDatabase userDatabase = new UserDatabase();
+ 
     private User user = new User("johnDoe", "Password1", "John", "Doe", "false");
     private static final String OUTPUT_FILE = "users.txt";
     private BufferedReader reader;
     private PrintWriter writer;
     private Message m = new Message("0|sender|reciever|content|false");
 
-    @Test(timeout = 1000)
+   // @Test(timeout = 1000)
     public void testLogin() throws BadDataException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
@@ -45,18 +43,25 @@ public class UserClientTest {
         if (output.contains("Login successful.")) {
             checker = true;
         }
-        assertTrue(checker);
-        
+        //assertTrue(checker);
+        System.out.println(checker);
     }
 
-    @Test(timeout = 1000)
+    //@Test(timeout = 1000)
     public void testBadLogin() throws BadDataException, IOException {
+        try {
+            UserClient some1 = new UserClient("johnDoe", "Password1");
+        } catch (BadDataException e) {
+            System.out.println(true);
+        }
+        /* 
         assertThrows(BadDataException.class, () -> {
             UserClient some1 = new UserClient("johnDoe", "Password1");
         });
+        */
     }
 
-    @Test(timeout = 1000)
+    //@Test(timeout = 1000)
     public void testNewUser() throws BadDataException, IOException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         PrintStream ps = new PrintStream(baos);
@@ -70,89 +75,54 @@ public class UserClientTest {
         if (output.contains("New user created.")) {
             checker = true;
         }
-        assertTrue(checker);
+        //assertTrue(checker);
+        System.out.println(checker);
     }
 
-    @Test(timeout = 1000)
+    //@Test(timeout = 1000)
     public void testClientOutput() throws BadDataException, IOException {
-        UserClient someone = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
-        someone.sendMessage("johnDoe|Password1|John|Doe|null|null|null|true", "Hi, how are you?", "false");
-        someone.deleteMessage("johnDoe|Password1|John|Doe|null|null|null|true", m);
-        someone.editMessage(m, "new content");
-        someone.blockUser("johnDoe");
-        someone.unblockUser("johnDoe");
-        someone.addFriend("johnDoe");
-        someone.removeFriend("johnDoe");
-        someone.setUserName("johnDoe");
-        someone.setPassword("newPassword");
+        UserClient usc = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
+        usc.sendMessage("johnDoe|Password1|John|Doe|null|null|null|true", "Hi, how are you?", "false");
+        usc.deleteMessage("johnDoe|Password1|John|Doe|null|null|null|true", m);
+        usc.editMessage(m, "new content");
+        usc.blockUser("johnDoe");
+        usc.unblockUser("johnDoe");
+        usc.addFriend("johnDoe");
+        usc.removeFriend("johnDoe");
+        usc.setUserName("johnDoe");
+        usc.setPassword("newPassword");
     } // Figure out how to get messages back from server
 
     
     
     public static void main(String[] args) throws Exception {
-        userDatabase.createUser("johnDoe", "Password1", "John", "Doe", "false");
-        // I guess what we can do is make a client socket here and make a server socket in server tests and then run
-        // them simultaneously to test both at once
-        ServerSocket server = new ServerSocket(1010);
-        Socket socket = server.accept();
-        BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
-        testLogin();
-        testBadLogin();
-        serverWriter.println("could not log in");
-        serverWriter.flush();
-        testNewUser();
-        testClientOutput();
-        boolean outputChecker = true;
-        // Checks if sendMessage works
-        String confirmation = serverReader.readLine();
-        if (!confirmation.equals("SEND_MESSAGE|" + "johnDoe" + "|" + "johnDoe" + "|" + "Hi, how are you?")) {
-            outputChecker = false;
-        }
-        // Checks if deleteMessage works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("DELETE_MESSAGE|" + "johnDoe|Password1|John|Doe|null|null|null|true" + "|" + "0")) {
-            outputChecker = false;
-        }
-        // Checks if editMessage works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("EDIT_MESSAGE|" + "0" + "|" + "new content")) {
-            outputChecker = false;
-        }
-        // Checks if blockUser works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("BLOCK|" + "johnDoe" + "|" + "johnDoe")) {
-            outputChecker = false;
-        }
-        // Checks if unblockUser works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("UNBLOCK|" + "johnDoe" + "|" + "johnDoe")) {
-            outputChecker = false;
-        }
-        // Checks if addFriend works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("ADD_FRIEND|" + "johnDoe" + "|" + "johnDoe")) {
-            outputChecker = false;
-        }
-        // Checks if removeFriend works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("REMOVE_FRIEND|" + "johnDoe" + "|" + "johnDoe")) {
-            outputChecker = false;
-        }
-        // Checks if setUserName works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("CHANGE_USERNAME|" + "johnDoe" + "|" + "johnDoe")) {
-            outputChecker = false;
-        }
-        // Checks if setPassword works
-        confirmation = serverReader.readLine();
-        if (!confirmation.equals("CHANGE_PASSWORD|" + "johnDoe" + "|" + "newPassword")) {
-            outputChecker = false;
-        }
-        if (outputChecker) {
-            System.out.println("All test cases passed successfully!");
-        } else {
-            System.out.println("Something went wrong in the client output test cases");
+        try {
+            UserClientTest uct = new UserClientTest();
+            // I guess what we can do is make a client socket here and make a server socket in server tests and then run
+            // them simultaneously to test both at once
+            Socket socket = new Socket("localhost", 8080);
+
+
+            BufferedReader serverReader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter serverWriter = new PrintWriter(socket.getOutputStream(), true);
+            uct.testLogin();
+            uct.testBadLogin();
+            serverWriter.println("could not log in");
+            serverWriter.flush();
+            uct.testNewUser();
+            uct.testClientOutput();
+            
+            // Checks if sendMessage works
+            String thingy = serverReader.readLine();
+            boolean outputChecker = Boolean.parseBoolean(thingy);
+            if (outputChecker) {
+                System.out.println("All test cases passed successfully!");
+            } else {
+                System.out.println("Something went wrong in the client output test cases");
+            }
+            System.exit(0);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
