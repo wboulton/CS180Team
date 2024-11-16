@@ -1,5 +1,11 @@
 import org.junit.Assert;
 import org.junit.Test;
+import org.junit.runner.JUnitCore;
+import org.junit.runner.Result;
+import org.junit.runner.notification.Failure;
+
+import java.io.*;
+import java.lang.reflect.Modifier;
 
 import java.beans.Transient;
 import java.io.*;
