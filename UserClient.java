@@ -25,7 +25,7 @@ public class UserClient implements UserClientInt {
     }
 
     private void connectToServer() throws IOException {
-        socket = new Socket("localhost", 1010);
+        socket = new Socket("localhost", 8080);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         scanner = new Scanner(System.in);
@@ -43,7 +43,6 @@ public class UserClient implements UserClientInt {
 
         System.out.println("Login successful.");
         this.user = UserDatabase.getUser(username);
-        this.messageDatabase = new MessageDatabase(user);
     }
 
     private void createNewUser(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
@@ -67,7 +66,7 @@ public class UserClient implements UserClientInt {
         if (receiverUser.getBlockedUsers().contains(user.getUsername())) throw new BadDataException("You are blocked by this user");
 
         // Send SEND_MESSAGE command to the server
-        writer.println("SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
+        writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
             File imageFile = new File(picture);
@@ -130,11 +129,24 @@ public class UserClient implements UserClientInt {
     }
 
     public static void main(String[] args) {
-        try {
-            UserClient client = new UserClient("test", "Testers123!");
-            client.sendMessage("receiver", "Hello!", null);  // Example of sending a message
-        } catch (Exception e) {
-            e.printStackTrace();
+        database = new UserDatabase();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("new or existing user?");
+        String existance = sc.nextLine();
+        if (existance.equalsIgnoreCase("existing")) {
+            System.out.println("Username: ");
+            
+            String username = sc.nextLine();
+            System.out.println("Password: ");
+            String password = sc.nextLine();
+            try {
+                UserClient client = new UserClient(username, password);
+                System.out.println("Write a message");
+                String message = sc.nextLine();
+                client.sendMessage("name", message, null);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 }
