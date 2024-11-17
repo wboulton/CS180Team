@@ -26,7 +26,7 @@ Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private static ArrayList<User> users;
-    private static final String OUTPUT_FILE = "users.txt";
+    private static final String OUTPUT_FILE = "CS180Team/users.txt";
     private static final Object LOCK = new Object();
     public UserDatabase() {
         // This is a constructor
@@ -71,8 +71,10 @@ Extra credit opportunity – Add support to upload and display profile pictures.
                 throw new BadDataException("Profile picture not found");
             }
         }
+        User user = new User(username, password, firstName, lastName, profilePicture);
+        writeDB(user);
         //create a new user
-        return new User(username, password, firstName, lastName, profilePicture);
+        return user;
         
     }
     //add to database

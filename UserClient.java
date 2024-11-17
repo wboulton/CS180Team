@@ -71,7 +71,6 @@ public class UserClient implements UserClientInt {
         } else {
             throw new BadDataException(response);
         }
-
     }
 
     @Override
@@ -192,7 +191,6 @@ public class UserClient implements UserClientInt {
             String profilePicture = "false";
             try {
                 client = new UserClient(username, password, firstName, lastName, profilePicture);
-                client.input = new ObjectInputStream(client.socket.getInputStream());
             } catch (Exception e) {
                 e.printStackTrace();
             }

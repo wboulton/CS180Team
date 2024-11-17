@@ -64,6 +64,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 String pfp = reader.readLine();
                 try {
                     user = database.createUser(username, password, firstname, lastname, pfp);
+                    System.out.println("user created");
                     writer.println("user created");
                     writer.flush();
                 } catch (Exception e) {
@@ -216,6 +217,8 @@ public class MediaServer extends Thread implements ServerInterface {
                 case ADD_FRIEND:
                     User user = UserDatabase.getUser(inputs[1]);
                     User otherUser = UserDatabase.getUser(inputs[2]);
+                    System.out.println(user);
+                    System.out.println(otherUser);
                     writer.write(String.valueOf(UserDatabase.addFriend(user, otherUser)));
                     writer.println();
                     writer.flush();
