@@ -38,9 +38,11 @@ public class MessageDatabase extends Thread implements MData {
     }
     
     public ArrayList<Message> getSentMessages() {
+        recoverMessages();
         return sentMessages;
     }
     public ArrayList<Message> getRecievedMessages() {
+        recoverMessages();
         return recievedMessages;
     }
 //this reads all of the messages in a user's file and adds them to the correct sent/recieved arraylist

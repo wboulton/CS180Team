@@ -10,9 +10,11 @@ import static org.junit.Assert.*;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.*;
 import java.net.*;
+import java.util.*;
 /**
  * Team Project -- MediaServerTester
  *
@@ -26,39 +28,64 @@ import java.net.*;
  */
 public class MediaServerTester {
     //Checks if "connected" is printed to ensure that server an client are connecting
-    public void testMessageHandling() {
+    @Test
+    public void testSendMessageHandling() {
         try {
             UserDatabase udb = new UserDatabase();
-            User sender = new User("sender|password|first|last|receiver|sender2|null|true");
-            User sender2 = new User("sender2|password|first|last|sender|null|null|false");
-            User reciever = new User("reciever|password|first|last|sender2|null|null|false");
-            MessageDatabase db = new MessageDatabase(sender);
-            MessageDatabase db2 = new MessageDatabase(sender2);
-
-            MediaServer ms = new MediaServer();
-
+            User sender = UserDatabase.getUser("sender");
+            User sender2 = UserDatabase.getUser("sender2");
+            User reciever = UserDatabase.getUser("reciever");
+            MessageDatabase db = new MessageDatabase(sender2);
             PrintWriter pw = null;
-            String line = "message|" + "SEND_MESSAGE|" + "sender" + "|" + "reciever" + "|" + "content";
-            ms.messageHandling(pw, line, db, udb.getUser("sender"));
+            String line = "SEND_MESSAGE|" + "sender2" + "|" + "reciever" + "|" + "content";
+            MediaServer.messageHandling(pw, line, db, udb.getUser("sender2"));
             BufferedReader send = new BufferedReader(new FileReader("reciever.txt"));
             String proof = send.readLine();
+            String[] parts = proof.split("\\|");
+            System.out.println(parts);
             boolean checker = false;
-            if (proof.equals("content")) checker = true;
+            if (parts[3].equals("content")) checker = true;
+            assertTrue(checker);
+            send.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    //wait for the message to be sent and then check if the message is in the reciever's file
+
+    @Test
+    public void testEditMessageHandling() throws InterruptedException {
+        TimeUnit.SECONDS.sleep(1);
+        try {
+            UserDatabase udb = new UserDatabase();
+            User sender = UserDatabase.getUser("sender");
+            User sender2 = UserDatabase.getUser("sender2");
+            User reciever = UserDatabase.getUser("reciever");
+            MessageDatabase db = new MessageDatabase(sender);
+            System.out.println(db.getSentMessages());
+            PrintWriter pw = null;
+            String line = "EDIT_MESSAGE|" + "21" + "|content2";
+            MediaServer.messageHandling(pw, line, db, udb.getUser("sender2"));
+            BufferedReader send = new BufferedReader(new FileReader("reciever.txt"));
+            String proof = send.readLine();
+            System.out.println(proof);
+            String[] parts = proof.split("\\|");
+            System.out.println(parts);
+            boolean checker = false;
+            if (parts[3].equals("content2")) checker = true;
             assertTrue(checker);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+
     @Test
     public void testBlockUserServer() {
         UserDatabase userDatabase = new UserDatabase();
         MediaServer.userHandling(null, "BLOCK|username|name");
         User username = userDatabase.getUser("username");
         assertTrue(username.getBlockedUsers().contains("name"));
-    }
-    public static void main(String[] args) throws Exception {
-        MediaServerTester mst = new MediaServerTester();
-        mst.testMessageHandling();
     }
 }

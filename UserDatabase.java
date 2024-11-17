@@ -141,7 +141,10 @@ Extra credit opportunity – Add support to upload and display profile pictures.
     public static void blockUser(User user, User blockedUser) {
         // This method blocks a user
         synchronized (LOCK) {
-            user.blockUser(blockedUser.getUsername());
+            if (!user.getBlockedUsers().contains(blockedUser.getUsername())) {
+                user.blockUser(blockedUser.getUsername());
+                updateDB();
+            }
             updateDB();
         }
     }
