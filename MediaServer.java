@@ -265,6 +265,7 @@ public class MediaServer extends Thread implements ServerInterface {
     }
 
     public static void main(String[] args) {
+        System.out.println("Server started");
         database = new UserDatabase();
         int port;
         try {
