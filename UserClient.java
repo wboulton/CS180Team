@@ -61,8 +61,10 @@ public class UserClient implements UserClientInt {
         writer.println(password);
         writer.println(firstName);
         writer.println(lastName);
+        System.out.println(profilePicture);
         writer.println(profilePicture);
         String response = reader.readLine();
+        System.out.println(response);
         if (response.equals("user created")) {
             try {
                 this.user = (User) input.readObject();
