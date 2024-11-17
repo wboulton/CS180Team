@@ -28,7 +28,7 @@ public interface UserDBInt {
     }
 
     boolean verifyLogin(String username, String password);
-    void changeUsername(User user, String newUsername);
+    boolean changeUsername(User user, String newUsername);
 
     static boolean legalPassword(String password) {
         return false;

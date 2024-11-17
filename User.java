@@ -44,7 +44,6 @@ public class User implements UserInt {
                 this.friends.add(friend);
             }
         }
-        System.out.println("Friends for" + username + ":" + this.friends);
         //add blocked users
         String[] blockedPeople = info[5].split(",");
         for (String blockedUser : blockedPeople) {
@@ -52,7 +51,6 @@ public class User implements UserInt {
                 this.blockedUsers.add(blockedUser);
             }
         }
-        System.out.println("Blocked Users for " + username + ":"  + this.blockedUsers);
         if (!info[6].contains(",")) {
             this.profilePicture = null;
         } else {

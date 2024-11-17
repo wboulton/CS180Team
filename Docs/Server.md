@@ -31,3 +31,8 @@ The enum operations for the user handler include (from Action.java): SEARCH, ADD
 
 # Threading 
 Threading in this class is handled slightly differently than threading from previous homeworks/projects. To avoid making a new object each time a client connects to the server and handling interactions within that object (in another java class), we use lambda functions to create a new thread directly with the run method included in the MediaServer.java class. More about this is described here [threading.md](threading.md).
+
+# Running the Network IO
+Start by running the Mediaserver with ```java MediaServer.java 8080```, with 8080 signifying the port of the server.
+
+After this, run clients and create/login for a user account, before following the instructions on the terminal for each client for each function
