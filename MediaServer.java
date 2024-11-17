@@ -115,7 +115,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 System.out.printf("Recieved '%s' from %s\n", line, client.toString());
                 System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
-                    userHandling(writer, line.substring(line.indexOf("\\|")));
+                    userHandling(writer, line.substring(line.indexOf("|")));
                 } else if (line.split("\\|")[0].equals("message")) {
                     System.out.println(line);
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),

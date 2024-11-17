@@ -333,6 +333,7 @@ public class UserClient implements UserClientInt {
                         do {
                             System.out.println("Who do you want to send a message to?");
                             String receiver = sc.nextLine();
+                            System.out.println(receiver);
                             if (client.search(receiver).equals("null")) {
                                 System.out.println("User not found");
                             } else {
