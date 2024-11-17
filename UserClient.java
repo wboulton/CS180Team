@@ -216,9 +216,10 @@ public class UserClient implements UserClientInt {
         //if user, have a search, add friend, remove friend, block, unblock, change username, change password
         //if message, have a send, delete, edit
         //dont make a new client, use the existing client
+        String choice;
         do {
             System.out.println("User or message? or exit?");
-            String choice = sc.nextLine();
+            choice = sc.nextLine();
             switch (choice.toLowerCase()) {
                 case "user" -> {
                     System.out.println("Search, add friend, remove friend, block, unblock, change username, change password?");
@@ -332,9 +333,7 @@ public class UserClient implements UserClientInt {
                                 e.printStackTrace();
                             }
                         }
-                        case "exit" -> {
-                            client.kill();
-                        }
+                        case "exit" -> client.kill();
                     }
                 }
                 case "message" -> {
@@ -395,8 +394,7 @@ public class UserClient implements UserClientInt {
                         }
                     }
                 }
-                case "exit" -> client.kill();
             }
-        } while (true);
+        } while (!choice.equals("exit"));
     }
 }
