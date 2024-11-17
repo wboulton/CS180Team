@@ -7,7 +7,8 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.Objects;
 import static org.junit.Assert.*;
-
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.io.*;
@@ -44,12 +45,18 @@ public class MediaServerTester {
             boolean checker = false;
             if (proof.equals("content")) checker = true;
             assertTrue(checker);
-            
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    @Test
+    public void testBlockUserServer() {
+        UserDatabase userDatabase = new UserDatabase();
+        MediaServer.userHandling(null, "BLOCK|username|name");
+        User username = userDatabase.getUser("username");
+        assertTrue(username.getBlockedUsers().contains("name"));
+    }
     public static void main(String[] args) throws Exception {
         MediaServerTester mst = new MediaServerTester();
         mst.testMessageHandling();

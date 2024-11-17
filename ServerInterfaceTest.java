@@ -15,13 +15,21 @@ import static org.junit.Assert.*;
  *
  * This file tests the ServerInterface class.
  *
- * @author Jai Menon
+ * @author Jai Menon, Mukund Venkatesh
  *
  * @version November 8, 2024
  *
  */
 
 public class ServerInterfaceTest {
+    @Test
+    public void testInterfaceExists() {
+        try {
+            Class.forName("ServerInterface");
+        } catch (ClassNotFoundException e) {
+            fail("ServerInterface interface should exist");
+        }
+    }
     @Test
     public void testMediaServerImplementsServerInterface() {
         Class<?>[] interfaces = ServerInterface.class.getInterfaces();
