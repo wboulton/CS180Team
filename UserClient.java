@@ -337,9 +337,8 @@ public class UserClient implements UserClientInt {
                             } else {
                                 System.out.println("Write a message");
                                 String message = sc.nextLine();
-                                User user = new User(message.substring(message.indexOf("|") + 1));
                                 try {
-                                    client.sendMessage(user.getUsername(), message, null);
+                                    client.sendMessage(receiver, message, null);
                                 } catch (Exception e) {
                                     e.printStackTrace();
                                 }
