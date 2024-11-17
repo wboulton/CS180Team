@@ -1,4 +1,4 @@
-username|password|firstname|lastname|null|null|null|true
+username|password|firstname|lastname|null|null,name,name|null|true
 name|word|firstname|lastname|null|null|null|true
 person|FakePassword1|william|boulton|||null|true
 anotheruser|fakePassword1|william|boulton|||null|true

@@ -23,6 +23,14 @@ import static org.junit.Assert.*;
 
 public class UserClientIntTest {
     @Test
+    public void testInterfaceExists() {
+        try {
+            Class.forName("UserClientInt");
+        } catch (ClassNotFoundException e) {
+            fail("UserClientInt interface should exist");
+        }
+    }
+    @Test
     public void testUserClientImplementsUserClientInt() {
         Class<?>[] interfaces = UserClient.class.getInterfaces();
         boolean implementsMData = Arrays.asList(interfaces).contains(UserClientInt.class);

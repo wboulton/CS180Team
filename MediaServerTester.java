@@ -54,11 +54,11 @@ public class MediaServerTester {
             e.printStackTrace();
         }
     }
-
-    public static void main(String[] args) throws Exception {
-        ServerSocket serverSocket = new ServerSocket(4242);
-        Socket socket = serverSocket.accept();
-        MediaServerTester mst = new MediaServerTester();
-        mst.testRunConnection(socket, serverSocket);
+    @Test
+    public void testBlockUserServer() {
+        UserDatabase userDatabase = new UserDatabase();
+        MediaServer.userHandling(null, "BLOCK|username|name");
+        User username = userDatabase.getUser("username");
+        assertTrue(username.getBlockedUsers().contains("name"));
     }
 }
