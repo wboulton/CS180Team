@@ -92,7 +92,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         if (message.getMessageID() > recentID.get()) {
                             if (currentlyViewing.get() != null && 
                                 message.getSender().equals(currentlyViewing.get().getUsername())) {
-                                writer.write("INCOMING\\|" + message.toString());
+                                writer.write("INCOMING|" + message.toString());
                                 writer.println();
                                 writer.flush();   
                                 recentID.set(message.getMessageID());
@@ -115,7 +115,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 System.out.printf("Recieved '%s' from %s\n", line, client.toString());
                 System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
-                    userHandling(writer, line.substring(line.indexOf("|")));
+                    userHandling(writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
                     System.out.println(line);
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
@@ -203,13 +203,14 @@ public class MediaServer extends Thread implements ServerInterface {
 //handle all user related functions sent by the client.
     public static void userHandling(PrintWriter writer, String line) {
         try {
+            System.out.println(line);
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
 
             switch (action) {
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
-                    writer.write("USER\\|" + userFound.toString());
+                    writer.write("USER|" + userFound.toString());
                     writer.println();
                     writer.flush();   
                     break;
