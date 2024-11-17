@@ -138,6 +138,32 @@ The media server class handles all database operations in two methods. One metho
 The user handling only needs to take in the arguments of the printwriter that sends all information to the client and the line that was sent from the client asking for an operation. However, the message handling class needs to recieve the messageDatabase for the user that is logged in (which is retrieved by the server when the client connects) and the other user that the current client is "viewing" (when there is a gui this would relate to the conversation that they are viewing). This allows it to call the methods previously implemented by messageDatabase. 
 userHandling() calls all of the functions previously implemented by UserDatabase.java and User.java. messageHandling() handles functions prviously implemented by MessageDatabase.java or Message.java. For more information or information about the interface view [Server.md](Docs/Server.md).
 
+_UserClient.java_
+The [UserClient.java](UserClient.java) file handles all user interaction with the server. Currently, it runs everything out of the terminal, which will not be the final design of the project. Eventually, all interactions will happen in a GUI rather than using the terminal, but that is going to be implemented during phase 3. Besides the temporary main method which allows interaction with the server through the terminal, this file sends all necessary requests to call any operation permitted by the server. To see which functions are available, see documentation for the server. 
+
+This class has the following fields:
+```java
+    private User user;
+    private BufferedReader reader;
+    private PrintWriter writer;
+    private Socket socket;
+    private ObjectInputStream input;
+    private static int portNumber;
+```
+and the following methods per the interface:
+```java
+    void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
+    void deleteMessage(int id) throws BadDataException, IOException;
+    void editMessage(int id, String newContent) throws IOException;
+    void blockUser(String u) throws IOException;
+    boolean unblockUser(String u) throws IOException;
+    boolean addFriend(String u) throws IOException;
+    boolean removeFriend(String u) throws IOException;
+    boolean setUserName(String name) throws IOException;
+    void setPassword(String password);
+```
+These functions handle all of the requests that may be sent to the server while a client is interacting with the app. This class was entirly tested manually because it is not able to get any information from the database without the use of network io. To learn more about this class, view [Client.md](Docs/Client.md).
+
 # Exceptions
 This project has one custom exception: BadDataException. In general this exception is used when a user input passed contains an invalid character or does not fufill requriements (i.e. password requirements). This exception is very standard and just calls the constructor of the Exception class with the passed message. 
 
