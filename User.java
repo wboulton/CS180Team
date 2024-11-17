@@ -15,7 +15,7 @@ import java.util.Arrays;
  * @version November 1, 2024
  *
  */
-public class User implements UserInt {
+public class User implements UserInt, Serializable {
     private static UserDatabase userDatabase = new UserDatabase();
     private String username;
     private String password;

@@ -47,6 +47,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         messageDatabase.recoverMessages();
                         writer.println("Logged in!");
                         writer.flush();
+                        System.out.println(user instanceof User);
                         oos.writeObject(user);
                         break;
                     } else {

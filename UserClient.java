@@ -31,6 +31,7 @@ public class UserClient implements UserClientInt {
         socket = new Socket("localhost", 8080);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
+        input = new ObjectInputStream(socket.getInputStream());
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -42,21 +43,29 @@ public class UserClient implements UserClientInt {
         if (response.equals("could not log in")) {
             throw new BadDataException("Invalid login credentials.");
         }
-
         System.out.println("Login successful.");
         try {
             this.user = (User) input.readObject();
+            System.out.println(this.user.toString());
+            System.out.println("USER CREATION SUCCESSFUL: " + this.user.toString());
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("the object was not a user");
         }
     }
 
     private void createNewUser(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
-        writer.println("new user");  // Send new user command
-        writer.println(username);
-        writer.println(password);
-        writer.println(firstName);
-        writer.println(lastName);
+        String response = reader.readLine();
+        if (response.equals("user created")) {
+            this.input = new ObjectInputStream(this.socket.getInputStream());
+            try {
+                this.user = (User) input.readObject();
+            } catch (Exception e) {
+                System.out.println("the object was not a user");
+            }
+        } else {
+            throw new BadDataException("User creation failed.");
+        }
         writer.println(profilePicture);
 
         try {
@@ -84,7 +93,7 @@ public class UserClient implements UserClientInt {
 
     public void deleteMessage(int id) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("DELETE_MESSAGE|" + user.getUsername() + "|" + id);
+        writer.println("message|DELETE_MESSAGE|" + user.getUsername() + "|" + id);
     }
 
     public void editMessage(int id, String newContent) throws IOException {
@@ -94,12 +103,12 @@ public class UserClient implements UserClientInt {
 
     public void blockUser(String usernameToBlock) throws IOException {
         // Send BLOCK command
-        writer.println("BLOCK|" + user.getUsername() + "|" + usernameToBlock);
+        writer.println("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
     }
 
     public boolean unblockUser(String usernameToUnblock) throws IOException {
         // Send UNBLOCK command
-        writer.println("UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+        writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
         return reader.readLine().equals("true");
     }
     public void getConversation(String username) throws IOException {
@@ -108,13 +117,13 @@ public class UserClient implements UserClientInt {
     }
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
-        writer.println("ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
         return reader.readLine().equals("true");
     }
 
     public boolean removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
-        writer.println("REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
         return reader.readLine().equals("true");
     }
 
@@ -128,6 +137,7 @@ public class UserClient implements UserClientInt {
     }
     public String search(String username) {
         writer.println("user|SEARCH|" + username);
+        writer.flush();
         try {
             return reader.readLine();
         } catch (IOException e) {
@@ -137,13 +147,15 @@ public class UserClient implements UserClientInt {
     }
     @Override
     public boolean setUserName(String name) throws IOException {
-        writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
+        writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
+        writer.flush();
         return reader.readLine().equals("true");
     }
 
     @Override
     public void setPassword(String password) {
-        writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
+        writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
+        writer.flush();
     }
 
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
@@ -160,13 +172,7 @@ public class UserClient implements UserClientInt {
             System.out.println("Password: ");
             String password = sc.nextLine();
             try {
-// this is a shut down hook which will tell the server to shut down the thread when you force quit (^C)
-                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-                    client.writer.write("77288937499272"); // random quit code
-                    client.writer.println();
-                    client.writer.flush();
-                })); 
-                client.input = new ObjectInputStream(client.socket.getInputStream());
+                client = new UserClient(username, password);
                 System.out.println("write or edit?");
                 String choice = sc.nextLine();
                 if (choice.equalsIgnoreCase("write")) {
@@ -187,8 +193,7 @@ public class UserClient implements UserClientInt {
                     }
                     client.kill();
                 }
-                client = new UserClient(username, password);
-                client.input = new ObjectInputStream(client.socket.getInputStream());
+                
             } catch (Exception e) {
                 e.printStackTrace();
             }
