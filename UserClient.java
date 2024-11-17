@@ -9,6 +9,7 @@ public class UserClient implements UserClientInt {
     private PrintWriter writer;
     private Socket socket;
     private ObjectInputStream input;
+    private static int portNumber;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -28,7 +29,7 @@ public class UserClient implements UserClientInt {
     }
 
     private void connectToServer() throws IOException {
-        socket = new Socket("localhost", 8080);
+        socket = new Socket("localhost", portNumber);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         input = new ObjectInputStream(socket.getInputStream());
@@ -166,7 +167,8 @@ public class UserClient implements UserClientInt {
 
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
 //for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
-    public static void main(String[] args) {       
+    public static void main(String[] args) {      
+        portNumber = Integer.parseInt(args[0]); 
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();
@@ -199,7 +201,6 @@ public class UserClient implements UserClientInt {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
         }
 
         final PrintWriter newWriter = client.writer;
