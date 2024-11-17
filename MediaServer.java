@@ -207,16 +207,24 @@ public class MediaServer extends Thread implements ServerInterface {
                 case ADD_FRIEND:
                     User user = UserDatabase.getUser(inputs[1]);
                     User otherUser = UserDatabase.getUser(inputs[2]);
-                    UserDatabase.addFriend(user, otherUser);
+                    writer.write(String.valueOf(UserDatabase.addFriend(user, otherUser)));
+                    writer.println();
+                    writer.flush();
                     break;
                 case REMOVE_FRIEND:
                     User user2 = UserDatabase.getUser(inputs[1]);
                     User otherUser2 = UserDatabase.getUser(inputs[2]);
-                    UserDatabase.removeFriend(user2, otherUser2);
+                    boolean value = UserDatabase.removeFriend(user2, otherUser2);
+                    writer.write(String.valueOf(value));
+                    writer.println();
+                    writer.flush();
                     break;
                 case CHANGE_USERNAME:
                     User userToModify = UserDatabase.getUser(inputs[1]);
-                    database.changeUsername(userToModify, inputs[2]);
+                    boolean v = database.changeUsername(userToModify, inputs[2]);
+                    writer.write(String.valueOf(v));
+                    writer.println();
+                    writer.flush();
                     break;
                 case BLOCK:
                     User user3 = UserDatabase.getUser(inputs[1]);
@@ -226,7 +234,10 @@ public class MediaServer extends Thread implements ServerInterface {
                 case UNBLOCK:
                     User user4 = UserDatabase.getUser(inputs[1]);
                     User otherUser4 = UserDatabase.getUser(inputs[2]);
-                    UserDatabase.unblockUser(user4, otherUser4);
+                    boolean val = UserDatabase.unblockUser(user4, otherUser4);
+                    writer.write(String.valueOf(val));
+                    writer.println();
+                    writer.flush();
                     break;
                 default:
                     break;

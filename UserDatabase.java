@@ -111,23 +111,29 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             }
         }
     }
-    public static void addFriend(User user, User friend) {
+    public static boolean addFriend(User user, User friend) {
         // This method adds a friend to a user
         synchronized (LOCK) {
             //if the user is not already a friend, add the friend
             if (!user.getFriends().contains(friend.getUsername())) {
                 user.addFriend(friend.getUsername());
+            } else {
+                return false;
             }
             updateDB();
+            //if the friend is added, return true, else return false
+            return user.getFriends().contains(friend.getUsername());
         }
     }
-    public static void removeFriend(User user, User friend) {
+    public static boolean removeFriend(User user, User friend) {
         //if the user is a friend, remove the friend
         synchronized (LOCK) {
             if (user.getFriends().contains(friend.getUsername())) {
                 user.removeFriend(friend.getUsername());
+                updateDB();
+                return true;
             }
-            updateDB();
+            return false;
         }
     }
     public static void blockUser(User user, User blockedUser) {
@@ -169,14 +175,17 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
     }
     //change username
-    public void changeUsername(User user, String newUsername) {
+    public boolean changeUsername(User user, String newUsername) {
         //if the username is not taken, change the username
         synchronized (LOCK) {
             if (getUser(newUsername) == null) {
                 user.changeUsername(newUsername);
+                updateDB();
+                return true;
             }
             updateDB();
         }
+        return false;
     }
     //change password
     public void changePassword(User user, String newPassword) {

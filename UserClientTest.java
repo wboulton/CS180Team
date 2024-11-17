@@ -83,7 +83,7 @@ public class UserClientTest {
     public void testClientOutput() throws BadDataException, IOException {
         UserClient usc = new UserClient("johnDoe", "Password1", "John", "Doe", "false");
         usc.sendMessage("johnDoe|Password1|John|Doe|null|null|null|true", "Hi, how are you?", "false");
-        usc.deleteMessage("johnDoe|Password1|John|Doe|null|null|null|true", m);
+        usc.deleteMessage("johnDoe|Password1|John|Doe|null|null|null|true", m.getMessageID());
         usc.editMessage(m.getMessageID(), "new content");
         usc.blockUser("johnDoe");
         usc.unblockUser("johnDoe");
