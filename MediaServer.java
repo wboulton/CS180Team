@@ -170,7 +170,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     return viewing;
                 case DELETE_MESSAGE:
                     ArrayList<Message> sent = messageDatabase.getSentMessages();
-                    int id = Integer.parseInt(information.split("\\|")[0]);
+                    int id = Integer.parseInt(information.split("\\|")[1]);
                     for (Message item : sent) {
                         if (item.getMessageID() == id) {
                             messageDatabase.deleteMessage(item);
