@@ -9,6 +9,8 @@ import java.util.Scanner;
  * This file is the client side of the user interface.
  *
  * @author Mukund Venkatesh, William Boulton, Kush Kodiya
+ *
+ * @version November 17, 2024
  */
 public class UserClient implements UserClientInt {
     private User user;

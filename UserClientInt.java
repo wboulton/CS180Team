@@ -1,4 +1,14 @@
 import java.io.IOException;
+
+/**
+ * Team Project -- UserClientInt
+ *
+ * This is the interface for the UserClient
+ *
+ * @author Mukund Venkatesh, Kush Kodiya
+ *
+ * @version November 17, 2024
+ */
 public interface UserClientInt {
     void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
     void deleteMessage(int id) throws BadDataException, IOException;

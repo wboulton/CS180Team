@@ -8,7 +8,7 @@ import java.net.*;
  *
  * This is server for handling multiple clients with threading
  *
- * @author William Boulton, Alan Yi
+ * @author William Boulton, Alan Yi, Mukund Venkatesh
  *
  * @version November 15, 2024
  * 
