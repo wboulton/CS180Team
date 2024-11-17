@@ -31,7 +31,6 @@ public class UserClient implements UserClientInt {
         socket = new Socket("localhost", 8080);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
-        scanner = new Scanner(System.in);
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -124,7 +123,15 @@ public class UserClient implements UserClientInt {
         }
         return sb.toString();
     }
-
+    public String search(String username) {
+        writer.println("user|SEARCH|" + username);
+        try {
+            return reader.readLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
     @Override
     public void setUserName(String name) {
         writer.println("CHANGE_USERNAME|" + user.getUsername() + "|" + name);
@@ -171,6 +178,52 @@ public class UserClient implements UserClientInt {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (existance.equalsIgnoreCase("new")) {
+            System.out.println("Username: ");
+            String username = sc.nextLine();
+            System.out.println("Password: ");
+            String password = sc.nextLine();
+            System.out.println("First Name: ");
+            String firstName = sc.nextLine();
+            System.out.println("Last Name: ");
+            String lastName = sc.nextLine();
+            String profilePicture = "false";
+            try {
+                UserClient client = new UserClient(username, password, firstName, lastName, profilePicture);
+                client.input = new ObjectInputStream(client.socket.getInputStream());
+                System.out.println("write or edit?");
+                String choice = sc.nextLine();
+                if (choice.equalsIgnoreCase("write")) {
+                    do {
+                        System.out.println("Who do you want to send a message to?");
+                        String receiver = sc.nextLine();
+                        if (client.search(receiver).equals("null")) {
+                            System.out.println("User not found");
+                        } else {
+                            break;
+                        }
+                    } while (true);
+                    System.out.println("Write a message");
+                    String message = sc.nextLine();
+                    client.sendMessage("name", message, null);
+                    client.kill();
+                } else if (choice.equalsIgnoreCase("edit")) {
+                    System.out.println("What message do you want to edit? (id)");
+                    String idString = sc.nextLine();
+                    int id = Integer.parseInt(idString);
+                    try {
+                        System.out.println("what do you want to say?");
+                        String content = sc.nextLine();
+                        client.editMessage(id, content);
+                    } catch (Exception e) {
+                        System.out.println("put it good id's you bozo");
+                    }
+                    client.kill();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 }
