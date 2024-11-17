@@ -200,12 +200,13 @@ public class UserClient implements UserClientInt {
                         if (client.search(receiver).equals("null")) {
                             System.out.println("User not found");
                         } else {
+                            System.out.println("Write a message");
+                            String message = sc.nextLine();
+                            User user = new User(message.substring(message.indexOf("|") + 1));
+                            client.sendMessage(user.getUsername(), message, null);
                             break;
                         }
                     } while (true);
-                    System.out.println("Write a message");
-                    String message = sc.nextLine();
-                    client.sendMessage("name", message, null);
                     client.kill();
                 } else if (choice.equalsIgnoreCase("edit")) {
                     System.out.println("What message do you want to edit? (id)");
