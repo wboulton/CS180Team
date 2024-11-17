@@ -54,7 +54,8 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    private void createNewUser(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
+    private void createNewUser(String username, String password, String firstName, String lastName, 
+        String profilePicture) throws IOException, BadDataException {
         String response = reader.readLine();
         if (response.equals("user created")) {
             try {
@@ -371,6 +372,12 @@ public class UserClient implements UserClientInt {
                     }
                     case "read" -> {
                         System.out.println("who do you want to read from");
+                        String person = sc.nextLine();
+                        try {
+                            client.getConversation(person);
+                        } catch (Exception e) {
+                            System.out.println("some unknown error occured");
+                        }
                     }
                     case "exit" -> client.kill();
                 }
