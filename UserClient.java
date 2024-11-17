@@ -63,7 +63,6 @@ public class UserClient implements UserClientInt {
         writer.println(profilePicture);
         String response = reader.readLine();
         if (response.equals("user created")) {
-            this.input = new ObjectInputStream(this.socket.getInputStream());
             try {
                 this.user = (User) input.readObject();
             } catch (Exception e) {
@@ -112,8 +111,12 @@ public class UserClient implements UserClientInt {
         return reader.readLine().equals("true");
     }
     public void getConversation(String username) throws IOException {
-        writer.println("message|SET_VIEWING|" + user.getUsername());
+        writer.println("message|SET_VIEWING|" + username);
         writer.println("message|GET_CONVERSATION|" + username);
+        String line;
+        while ((line = reader.readLine()) != null) {
+            System.out.println(line);
+        }
     }
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
@@ -173,29 +176,9 @@ public class UserClient implements UserClientInt {
             String password = sc.nextLine();
             try {
                 client = new UserClient(username, password);
-                System.out.println("write or edit?");
-                String choice = sc.nextLine();
-                if (choice.equalsIgnoreCase("write")) {
-                    System.out.println("Write a message");
-                    String message = sc.nextLine();
-                    client.sendMessage("name", message, null);
-                    client.kill();
-                } else if (choice.equalsIgnoreCase("edit")) {
-                    System.out.println("What message do you want to edit? (id)");
-                    String idString = sc.nextLine();
-                    int id = Integer.parseInt(idString);
-                    try {
-                        System.out.println("what do you want to say?");
-                        String content = sc.nextLine();
-                        client.editMessage(id, content);
-                    } catch (Exception e) {
-                        System.out.println("put in good id's you bozo");
-                    }
-                    client.kill();
-                }
-                
             } catch (Exception e) {
                 e.printStackTrace();
+                client.kill();
             }
         } else if (existance.equalsIgnoreCase("new")) {
             System.out.println("Username: ");
@@ -340,7 +323,7 @@ public class UserClient implements UserClientInt {
                 }
             }
             case "message" -> {
-                System.out.println("Send, delete, edit?");
+                System.out.println("Send, delete, edit, read?");
                 String messageChoice = sc.nextLine();
                 switch (messageChoice.toLowerCase()) {
                     case "send" -> {
@@ -385,6 +368,9 @@ public class UserClient implements UserClientInt {
                             System.out.println("put in good id's you bozo");
                         }
                         client.kill();
+                    }
+                    case "read" -> {
+                        System.out.println("who do you want to read from");
                     }
                     case "exit" -> client.kill();
                 }
