@@ -54,14 +54,17 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    private void createNewUser(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
+    private void createNewUser(String username, String password, String firstName, String lastName, 
+        String profilePicture) throws IOException, BadDataException {
         writer.println("new user");  // Send new user command to the server
         writer.println(username);
         writer.println(password);
         writer.println(firstName);
         writer.println(lastName);
+        System.out.println(profilePicture);
         writer.println(profilePicture);
         String response = reader.readLine();
+        System.out.println(response);
         if (response.equals("user created")) {
             try {
                 this.user = (User) input.readObject();
@@ -328,6 +331,7 @@ public class UserClient implements UserClientInt {
                         do {
                             System.out.println("Who do you want to send a message to?");
                             String receiver = sc.nextLine();
+                            System.out.println(receiver);
                             if (client.search(receiver).equals("null")) {
                                 System.out.println("User not found");
                             } else {
@@ -369,6 +373,12 @@ public class UserClient implements UserClientInt {
                     }
                     case "read" -> {
                         System.out.println("who do you want to read from");
+                        String person = sc.nextLine();
+                        try {
+                            client.getConversation(person);
+                        } catch (Exception e) {
+                            System.out.println("some unknown error occured");
+                        }
                     }
                     case "exit" -> client.kill();
                 }

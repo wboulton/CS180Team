@@ -1,2 +1,6 @@
 username|password|firstname|lastname|null|null|null|true
 name|word|firstname|lastname|null|null|null|true
+person|FakePassword1|william|boulton|||null|true
+anotheruser|fakePassword1|william|boulton|||null|true
+thisguy|Password1|william|boulton|||null|true
+anotherguh|Password1|william|boulton|||null|true
