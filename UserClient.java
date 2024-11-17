@@ -31,7 +31,6 @@ public class UserClient implements UserClientInt {
         socket = new Socket("localhost", 8080);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
-        scanner = new Scanner(System.in);
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -135,7 +134,9 @@ public class UserClient implements UserClientInt {
         writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
-    public static void main(String[] args) {        
+//this main method is set up for testing, the final app will use a GUI to run all of these functions,
+//for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
+    public static void main(String[] args) {       
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();
@@ -147,6 +148,12 @@ public class UserClient implements UserClientInt {
             String password = sc.nextLine();
             try {
                 UserClient client = new UserClient(username, password);
+// this is a shut down hook which will tell the server to shut down the thread when you force quit (^C)
+                Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                    client.writer.write("77288937499272"); // random quit code
+                    client.writer.println();
+                    client.writer.flush();
+                })); 
                 client.input = new ObjectInputStream(client.socket.getInputStream());
                 System.out.println("write or edit?");
                 String choice = sc.nextLine();
@@ -164,7 +171,7 @@ public class UserClient implements UserClientInt {
                         String content = sc.nextLine();
                         client.editMessage(id, content);
                     } catch (Exception e) {
-                        System.out.println("put it good id's you bozo");
+                        System.out.println("put in good id's you bozo");
                     }
                     client.kill();
                 }
