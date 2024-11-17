@@ -203,7 +203,7 @@ public class UserClient implements UserClientInt {
 
             }
         } while (client == null);
-        }
+
 
         final PrintWriter newWriter = client.writer;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
