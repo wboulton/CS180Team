@@ -30,6 +30,7 @@ public class MediaServer extends Thread implements ServerInterface {
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
+            final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             System.out.println("connected");
             String line = reader.readLine();
             if (line.equals("login")) {
@@ -46,6 +47,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         messageDatabase.recoverMessages();
                         writer.println("Logged in!");
                         writer.flush();
+                        oos.writeObject(user);
                         break;
                     } else {
                         writer.println("could not log in");
@@ -60,6 +62,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 String lastname = reader.readLine();
                 String pfp = reader.readLine();
                 user = database.createUser(username, password, firstname, lastname, pfp);
+                oos.writeObject(user);
                 messageDatabase = new MessageDatabase(user);
             } else {
                 return;

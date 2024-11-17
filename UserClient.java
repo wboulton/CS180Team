@@ -5,12 +5,10 @@ import java.util.Scanner;
 
 public class UserClient implements UserClientInt {
     private User user;
-    private static UserDatabase database;
-    private MessageDatabase messageDatabase;
     private BufferedReader reader;
     private PrintWriter writer;
     private Socket socket;
-    private Scanner scanner;
+    private ObjectInputStream input;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -47,7 +45,11 @@ public class UserClient implements UserClientInt {
         }
 
         System.out.println("Login successful.");
-        this.user = UserDatabase.getUser(username);
+        try {
+            this.user = (User) input.readObject();
+        } catch (Exception e) {
+            System.out.println("the object was not a user");
+        }
     }
 
     private void createNewUser(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
@@ -58,18 +60,15 @@ public class UserClient implements UserClientInt {
         writer.println(lastName);
         writer.println(profilePicture);
 
-        System.out.println("New user created.");
-        this.user = UserDatabase.getUser(username);
-        this.messageDatabase = new MessageDatabase(user);
+        try {
+            this.user = (User) input.readObject();
+        } catch (Exception e) {
+            System.out.println("the object was not a user");
+        }
     }
 
     @Override
     public void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
-        User receiverUser = UserDatabase.getUser(receiver);
-        if (receiverUser == null) throw new BadDataException("Receiver does not exist");
-        if (user.getBlockedUsers().contains(receiver)) throw new BadDataException("You have blocked this user");
-        if (receiverUser.getBlockedUsers().contains(user.getUsername())) throw new BadDataException("You are blocked by this user");
-
         // Send SEND_MESSAGE command to the server
         writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
@@ -136,8 +135,7 @@ public class UserClient implements UserClientInt {
         writer.println("CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
     }
 
-    public static void main(String[] args) {
-        database = new UserDatabase();
+    public static void main(String[] args) {        
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();
@@ -149,6 +147,7 @@ public class UserClient implements UserClientInt {
             String password = sc.nextLine();
             try {
                 UserClient client = new UserClient(username, password);
+                client.input = new ObjectInputStream(client.socket.getInputStream());
                 System.out.println("write or edit?");
                 String choice = sc.nextLine();
                 if (choice.equalsIgnoreCase("write")) {
