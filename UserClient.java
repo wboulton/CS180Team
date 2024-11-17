@@ -9,6 +9,7 @@ public class UserClient implements UserClientInt {
     private PrintWriter writer;
     private Socket socket;
     private ObjectInputStream input;
+    private static int portNumber;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -28,7 +29,7 @@ public class UserClient implements UserClientInt {
     }
 
     private void connectToServer() throws IOException {
-        socket = new Socket("localhost", 8080);
+        socket = new Socket("localhost", portNumber);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         input = new ObjectInputStream(socket.getInputStream());
@@ -166,44 +167,41 @@ public class UserClient implements UserClientInt {
 
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
 //for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
-    public static void main(String[] args) {
+    public static void main(String[] args) {      
+        portNumber = Integer.parseInt(args[0]); 
         Scanner sc = new Scanner(System.in);
-        UserClient client;
-        do {
-            System.out.println("new or existing user?");
-            String existance = sc.nextLine();
-            client = null;
-            if (existance.equalsIgnoreCase("existing")) {
-                System.out.println("Username: ");
+        System.out.println("new or existing user?");
+        String existance = sc.nextLine();
+        UserClient client = null;
+        if (existance.equalsIgnoreCase("existing")) {
+            System.out.println("Username: ");
 
-                String username = sc.nextLine();
-                System.out.println("Password: ");
-                String password = sc.nextLine();
-                try {
-                    client = new UserClient(username, password);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    client.kill();
-                }
-            } else if (existance.equalsIgnoreCase("new")) {
-                System.out.println("Username: ");
-                String username = sc.nextLine();
-                System.out.println("Password: ");
-                String password = sc.nextLine();
-                System.out.println("First Name: ");
-                String firstName = sc.nextLine();
-                System.out.println("Last Name: ");
-                String lastName = sc.nextLine();
-                String profilePicture = "false";
-                try {
-                    client = new UserClient(username, password, firstName, lastName, profilePicture);
-                } catch (Exception e) {
-                    System.out.println(e.getMessage());
-                }
-
+            String username = sc.nextLine();
+            System.out.println("Password: ");
+            String password = sc.nextLine();
+            try {
+                client = new UserClient(username, password);
+            } catch (Exception e) {
+                e.printStackTrace();
+                client.kill();
             }
-        } while (client == null);
-
+        } else if (existance.equalsIgnoreCase("new")) {
+            System.out.println("Username: ");
+            String username = sc.nextLine();
+            System.out.println("Password: ");
+            String password = sc.nextLine();
+            System.out.println("First Name: ");
+            String firstName = sc.nextLine();
+            System.out.println("Last Name: ");
+            String lastName = sc.nextLine();
+            String profilePicture = "false";
+            try {
+                client = new UserClient(username, password, firstName, lastName, profilePicture);
+                client.input = new ObjectInputStream(client.socket.getInputStream());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 
         final PrintWriter newWriter = client.writer;
         Runtime.getRuntime().addShutdownHook(new Thread(() -> {
@@ -216,185 +214,185 @@ public class UserClient implements UserClientInt {
         //if user, have a search, add friend, remove friend, block, unblock, change username, change password
         //if message, have a send, delete, edit
         //dont make a new client, use the existing client
-        String choice;
-        do {
-            System.out.println("User or message? or exit?");
-            choice = sc.nextLine();
-            switch (choice.toLowerCase()) {
-                case "user" -> {
-                    System.out.println("Search, add friend, remove friend, block, unblock, change username, change password?");
-                    String userChoice = sc.nextLine();
-                    switch (userChoice.toLowerCase()) {
-                        case "search" -> {
-                            System.out.println("Who do you want to search for?");
-                            String search = sc.nextLine();
-                            try {
-                                if (client.search(search).equals("null")) {
-                                    System.out.println("User not found");
-                                } else {
-                                    System.out.println(client.search(search));
-                                }
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "add friend" -> {
-                            System.out.println("Who do you want to add as a friend?");
-                            String friend = sc.nextLine();
-                            try {
-                                boolean value = client.addFriend(friend);
-                                if (value) {
-                                    System.out.println("Friend added");
-                                } else {
-                                    System.out.println("Friend not added because they are already a friend or blocked or " +
-                                            "do not exist");
-                                }
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "remove friend" -> {
-                            System.out.println("Who do you want to remove as a friend?");
-                            String friend = sc.nextLine();
-                            try {
-                                boolean value = client.removeFriend(friend);
-                                if (value) {
-                                    System.out.println("Friend removed");
-                                } else {
-                                    System.out.println("Friend not removed because they are not a friend or blocked or " +
-                                            "do not exist");
-                                }
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "block" -> {
-                            System.out.println("Who do you want to block?");
-
-                            String block = sc.nextLine();
-                            //check if user exists
-                            String search = client.search(block);
-                            if (search.equals("null")) {
+        System.out.println("User or message?");
+        String choice = sc.nextLine();
+        switch (choice.toLowerCase()) {
+            case "user" -> {
+                System.out.println("Search, add friend, remove friend, block, unblock, change username, change password?");
+                String userChoice = sc.nextLine();
+                switch (userChoice.toLowerCase()) {
+                    case "search" -> {
+                        System.out.println("Who do you want to search for?");
+                        String search = sc.nextLine();
+                        try {
+                            if (client.search(search).equals("null")) {
                                 System.out.println("User not found");
-                                client.kill();
-                            }
-                            try {
-                                client.blockUser(block);
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "unblock" -> {
-                            System.out.println("Who do you want to unblock?");
-                            String unblock = sc.nextLine();
-                            String search = client.search(unblock);
-                            if (search.equals("null")) {
-                                System.out.println("User not found");
-                                client.kill();
-                            }
-                            try {
-                                boolean value = client.unblockUser(unblock);
-                                if (value) {
-                                    System.out.println("User unblocked");
-                                } else {
-                                    System.out.println("User not unblocked because they are not blocked");
-                                }
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "change username" -> {
-                            System.out.println("What do you want your new username to be?");
-                            String newUsername = sc.nextLine();
-                            try {
-                                boolean val = client.setUserName(newUsername);
-                                if (val) {
-                                    System.out.println("Username changed");
-                                } else {
-                                    System.out.println("Username not changed because it already exists");
-                                }
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "change password" -> {
-                            System.out.println("What do you want your new password to be?");
-                            String newPassword = sc.nextLine();
-                            try {
-                                client.setPassword(newPassword);
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "exit" -> client.kill();
-                    }
-                }
-                case "message" -> {
-                    System.out.println("Send, delete, edit, read?");
-                    String messageChoice = sc.nextLine();
-                    switch (messageChoice.toLowerCase()) {
-                        case "send" -> {
-                            do {
-                                System.out.println("Who do you want to send a message to?");
-                                String receiver = sc.nextLine();
-                                System.out.println(receiver);
-                                if (client.search(receiver).equals("null")) {
-                                    System.out.println("User not found");
-                                } else {
-                                    System.out.println("Write a message");
-                                    String message = sc.nextLine();
-                                    try {
-                                        client.sendMessage(receiver, message, null);
-                                    } catch (Exception e) {
-                                        e.printStackTrace();
-                                    }
-                                    break;
-                                }
-                            } while (true);
-                        }
-                        case "delete" -> {
-                            System.out.println("What is the id of the message you want to delete?");
-                            String idString = sc.nextLine();
-                            int id = Integer.parseInt(idString);
-                            try {
-                                client.deleteMessage(id);
-                                client.kill();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }
-                        case "edit" -> {
-                            System.out.println("What message do you want to edit? (id)");
-                            String idString = sc.nextLine();
-                            int id = Integer.parseInt(idString);
-                            try {
-                                System.out.println("what do you want to say?");
-                                String content = sc.nextLine();
-                                client.editMessage(id, content);
-                            } catch (Exception e) {
-                                System.out.println("put in good id's you bozo");
+                            } else {
+                                System.out.println(client.search(search));
                             }
                             client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
-                        case "read" -> {
-                            System.out.println("who do you want to read from");
-                            String person = sc.nextLine();
-                            try {
-                                client.getConversation(person);
-                            } catch (Exception e) {
-                                System.out.println("some unknown error occured");
+                    }
+                    case "add friend" -> {
+                        System.out.println("Who do you want to add as a friend?");
+                        String friend = sc.nextLine();
+                        try {
+                            boolean value = client.addFriend(friend);
+                            if (value) {
+                                System.out.println("Friend added");
+                            } else {
+                                System.out.println("Friend not added because they are already a friend or blocked or " +
+                                        "do not exist");
                             }
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+                    }
+                    case "remove friend" -> {
+                        System.out.println("Who do you want to remove as a friend?");
+                        String friend = sc.nextLine();
+                        try {
+                            boolean value = client.removeFriend(friend);
+                            if (value) {
+                                System.out.println("Friend removed");
+                            } else {
+                                System.out.println("Friend not removed because they are not a friend or blocked or " +
+                                        "do not exist");
+                            }
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "block" -> {
+                        System.out.println("Who do you want to block?");
+
+                        String block = sc.nextLine();
+                        //check if user exists
+                        String search = client.search(block);
+                        if (search.equals("null")) {
+                            System.out.println("User not found");
+                            client.kill();
+                        }
+                        try {
+                            client.blockUser(block);
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "unblock" -> {
+                        System.out.println("Who do you want to unblock?");
+                        String unblock = sc.nextLine();
+                        String search = client.search(unblock);
+                        if (search.equals("null")) {
+                            System.out.println("User not found");
+                            client.kill();
+                        }
+                        try {
+                            boolean value = client.unblockUser(unblock);
+                            if (value) {
+                                System.out.println("User unblocked");
+                            } else {
+                                System.out.println("User not unblocked because they are not blocked");
+                            }
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "change username" -> {
+                        System.out.println("What do you want your new username to be?");
+                        String newUsername = sc.nextLine();
+                        try {
+                            boolean val = client.setUserName(newUsername);
+                            if (val) {
+                                System.out.println("Username changed");
+                            } else {
+                                System.out.println("Username not changed because it already exists");
+                            }
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "change password" -> {
+                        System.out.println("What do you want your new password to be?");
+                        String newPassword = sc.nextLine();
+                        try {
+                            client.setPassword(newPassword);
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "exit" -> {
+                        client.kill();
                     }
                 }
             }
-        } while (!choice.equals("exit"));
+            case "message" -> {
+                System.out.println("Send, delete, edit, read?");
+                String messageChoice = sc.nextLine();
+                switch (messageChoice.toLowerCase()) {
+                    case "send" -> {
+                        do {
+                            System.out.println("Who do you want to send a message to?");
+                            String receiver = sc.nextLine();
+                            System.out.println(receiver);
+                            if (client.search(receiver).equals("null")) {
+                                System.out.println("User not found");
+                            } else {
+                                System.out.println("Write a message");
+                                String message = sc.nextLine();
+                                try {
+                                    client.sendMessage(receiver, message, null);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                                break;
+                            }
+                        } while (true);
+                    }
+                    case "delete" -> {
+                        System.out.println("What is the id of the message you want to delete?");
+                        String idString = sc.nextLine();
+                        int id = Integer.parseInt(idString);
+                        try {
+                            client.deleteMessage(id);
+                            client.kill();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    case "edit" -> {
+                        System.out.println("What message do you want to edit? (id)");
+                        String idString = sc.nextLine();
+                        int id = Integer.parseInt(idString);
+                        try {
+                            System.out.println("what do you want to say?");
+                            String content = sc.nextLine();
+                            client.editMessage(id, content);
+                        } catch (Exception e) {
+                            System.out.println("put in good id's you bozo");
+                        }
+                        client.kill();
+                    }
+                    case "read" -> {
+                        System.out.println("who do you want to read from");
+                        String person = sc.nextLine();
+                        try {
+                            client.getConversation(person);
+                        } catch (Exception e) {
+                            System.out.println("some unknown error occured");
+                        }
+                    }
+                    case "exit" -> client.kill();
+                }
+            }
+        }
     }
 }

@@ -3,7 +3,15 @@
 This readme gives a brief introduction to all of the classes and functions of our app so far. For more detailed documentation visit the Docs folder: [Documentation](Docs/). 
 
 # How to run
-At this stage in the project (phase 1) the project does not run as a social media app, to test it you can use the test cases contained in the [testing.md](Docs/testing.md) file. Compile all of the classes using javac ___ then run them that way.
+At this stage in the project (phase 2) this app does not run with an actual GUI. This means that we cannot look at messages real time because we are using the terminal to handle all client server interaction. There is infastructure to support real time messaging however, and it is discussed more in the [server documentation](Docs/Server.md). To run the project as intended, navigate to the [compiled/ folder](compiled/) and run the server first by typing
+```bash
+$ java MediaServer 8080
+``` 
+in your terminal. Then run the Client by typing in your terminal:
+```bash
+$ java UserClient 8080
+```
+Then you should be able to interact with the client based on the terminal prompts. For information about the prompts visit [Client.md](Docs/Client.md). If you cannot use the port 8080, you can change the port just by running them with different arguments. This means you should not need to recompile any of the classes already in the compiled folder.
 
 # Submissions
 William Boulton - Phase 1 submitted on Vocarium on November 3. 
@@ -14,7 +22,9 @@ Our file contains four interfaces, one for each main file. This means we have an
  - UserInt.java : User.java
  - MData.java : MessageDatabase.java
  - MessageInterface.java : Message.java
- - BadDataExceptionInt.java: BadDataException
+ - BadDataExceptionInt.java : BadDataException.java
+ - ServerInterface.java : MediaServer.java
+ - UserClientInt.java : UserClient.java
 
 These files contain necessary methods for each of the classes that implement them. At this point, none of them contain any global variables that get used by the implementing classes and none of them are implemented in more than one class. This does not mean that there will not be implementations for more classes later. 
 
@@ -107,6 +117,27 @@ This class interacts with the User.java file in order to create and handle users
 ```
 The load function handles reading through all of the users written to "users.txt" upon start up and storing them in the program once again. The writeDB function writes all of the users stored in program memory (an arraylist) to the "users.txt" file to be reused again later. Validating user creation happens in this file, where we ensure that the password and other user inputs are valid. Blocking, unblocking, Friending, and unfriending is all handled within this class as well. For more information on UserDatabase.java, see [User Data](Docs/UserDatabasing.md)
 
+# Network
+All of networkIO is handled between two files, the [server](MediaServer.java) file and the [client](UserClient.java) file. The server file handles all interaction with the database and sends either strings through a printwriter or objects (users) through an object output stream. The client file handles user's interactions with the server and displaying messages. At this point in time, we do not persistently display messages on the terminal, this will be implemented with the gui, however, there is an action that can be made to read all of your messages from another user. This setup means that real time messaging does not quite work with the current setup, but it will be easy to implement in the future when we have a means for displaying messages consistently (not through the terminal).
+
+_MediaServer.java_
+The MediaServer file works as the primary server for all database interaction and client handling. It works by creating a new thread for each client that connects with lambda function that runs the run() method with the arguments of the socket and serversocket. The run method then gets a desginated thread with that socket and server socket to interact with the client that just connected. 
+
+This class has two static fields:
+```java
+    private static UserDatabase database;
+    public static final Object lock = new Object();
+```
+The user database is the only user database that gets created and it gets created upon running the main method. The object "lock" is used to prevent threading issues when interacting with shared resources. 
+
+The media server class handles all database operations in two methods. One method handles all operations related to the user database and the other handles all operations related to message databases. The signatures for the two methods follow
+```java
+    public static void userHandling(PrintWriter writer, String line) {
+    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing) {
+```
+The user handling only needs to take in the arguments of the printwriter that sends all information to the client and the line that was sent from the client asking for an operation. However, the message handling class needs to recieve the messageDatabase for the user that is logged in (which is retrieved by the server when the client connects) and the other user that the current client is "viewing" (when there is a gui this would relate to the conversation that they are viewing). This allows it to call the methods previously implemented by messageDatabase. 
+userHandling() calls all of the functions previously implemented by UserDatabase.java and User.java. messageHandling() handles functions prviously implemented by MessageDatabase.java or Message.java. For more information or information about the interface view [Server.md](Docs/Server.md).
+
 # Exceptions
 This project has one custom exception: BadDataException. In general this exception is used when a user input passed contains an invalid character or does not fufill requriements (i.e. password requirements). This exception is very standard and just calls the constructor of the Exception class with the passed message. 
 
@@ -114,4 +145,4 @@ This project has one custom exception: BadDataException. In general this excepti
 Threading is handled by synchronizing all calls to shared resources (files and static variables) in each file. To handle the creation of new threads, this project creates two new files to call actions within the MessageDatabase and UserDatabse on a new thread. These files create a run method which uses a switch statement to determine which function from the database class to run. They are both passed a database object to run these methods from. All actions are contained in the [Action.java](Action.java) enumeration file. To read more about how threading is handled in this project, including information about the two classes involved in handling threading, visit the [Threading Docs](Docs/threading.md).
 
 # Testing
-Each class has it's own test file, each of which are listed and linked in the [testing](Docs/testing.md) file. Each test file includes multiple test cases for each method and constructor in the class that it is testing and a large test that tests how all of the methods work together and checks the data storage in a file. 
+Each class has it's own test file, each of which are listed and linked in the [testing](Docs/testing.md) file. Each test file includes multiple test cases for each method and constructor in the class that it is testing and a large test that tests how all of the methods work together and checks the data storage in a file. Much of GUI testing and Network testing will be done by hand, as test cases are not a great method for ensuring their functionality. 
