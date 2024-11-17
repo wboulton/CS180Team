@@ -26,7 +26,7 @@ Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private static ArrayList<User> users;
-    private static final String OUTPUT_FILE = "CS180Team/users.txt";
+    private static final String OUTPUT_FILE = "users.txt";
     private static final Object LOCK = new Object();
     public UserDatabase() {
         // This is a constructor

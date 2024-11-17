@@ -82,6 +82,52 @@ public class MediaServerTester {
     }
 
     @Test
+    public void testDeleteMessage() {
+        try {
+            UserDatabase udb = new UserDatabase();
+            User user1 = new User("sender|password|first|last|receiver|sender2|null|true");
+            User user2 = new User("reciever|password|first|last|sender2|null|null|false");
+            udb.addUser(user1);
+            udb.addUser(user2);
+            Message sentMessage = new Message("0|sender|reciever|content|false");
+            try (BufferedWriter send = new BufferedWriter(new FileWriter("sender.txt"));
+            BufferedWriter recieve = new BufferedWriter(new FileWriter("reciever.txt"))) {
+                send.write(sentMessage.toString());
+                send.newLine();
+                recieve.write(sentMessage.toString());
+                recieve.newLine();
+            }
+            MessageDatabase db = new MessageDatabase(user2);
+            PrintWriter pw = null;
+            String line = "message|" + "DELETE_MESSAGE|" + "sender" + "|" + "reciever" + "|" + "content";
+            MediaServer.messageHandling(pw, line, db, udb.getUser("sender"));
+            BufferedReader send = new BufferedReader(new FileReader("reciever.txt"));
+            String proof = send.readLine();
+            boolean checker = false;
+            if (proof == null) checker = true;
+            assertTrue(checker);
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Test
+    public void testSetViewing() {
+        UserDatabase udb = new UserDatabase();
+        User user1 = new User("sender|password|first|last|receiver|sender2|null|true");
+        User user2 = new User("reciever|password|first|last|sender2|null|null|false");
+        udb.addUser(user1);
+        udb.addUser(user2);
+        String line = "SET_VIEWING|reciever";
+        MessageDatabase db = new MessageDatabase(user1);
+        User result = MediaServer.messageHandling(null, line, db, udb.getUser("sender"));
+        boolean checker = false;
+        if (result.getUsername().equals(user2.getUsername())) checker = true;
+        assertTrue(checker);
+    }
+
+    @Test
     public void testBlockUserServer() {
         UserDatabase userDatabase = new UserDatabase();
         MediaServer.userHandling(null, "BLOCK|username|name");
