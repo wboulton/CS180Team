@@ -82,9 +82,9 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    public void deleteMessage(String sender, int id) throws IOException {
+    public void deleteMessage(int id) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("DELETE_MESSAGE|" + sender + "|" + id);
+        writer.println("DELETE_MESSAGE|" + user.getUsername() + "|" + id);
     }
 
     public void editMessage(int id, String newContent) throws IOException {
@@ -329,13 +329,11 @@ public class UserClient implements UserClientInt {
                         } while (true);
                     }
                     case "delete" -> {
-                        System.out.println("Who sent the message?");
-                        String sender = sc.nextLine();
                         System.out.println("What is the id of the message you want to delete?");
                         String idString = sc.nextLine();
                         int id = Integer.parseInt(idString);
                         try {
-                            client.deleteMessage(sender, id);
+                            client.deleteMessage(id);
                             client.kill();
                         } catch (Exception e) {
                             e.printStackTrace();
