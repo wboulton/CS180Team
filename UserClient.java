@@ -74,6 +74,7 @@ public class UserClient implements UserClientInt {
         } else {
             throw new BadDataException(response);
         }
+
     }
 
     @Override
@@ -202,6 +203,15 @@ public class UserClient implements UserClientInt {
 
             }
         } while (client == null);
+        }
+
+        final PrintWriter newWriter = client.writer;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            newWriter.write("77288937499272"); // random quit code
+            newWriter.println();
+            newWriter.flush();
+        }));
+
         //have a user or message option
         //if user, have a search, add friend, remove friend, block, unblock, change username, change password
         //if message, have a send, delete, edit
