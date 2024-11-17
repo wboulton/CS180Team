@@ -62,7 +62,15 @@ public class MediaServer extends Thread implements ServerInterface {
                 String firstname = reader.readLine();
                 String lastname = reader.readLine();
                 String pfp = reader.readLine();
-                user = database.createUser(username, password, firstname, lastname, pfp);
+                try {
+                    user = database.createUser(username, password, firstname, lastname, pfp);
+                    writer.println("user created");
+                    writer.flush();
+                } catch (Exception e) {
+                    writer.println(e.getMessage());
+                    writer.flush();
+                    return;
+                }
                 oos.writeObject(user);
                 messageDatabase = new MessageDatabase(user);
             } else {

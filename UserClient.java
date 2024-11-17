@@ -56,6 +56,12 @@ public class UserClient implements UserClientInt {
 
     private void createNewUser(String username, String password, String firstName, String lastName, 
         String profilePicture) throws IOException, BadDataException {
+        writer.println("new user");  // Send new user command to the server
+        writer.println(username);
+        writer.println(password);
+        writer.println(firstName);
+        writer.println(lastName);
+        writer.println(profilePicture);
         String response = reader.readLine();
         if (response.equals("user created")) {
             try {
@@ -64,15 +70,9 @@ public class UserClient implements UserClientInt {
                 System.out.println("the object was not a user");
             }
         } else {
-            throw new BadDataException("User creation failed.");
+            throw new BadDataException(response);
         }
-        writer.println(profilePicture);
 
-        try {
-            this.user = (User) input.readObject();
-        } catch (Exception e) {
-            System.out.println("the object was not a user");
-        }
     }
 
     @Override

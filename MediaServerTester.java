@@ -28,13 +28,12 @@ public class MediaServerTester {
     //Checks if "connected" is printed to ensure that server an client are connecting
     public void testRunConnection(Socket client, ServerSocket server) {
         try {
-            PrintWriter writer  = new PrintWriter(server.getOutputStream()); 
+            PrintWriter writer  = new PrintWriter(client.getOutputStream());
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             PrintStream ps = new PrintStream(baos);
             MediaServer ms = new MediaServer();
             PrintStream originalOut = System.out;
             System.setOut(ps);
-            ms.run(client, server);
             writer.println("new user");
             writer.println("johnDoe");
             writer.println("Password1");
@@ -59,6 +58,7 @@ public class MediaServerTester {
     public static void main(String[] args) throws Exception {
         ServerSocket serverSocket = new ServerSocket(4242);
         Socket socket = serverSocket.accept();
-        testRunConnection(socket, serverSocket);
+        MediaServerTester mst = new MediaServerTester();
+        mst.testRunConnection(socket, serverSocket);
     }
 }

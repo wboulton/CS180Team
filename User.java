@@ -16,7 +16,6 @@ import java.util.Arrays;
  *
  */
 public class User implements UserInt, Serializable {
-    private static UserDatabase userDatabase = new UserDatabase();
     private String username;
     private String password;
     private String firstName;
@@ -67,7 +66,7 @@ public class User implements UserInt, Serializable {
             }
         }
         allowAll = Boolean.parseBoolean(info[7]);
-        userDatabase.addUser(this);
+
     }
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
     public User(String username, String password, String firstName, String lastName, String profile) {
@@ -97,7 +96,7 @@ public class User implements UserInt, Serializable {
         }
         // allow all is set to true by default
         allowAll = true;
-        userDatabase.addUser(this);
+
     }
 
     public boolean addFriend(String user) {
