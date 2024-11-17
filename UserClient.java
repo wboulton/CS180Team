@@ -3,6 +3,13 @@ import java.net.Socket;
 import java.nio.file.Files;
 import java.util.Scanner;
 
+/**
+ * Team Project -- UserClient
+ *
+ * This file is the client side of the user interface.
+ *
+ * @author Mukund Venkatesh, William Boulton, Kush Kodiya
+ */
 public class UserClient implements UserClientInt {
     private User user;
     private BufferedReader reader;

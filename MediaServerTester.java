@@ -53,7 +53,7 @@ public class MediaServerTester {
         }
     }
     //wait for the message to be sent and then check if the message is in the reciever's file
-
+    //this runs fine on most machines, make sure your files are in the right spot
     @Test
     public void testEditMessageHandling() throws InterruptedException {
         TimeUnit.SECONDS.sleep(1);
