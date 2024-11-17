@@ -26,31 +26,27 @@ import java.net.*;
  */
 public class MediaServerTester {
     //Checks if "connected" is printed to ensure that server an client are connecting
-    public void testRunConnection(Socket client, ServerSocket server) {
+    public void testMessageHandling() {
         try {
-            PrintWriter writer  = new PrintWriter(client.getOutputStream());
-            ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PrintStream ps = new PrintStream(baos);
+            UserDatabase udb = new UserDatabase();
+            User sender = new User("sender|password|first|last|receiver|sender2|null|true");
+            User sender2 = new User("sender2|password|first|last|sender|null|null|false");
+            User reciever = new User("reciever|password|first|last|sender2|null|null|false");
+            MessageDatabase db = new MessageDatabase(sender);
+            MessageDatabase db2 = new MessageDatabase(sender2);
+
             MediaServer ms = new MediaServer();
-            PrintStream originalOut = System.out;
-            System.setOut(ps);
-            writer.println("new user");
-            writer.println("johnDoe");
-            writer.println("Password1");
-            writer.println("John");
-            writer.println("Doe");
-            writer.println("false");
-            writer.flush();
-            System.setOut(originalOut);
-            writer.close();
-            String output = baos.toString();
+
+            PrintWriter pw = null;
+            String line = "message|" + "SEND_MESSAGE|" + "sender" + "|" + "reciever" + "|" + "content";
+            ms.messageHandling(pw, line, db, udb.getUser("sender"));
+            BufferedReader send = new BufferedReader(new FileReader("reciever.txt"));
+            String proof = send.readLine();
             boolean checker = false;
-            // Checks if the desired text was printed
-            if (output.contains("connected")) {
-                checker = true;
-            }
+            if (proof.equals("content")) checker = true;
             assertTrue(checker);
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -60,5 +56,9 @@ public class MediaServerTester {
         MediaServer.userHandling(null, "BLOCK|username|name");
         User username = userDatabase.getUser("username");
         assertTrue(username.getBlockedUsers().contains("name"));
+    }
+    public static void main(String[] args) throws Exception {
+        MediaServerTester mst = new MediaServerTester();
+        mst.testMessageHandling();
     }
 }
