@@ -10,10 +10,12 @@ TODO:
  - stress testing (who seems the most deranged?)
 
  - Report: mostly derivatives of what we have already written in the docs folder
+    - project and functionality:
+    - design choices and features: 
 
  - Presentation: everyone talks for two minutes about different topics
-    - Database handling: 
+    - pitch: 
+    - demo: 
+    - testing: 
     - GUI: 
-    - Network IO: 
-    - Features/running: 
-    - Testing: 
+    - FAQ: 
