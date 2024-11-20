@@ -1,0 +1,19 @@
+TASKS:
+    IMPLEMENT A GUI
+    PRESENTATION
+    REPORT
+
+TODO:
+ - ensure gui runs on a different thread and is updated consistently
+ - make gui which looks good enough (java gui is sketchy)
+ - ensure pictures work (this seems like it would probably be the only hard part)
+ - stress testing (who seems the most deranged?)
+
+ - Report: mostly derivatives of what we have already written in the docs folder
+
+ - Presentation: everyone talks for two minutes about different topics
+    - Database handling: 
+    - GUI: 
+    - Network IO: 
+    - Features/running: 
+    - Testing: 
