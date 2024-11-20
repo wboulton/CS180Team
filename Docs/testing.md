@@ -1,4 +1,4 @@
-Testing is contained within four classes using junit tests ran in Intellij. Those four classes are the following:
+Testing is contained within twelve classes using junit tests ran in Intellij. Those twelve classes are the following:
 1. [MessageTest.java](../MessageTest.java)
 2. [MessageDatabaseTest.java](../MessageDatabaseTest.java)
 3. [UserTest.java](../UserTest.java)
