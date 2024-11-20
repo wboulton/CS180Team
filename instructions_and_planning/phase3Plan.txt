@@ -6,7 +6,7 @@ TASKS:
 TODO:
  - ensure gui runs on a different thread and is updated consistently: William/Alan
  - make gui which looks good enough (java gui is sketchy): William/Alan
- - ensure pictures work (this seems like it would probably be the only hard part): MUKUND
+ - ensure pictures work (this seems like it would probably be the only hard part): Mukund
  - stress testing (who seems the most deranged?): Kush
 
  - Report: mostly derivatives of what we have already written in the docs folder: Jai
