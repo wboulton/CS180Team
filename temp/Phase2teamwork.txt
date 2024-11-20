@@ -1,0 +1,23 @@
+TODO:
+ - multiple client support
+ - Server/Database interaction is thread safe
+ - Extend runnable in order to create a new thread for every logged in user
+ - Client stores no information locally (I am taking this loosly because it needs to store enough to display messages)
+ - Updates to phase 1 may be necessary
+ - Test cases 
+ - implement server io and stuff
+
+Client: Kush, Mukund
+ - connect to server
+ - send user sign in
+ - send opened dms
+ - recieve dm messages from database
+
+Server: Alan, William
+ - Receive client inputs
+ - verify user
+ - find user in userdatabase and open user database
+ - send messages from queried users to client
+
+TEST CASES: Jai
+INTERFACES

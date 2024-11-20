@@ -13,8 +13,8 @@ import java.net.Socket;
  */
 
 public interface ServerInterface {
-    static UserDatabase database = new UserDatabase();
-    static final Object lock = new Object();
+    static UserDatabase DATABASE = new UserDatabase();
+    static final Object LOCK = new Object();
 
     static void userHandling(PrintWriter writer, String line) {
     };

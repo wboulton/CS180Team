@@ -27,7 +27,8 @@ public class UserClient implements UserClientInt {
     }
 
     // Constructor for new user
-    public UserClient(String username, String password, String firstName, String lastName, String profilePicture) throws IOException, BadDataException {
+    public UserClient(String username, String password, String firstName, String lastName,
+        String profilePicture) throws IOException, BadDataException {
         connectToServer();
         createNewUser(username, password, firstName, lastName, profilePicture);
     }
@@ -96,7 +97,8 @@ public class UserClient implements UserClientInt {
             File imageFile = new File(picture);
             try {
                 byte[] imageData = Files.readAllBytes(imageFile.toPath());
-                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + content + "|" + byteArrayToString(imageData));
+                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + 
+                    content + "|" + byteArrayToString(imageData));
             } catch (IOException e) {
                 throw new BadDataException("Picture not found");
             }
@@ -227,7 +229,8 @@ public class UserClient implements UserClientInt {
         String choice = sc.nextLine();
         switch (choice.toLowerCase()) {
             case "user" -> {
-                System.out.println("Search, add friend, remove friend, block, unblock, change username, change password?");
+                System.out.println("Search, add friend, remove friend, block, unblock, "
+                    + "change username, change password?");
                 String userChoice = sc.nextLine();
                 switch (userChoice.toLowerCase()) {
                     case "search" -> {
@@ -252,8 +255,8 @@ public class UserClient implements UserClientInt {
                             if (value) {
                                 System.out.println("Friend added");
                             } else {
-                                System.out.println("Friend not added because they are already a friend or blocked or " +
-                                        "do not exist");
+                                System.out.println("Friend not added because they " + 
+                                    "are already a friend or blocked or do not exist");
                             }
                             client.kill();
                         } catch (Exception e) {
@@ -268,8 +271,8 @@ public class UserClient implements UserClientInt {
                             if (value) {
                                 System.out.println("Friend removed");
                             } else {
-                                System.out.println("Friend not removed because they are not a friend or blocked or " +
-                                        "do not exist");
+                                System.out.println("Friend not removed because they are not " +
+                                    "a friend or blocked or do not exist");
                             }
                             client.kill();
                         } catch (Exception e) {

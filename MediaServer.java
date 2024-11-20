@@ -16,7 +16,7 @@ import java.net.*;
 
 public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
-    public static final Object lock = new Object();
+    public static final Object LOCK = new Object();
 //run method used to control each thread that is made. There is some weird stuff going on with 
 //atomic references and atomic integers to make sure these threads work properly with final values
 //and lambda functions. It seems atomic types are effectively final so we can use them in more threaded
@@ -257,9 +257,9 @@ public class MediaServer extends Thread implements ServerInterface {
                     break;
             }            
 
-        }catch (IndexOutOfBoundsException e) {
+        } catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -269,7 +269,7 @@ public class MediaServer extends Thread implements ServerInterface {
         database = new UserDatabase();
         int port;
         try {
-        port = Integer.parseInt(args[0]);
+            port = Integer.parseInt(args[0]);
         } catch (Exception e) {
             System.out.println("Enter a valid 4 digit port number");
             return;
