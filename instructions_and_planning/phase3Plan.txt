@@ -4,18 +4,22 @@ TASKS:
     REPORT
 
 TODO:
- - ensure gui runs on a different thread and is updated consistently
- - make gui which looks good enough (java gui is sketchy)
- - ensure pictures work (this seems like it would probably be the only hard part)
- - stress testing (who seems the most deranged?)
+ - ensure gui runs on a different thread and is updated consistently: William/Alan
+ - make gui which looks good enough (java gui is sketchy): William/Alan
+ - ensure pictures work (this seems like it would probably be the only hard part): MUKUND
+ - stress testing (who seems the most deranged?): Kush
 
- - Report: mostly derivatives of what we have already written in the docs folder
-    - project and functionality:
-    - design choices and features: 
+ - Report: mostly derivatives of what we have already written in the docs folder: Jai
+    - project and functionality
+    - design choices and features
 
  - Presentation: everyone talks for two minutes about different topics
-    - pitch: 
-    - demo: 
-    - testing: 
-    - GUI: 
-    - FAQ: 
+    - pitch: Mukund
+    - demo: Jai 
+    - testing: Kush
+    - GUI: Alan
+    - Network: William
+    - FAQ: N/A
+
+
+Everyone must add to the report with what they have done for the project.
