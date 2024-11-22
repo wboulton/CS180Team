@@ -8,6 +8,9 @@ import java.util.*;
 public class GUIClient implements Runnable {
     ArrayList<String> usernames;
     ArrayList<String> displayUsers;
+    ArrayList<String> messages = new ArrayList<>(Arrays.asList("message1", "message2", 
+    "message3", "message4", "message5"));;
+
     JButton friendButton;
     JButton blockButton;
     JLabel userImage;
@@ -17,11 +20,19 @@ public class GUIClient implements Runnable {
     JButton searchButton;
     JTextField searchField;
     JTextArea viewingUser;
+    JList<String> messageJList;
+
     String viewingUsername;
+    String clientUsername;
 
     public GUIClient(ArrayList<String> usernames) {
         this.usernames = usernames;
         viewingUsername = "";
+    }
+
+    public void setMessages(ArrayList<String> messages) {
+        this.messages = messages;
+        messageJList.setListData(this.messages.toArray(new String[0]));
     }
 
     private void searchForUser(String username) {
@@ -49,6 +60,7 @@ public class GUIClient implements Runnable {
         userList = new JList<String>(usernames.toArray(new String[0]));
         searchField = new JTextField("user");
         viewingUser = new JTextArea(String.format("Currently viewing %s", viewingUsername));
+        messageJList = new JList<String>(messages.toArray(new String[0]));
     
         ActionListener actionListener = new ActionListener() {
             @Override
@@ -104,10 +116,14 @@ public class GUIClient implements Runnable {
         
         rightPanel.add(searchPanel);
         rightPanel.add(userList);
+
+        JPanel messagePanel = new JPanel();
+        messagePanel.add(messageJList);
     
         content.add(topPanel, BorderLayout.NORTH);
         content.add(bottomPanel, BorderLayout.SOUTH);
         content.add(rightPanel, BorderLayout.EAST);
+        content.add(messagePanel, BorderLayout.WEST);
     
         frame.setSize(1900, 1000);
         frame.setLocationRelativeTo(null);
