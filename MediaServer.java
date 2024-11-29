@@ -32,6 +32,15 @@ public class MediaServer extends Thread implements ServerInterface {
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             System.out.println("connected");
+            ArrayList<User> users = database.getUsers();
+            for (User item : users) {
+                writer.write(item.getUsername());
+                writer.println();
+                writer.flush();
+            }
+            writer.println("|ENDED HERE 857725|");
+            writer.flush();
+
             String line = reader.readLine();
             if (line.equals("login")) {
                 while (true) {
@@ -123,7 +132,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         messageDatabase, currentlyViewing.get()));
                 }
             }
-            System.out.printf("Client %s disconnected\n", client);
+            //System.out.printf("Client %s disconnected\n", client);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -151,6 +160,8 @@ public class MediaServer extends Thread implements ServerInterface {
                             writer.flush();
                         }
                     }
+                    writer.println("|ENDED HERE 857725|");
+                    writer.flush();
                     return viewing;
 //public Message(User sender, User reciever, String content)
                 case SEND_MESSAGE:
@@ -167,6 +178,8 @@ public class MediaServer extends Thread implements ServerInterface {
                         }
                         message.addPicture(picture);
                     }
+                    writer.println(message);
+                    writer.flush();
                     return viewing;
                 case DELETE_MESSAGE:
                     ArrayList<Message> sent = messageDatabase.getSentMessages();

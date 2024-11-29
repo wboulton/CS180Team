@@ -1,7 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Team Project -- UserClient
@@ -14,11 +14,12 @@ import java.util.Scanner;
  */
 public class UserClient implements UserClientInt {
     private User user;
+    private ArrayList<String> userList;
     private BufferedReader reader;
     private PrintWriter writer;
     private Socket socket;
     private ObjectInputStream input;
-    private static int portNumber;
+    private static final int portNumber = 8080;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -43,6 +44,12 @@ public class UserClient implements UserClientInt {
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         input = new ObjectInputStream(socket.getInputStream());
+        //here we collect a list of usernames
+        userList = new ArrayList<String>();
+        String line = null;
+        while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
+            userList.add(line);
+        }
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -89,7 +96,7 @@ public class UserClient implements UserClientInt {
     }
 
     @Override
-    public void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
+    public String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
         // Send SEND_MESSAGE command to the server
         writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
@@ -103,6 +110,12 @@ public class UserClient implements UserClientInt {
                 throw new BadDataException("Picture not found");
             }
         }
+        String message = reader.readLine();
+        return message;
+    }
+
+    public ArrayList<String> getUserList() {
+        return userList;
     }
 
     public void deleteMessage(int id) throws IOException {
@@ -125,13 +138,16 @@ public class UserClient implements UserClientInt {
         writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
         return reader.readLine().equals("true");
     }
-    public void getConversation(String username) throws IOException {
+    public ArrayList<String> getConversation(String username) throws IOException {
         writer.println("message|SET_VIEWING|" + username);
         writer.println("message|GET_CONVERSATION|" + username);
+        ArrayList<String> messagesList = new ArrayList<String>();
         String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+        while ((line = reader.readLine()) != null && !line.equals("|ENDED HERE 857725|")) {
+            messagesList.add(line);
         }
+        System.out.println(messagesList);
+        return messagesList;
     }
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
@@ -179,7 +195,6 @@ public class UserClient implements UserClientInt {
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
 //for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
     public static void main(String[] args) {      
-        portNumber = Integer.parseInt(args[0]); 
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();

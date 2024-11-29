@@ -10,7 +10,7 @@ import java.io.IOException;
  * @version November 17, 2024
  */
 public interface UserClientInt {
-    void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
+    String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
     void deleteMessage(int id) throws BadDataException, IOException;
     void editMessage(int id, String newContent) throws IOException;
     void blockUser(String u) throws IOException;

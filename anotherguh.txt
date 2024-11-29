@@ -1,1 +1,12 @@
 6|username|anotherguh|hello there anotherguh|false
+12|username|anotherguh|sending message|false
+13|username|anotherguh|new message|false
+14|username|anotherguh|sending message here again for testing purposes|false
+15|username|anotherguh|temporary message|false
+16|username|anotherguh|oiasihashjds|false
+17|username|anotherguh|jdjfjfjf|false
+18|username|anotherguh|one more time|false
+19|anotherguh|username|one from anotherguh|false
+20|anotherguh|username|another message here|false
+21|anotherguh|username|message to send|false
+22|anotherguh|username|how do i get the incoming message|false

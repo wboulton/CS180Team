@@ -1,6 +1,12 @@
 import javax.swing.*;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.Style;
+import javax.swing.text.StyledDocument;
+
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.FocusEvent;
 
 import java.awt.*;
 import java.util.*;
@@ -8,14 +14,16 @@ import java.util.*;
 public class GUIClient implements Runnable {
     ArrayList<String> usernames;
     ArrayList<String> displayUsers;
-    ArrayList<String> messages = new ArrayList<>(Arrays.asList("message1", "message2", 
-    "message3", "message4", "message5"));;
+    ArrayList<String> messages;
+    String username;
+
+    UserClient client;
 
     JButton friendButton;
     JButton blockButton;
     JLabel userImage;
     JButton sendButton;
-    JTextField messageField;
+    JTextPane messageField;
     JList<String> userList;
     JButton searchButton;
     JTextField searchField;
@@ -25,9 +33,11 @@ public class GUIClient implements Runnable {
     String viewingUsername;
     String clientUsername;
 
-    public GUIClient(ArrayList<String> usernames) {
+    public GUIClient(ArrayList<String> usernames, UserClient client, String username) {
         this.usernames = usernames;
         viewingUsername = "";
+        this.client = client;
+        this.username = username;
     }
 
     public void setMessages(ArrayList<String> messages) {
@@ -35,6 +45,20 @@ public class GUIClient implements Runnable {
         messageJList.setListData(this.messages.toArray(new String[0]));
     }
 
+    private ArrayList<String> getMessages() {
+        ArrayList<String> content = new ArrayList<String>();
+        for (String message : messages) {
+            String[] info = message.split("\\|");
+            content.add(String.format("%s: %s", info[1], info[3]));
+        }
+        return content;
+    }
+
+    private String getSender(String sender) {
+        return sender.split(":")[0];
+    }
+
+    //action listener methods
     private void searchForUser(String username) {
         displayUsers = new ArrayList<String>();
         for (String user : usernames) {
@@ -45,7 +69,44 @@ public class GUIClient implements Runnable {
         userList.setListData(displayUsers.toArray(new String[0]));
     }
 
+    private void sendMessage(String message) {
+        if (message != null && !message.trim().isEmpty()) {
+            try {
+                String sending = viewingUser.getText().replace("Currently viewing: ", "");
+                String toSend = client.sendMessage(sending, message, null);
+                messages.add(toSend);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            messageField.setText("");
+            messageJList.setListData(getMessages().toArray(new String[0]));
+        }
+    }
+
+    private void placeHolder(JTextField textField, String placeholderText) {
+        textField.setText(placeholderText);
+        textField.setForeground(Color.GRAY);
+
+        textField.addFocusListener(new FocusListener() {
+            public void focusGained(FocusEvent e) {
+                if (textField.getText().equals(placeholderText)) {
+                    textField.setText("");
+                    textField.setForeground(Color.BLACK);
+                }
+            }
+
+            public void focusLost(FocusEvent e) {
+                if (textField.getText().isEmpty()) {
+                    textField.setText(placeholderText);
+                    textField.setForeground(Color.GRAY);
+                }
+            }
+        });
+    }
+
     public void run() {
+        this.messages = new ArrayList<String>();
+
         JFrame frame = new JFrame("Social Media App(tm)");
         Container content = frame.getContentPane();
         JPanel panel = new JPanel();
@@ -53,15 +114,46 @@ public class GUIClient implements Runnable {
     
         friendButton = new JButton("friend/unfriend");
         blockButton = new JButton("block/unblock");
-        sendButton = new JButton("send");
+        sendButton = new JButton("<html>send<br>message</html>");
+        sendButton.setPreferredSize(new Dimension(100, 100));
         searchButton = new JButton("search");
         userImage = new JLabel("User Image Placeholder"); 
-        messageField = new JTextField("message");
-        userList = new JList<String>(usernames.toArray(new String[0]));
-        searchField = new JTextField("user");
+        messageField = new JTextPane();
+        messageField.setPreferredSize(new Dimension(1700, 100));
+        messageField.setFont(new Font("Arial", Font.PLAIN, 16));
+        messageField.setEditable(true); 
+        messageField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+
+        // Enable wrapping with styling
+        StyledDocument doc = messageField.getStyledDocument();
+        Style style = messageField.addStyle("WrapStyle", null);
+        StyleConstants.setLineSpacing(style, 0.2f); 
+        messageField.setParagraphAttributes(style, true);
+        userList = new JList<>(usernames.toArray(new String[0]));
+        searchField = new JTextField();
+        searchField.setPreferredSize(new Dimension(100,25));
         viewingUser = new JTextArea(String.format("Currently viewing %s", viewingUsername));
-        messageJList = new JList<String>(messages.toArray(new String[0]));
-    
+        viewingUser.setEditable(false); // Make the text area non-editable
+        messageJList = new JList<String>();
+        messageJList.setCellRenderer(new DefaultListCellRenderer() {
+            @Override
+            public Component getListCellRendererComponent(JList<?> list, Object value, int index,
+                boolean isSelected, boolean cellHasFocus) {
+                JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+                String message = value.toString();
+                String sender = getSender(message);
+                if (sender.equals(GUIClient.this.username)) { // Alternate alignment
+                    label.setHorizontalAlignment(SwingConstants.LEFT);
+                } else {
+                    label.setHorizontalAlignment(SwingConstants.RIGHT);
+                }
+        
+                return label;
+            }
+        });
+
+        placeHolder(searchField, "user");
+        
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -73,19 +165,27 @@ public class GUIClient implements Runnable {
                     String username = searchField.getText();
                     searchForUser(username);
                 } else if (e.getSource() == sendButton) {
+                    String message = messageField.getText();
+                    sendMessage(message);
                     System.out.println("Send button clicked");
                 }
             }
         };
     userList.addMouseListener(new java.awt.event.MouseAdapter() {
         public void mouseClicked(java.awt.event.MouseEvent evt) {
-        if (evt.getClickCount() == 2) {
-            int index = userList.locationToIndex(evt.getPoint());
-            if (index >= 0) {
-            viewingUsername = userList.getModel().getElementAt(index);
-            viewingUser.setText(String.format("Currently viewing: %s", viewingUsername));
+            if (evt.getClickCount() == 2) {
+                int index = userList.locationToIndex(evt.getPoint());
+                if (index >= 0) {
+                    viewingUsername = userList.getModel().getElementAt(index);
+                    viewingUser.setText(String.format("Currently viewing: %s", viewingUsername));
+                    try {
+                        messages = client.getConversation(viewingUsername);
+                        messageJList.setListData(getMessages().toArray(new String[0])); 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-        }
         }
     });
     
@@ -133,8 +233,16 @@ public class GUIClient implements Runnable {
     
 
     public static void main(String[] args) {
-        ArrayList<String> usernames = new ArrayList<>(Arrays.asList("fake username",
-            "antoher username", "I made a typo in the last one", "one more here"));
-        SwingUtilities.invokeLater(new GUIClient(usernames));
+        UserClient client = null;
+        String username = "anotherguh";
+        String password = "Password1";
+        try {
+            client = new UserClient(username, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
+        ArrayList<String> usernames = client.getUserList();
+        SwingUtilities.invokeLater(new GUIClient(usernames, client, username));
     }
 }
