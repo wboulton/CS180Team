@@ -142,23 +142,40 @@ public class UserClient implements UserClientInt {
         writer.println("message|SET_VIEWING|" + username);
         writer.println("message|GET_CONVERSATION|" + username);
         ArrayList<String> messagesList = new ArrayList<String>();
+        messagesList.clear();
         String line;
         while ((line = reader.readLine()) != null && !line.equals("|ENDED HERE 857725|")) {
+            if (line.contains("INCOMING|")) {
+                continue;
+            }
             messagesList.add(line);
         }
-        System.out.println(messagesList);
+        //This is a really sketchy fix but it works
+        if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > 
+            Integer.parseInt(messagesList.get(1).split("\\|")[0])) {
+            messagesList.remove(0);
+        }
         return messagesList;
     }
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
         writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
-        return reader.readLine().equals("true");
+        String temp = reader.readLine();
+        return temp.equals("true");
     }
 
     public boolean removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
         writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
         return reader.readLine().equals("true");
+    }
+
+    public void addOrRemoveFriend(String username) throws IOException {
+        boolean something = addFriend(username);
+        System.out.println(something);
+        if (!something) {
+            removeFriend(username);
+        }
     }
 
     // Helper method to convert byte array to string format for transmission

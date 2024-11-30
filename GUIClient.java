@@ -15,7 +15,6 @@ public class GUIClient implements Runnable {
     ArrayList<String> usernames;
     ArrayList<String> displayUsers;
     ArrayList<String> messages;
-    String username;
 
     UserClient client;
 
@@ -37,7 +36,7 @@ public class GUIClient implements Runnable {
         this.usernames = usernames;
         viewingUsername = "";
         this.client = client;
-        this.username = username;
+        this.clientUsername = username;
     }
 
     public void setMessages(ArrayList<String> messages) {
@@ -47,6 +46,11 @@ public class GUIClient implements Runnable {
 
     private ArrayList<String> getMessages() {
         ArrayList<String> content = new ArrayList<String>();
+        try {
+            messages = client.getConversation(viewingUsername);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (String message : messages) {
             String[] info = message.split("\\|");
             content.add(String.format("%s: %s", info[1], info[3]));
@@ -74,7 +78,6 @@ public class GUIClient implements Runnable {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
                 String toSend = client.sendMessage(sending, message, null);
-                messages.add(toSend);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -135,6 +138,9 @@ public class GUIClient implements Runnable {
         viewingUser = new JTextArea(String.format("Currently viewing %s", viewingUsername));
         viewingUser.setEditable(false); // Make the text area non-editable
         messageJList = new JList<String>();
+        messageJList.setPreferredSize(new Dimension(1600, 800));
+                //this handles alignment by sender The logged in user appears on the left and the 
+                //user they are viewing appears on the right
         messageJList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -142,7 +148,7 @@ public class GUIClient implements Runnable {
                 JLabel label = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
                 String message = value.toString();
                 String sender = getSender(message);
-                if (sender.equals(GUIClient.this.username)) { // Alternate alignment
+                if (sender.equals(GUIClient.this.clientUsername)) { 
                     label.setHorizontalAlignment(SwingConstants.LEFT);
                 } else {
                     label.setHorizontalAlignment(SwingConstants.RIGHT);
@@ -158,7 +164,11 @@ public class GUIClient implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == friendButton) {
-                    System.out.println("Friend button clicked");
+                    try {
+                        client.addOrRemoveFriend(viewingUsername);
+                    } catch (Exception error) {
+                        error.printStackTrace();
+                    }
                 } else if (e.getSource() == blockButton) {
                     System.out.println("Block button clicked");
                 } else if (e.getSource() == searchButton) {

@@ -116,18 +116,16 @@ public class MediaServer extends Thread implements ServerInterface {
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
-                System.out.println(line);
                 //random numbers for kill message, this should not be vulnerable because all other lines
                 //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     break;
                 }
-                System.out.printf("Recieved '%s' from %s\n", line, client.toString());
-                System.out.println(line.split("\\|")[0]);
+                //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
+                //System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
                     userHandling(writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
-                    System.out.println(line);
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
                         messageDatabase, currentlyViewing.get()));
                 }
@@ -234,15 +232,18 @@ public class MediaServer extends Thread implements ServerInterface {
                     User otherUser = UserDatabase.getUser(inputs[2]);
                     System.out.println(user);
                     System.out.println(otherUser);
-                    writer.write(String.valueOf(UserDatabase.addFriend(user, otherUser)));
+                    boolean value = UserDatabase.addFriend(user, otherUser);
+                    System.out.println(value);
+                    writer.write(String.valueOf(value));
                     writer.println();
                     writer.flush();
                     break;
                 case REMOVE_FRIEND:
                     User user2 = UserDatabase.getUser(inputs[1]);
                     User otherUser2 = UserDatabase.getUser(inputs[2]);
-                    boolean value = UserDatabase.removeFriend(user2, otherUser2);
-                    writer.write(String.valueOf(value));
+                    boolean response = UserDatabase.removeFriend(user2, otherUser2);
+                    System.out.println(response);
+                    writer.write(String.valueOf(response));
                     writer.println();
                     writer.flush();
                     break;
