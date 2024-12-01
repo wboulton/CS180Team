@@ -1,10 +1,10 @@
-1|username|name|goodbye|false
 0|username|name|hi|false
+1|username|name|goodbye|false
 2|username|name|something else|false
 6|username|anotherguh|hello there anotherguh|false
+7|username|thisguy|this guy?|false
 8|username|name|idk anymore|false
 9|username|name|lock in my guy|false
-7|username|thisguy|this guy?|false
 12|username|anotherguh|sending message|false
 13|username|anotherguh|new message|false
 14|username|anotherguh|sending message here again for testing purposes|false
@@ -45,4 +45,4 @@
 49|username|anotherguh|why does it seem to be working here|false
 50|anotherguh|username|I am going to try to write you a message|false
 51|anotherguh|username|I will write another message|false
-52|username|anotherguh|oh it seems to work fine without the lambda thread|false
+52|username|anotherguh|oh it seems to work fine without the lambda thread but this one is|false

@@ -20,6 +20,7 @@ public class UserClient implements UserClientInt {
     private Socket socket;
     private ObjectInputStream input;
     private static final int portNumber = 8080;
+    private static final int MAX_LENGTH = 5_000;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -94,10 +95,13 @@ public class UserClient implements UserClientInt {
         }
 
     }
-
+//messages that are too long are canceled because when they get sent over network bad things happen.
     @Override
     public String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
         // Send SEND_MESSAGE command to the server
+        if (content.length() > MAX_LENGTH) {
+            return "String too long";
+        }
         writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
@@ -123,9 +127,13 @@ public class UserClient implements UserClientInt {
         writer.println("message|DELETE_MESSAGE|" + user.getUsername() + "|" + id);
     }
 
-    public void editMessage(int id, String newContent) throws IOException {
+    public String editMessage(int id, String newContent) throws IOException {
         // Send EDIT_MESSAGE command
+        if (newContent.length() > MAX_LENGTH) {
+            return "String too long";
+        }
         writer.println("message|" + "EDIT_MESSAGE|" + id + "|" + newContent);
+        return "success";
     }
 
     public void blockUser(String usernameToBlock) throws IOException {
@@ -138,6 +146,7 @@ public class UserClient implements UserClientInt {
         writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
         return reader.readLine().equals("true");
     }
+
     public ArrayList<String> getConversation(String username) throws IOException {
         writer.println("message|SET_VIEWING|" + username);
         writer.println("message|GET_CONVERSATION|" + username);

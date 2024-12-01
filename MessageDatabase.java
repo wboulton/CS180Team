@@ -116,8 +116,8 @@ public class MessageDatabase extends Thread implements MData {
     @Override
     public void deleteMessage(Message m) throws BadDataException {
         synchronized (LOCK) {
+            recoverMessages();
             int id = m.getMessageID();
-            System.out.println(id);
             try {
                 if (!sentMessages.remove(m)) {
                     throw new BadDataException("This message did not exist");
@@ -128,8 +128,11 @@ public class MessageDatabase extends Thread implements MData {
             }
             //here I use the arraylist to generate the new list of messages after the delete, this means 
             //the array list must be up to date before deleting.
+            ArrayList<Message> messages = sentMessages;
+            messages.addAll(recievedMessages);
+            messages.sort(Comparator.comparingInt(Message::getMessageID));
             try (BufferedWriter sender = new BufferedWriter(new FileWriter(filePath))) {
-                for (Message message : sentMessages) {
+                for (Message message : messages) {
                     sender.write(message.toString());
                     sender.newLine();
                 }

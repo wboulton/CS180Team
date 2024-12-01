@@ -189,14 +189,11 @@ public class MediaServer extends Thread implements ServerInterface {
                     }
                     return viewing;
                 case EDIT_MESSAGE:
-                    System.out.println("you're here");
                     ArrayList<Message> sentMessages = messageDatabase.getSentMessages();
                     for (Message item : sentMessages) {
                         if (item.getMessageID() == Integer.parseInt(information.split("\\|")[0])) {
                             Message editedMessage = new Message(UserDatabase.getUser(item.getSender()), 
                                 UserDatabase.getUser(item.getReciever()), information.split("\\|")[1]);
-                            System.out.println(item);
-                            System.out.println(editedMessage);
                             messageDatabase.editMessage(item, editedMessage);
                         }
                     }

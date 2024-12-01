@@ -12,7 +12,7 @@ import java.io.IOException;
 public interface UserClientInt {
     String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
     void deleteMessage(int id) throws BadDataException, IOException;
-    void editMessage(int id, String newContent) throws IOException;
+    String editMessage(int id, String newContent) throws IOException;
     void blockUser(String u) throws IOException;
     boolean unblockUser(String u) throws IOException;
     boolean addFriend(String u) throws IOException;

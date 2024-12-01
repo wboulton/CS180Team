@@ -154,7 +154,6 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         synchronized (LOCK) {
             if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
                 user.unblockUser(blockedUser.getUsername());
-                System.out.println(user.toString());
                 updateDB();
                 return true;
             }

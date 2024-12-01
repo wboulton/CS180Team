@@ -87,6 +87,10 @@ public class GUIClient implements Runnable {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
                 String toSend = client.sendMessage(sending, message, null);
+                if (toSend.equals("String too long")) {
+                    JOptionPane.showMessageDialog(null, "The message was too long", "Social Media App(tm)",
+                        JOptionPane.ERROR_MESSAGE);
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -164,7 +168,6 @@ public class GUIClient implements Runnable {
                 } else {
                     label.setHorizontalAlignment(SwingConstants.RIGHT);
                 }
-        
                 return label;
             }
         });
@@ -205,6 +208,46 @@ public class GUIClient implements Runnable {
                     try {
                         messages = client.getConversation(viewingUsername);
                         messageJList.setListData(getMessages().toArray(new String[0])); 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    });
+
+    messageJList.addMouseListener(new java.awt.event.MouseAdapter() {
+        public void mouseClicked(java.awt.event.MouseEvent evt) {
+            if (evt.getClickCount() == 2) {
+                int index = messageJList.locationToIndex(evt.getPoint());
+                if (index >= 0) {
+                    try {
+                        String viewingMessage = client.getConversation(viewingUsername).get(index);
+                        int messageAlter = JOptionPane.showOptionDialog(null, viewingMessage.split("\\|")[3],
+                            "Social Media App(tm)", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                            new String[]{"Edit", "Delete", "Cancel"}, null);
+                        if (messageAlter == 0) {
+                            //edit
+                            String edit;
+                            do {
+                                String newText = JOptionPane.showInputDialog("What would you like to change it to?",
+                                    viewingMessage.split("\\|")[3]);
+                                if (newText != null) {
+                                    edit = client.editMessage(Integer.parseInt(viewingMessage.split("\\|")[0]), newText);
+                                    if (edit.equals("String too long")) {
+                                        JOptionPane.showMessageDialog(null, "The message was too long",
+                                            "Social Media App(tm)", JOptionPane.ERROR_MESSAGE);
+                                    }
+                                    messageJList.setListData(getMessages().toArray(new String[0]));
+                                } else {
+                                    edit = "";
+                                }
+                            } while (edit.equals("String too long"));
+                        } else if (messageAlter == 1) {
+                            //delete
+                            client.deleteMessage(Integer.parseInt(viewingMessage.split("\\|")[0]));
+                            messageJList.setListData(getMessages().toArray(new String[0]));
+                        }
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
