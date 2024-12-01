@@ -10,6 +10,8 @@ import java.awt.event.FocusEvent;
 
 import java.awt.*;
 import java.util.*;
+import java.net.*;
+import java.util.concurrent.atomic.*;
 
 public class GUIClient implements Runnable {
     ArrayList<String> usernames;
@@ -32,11 +34,14 @@ public class GUIClient implements Runnable {
     String viewingUsername;
     String clientUsername;
 
+    private java.util.Timer messageUpdateTimer;
+
     public GUIClient(ArrayList<String> usernames, UserClient client, String username) {
         this.usernames = usernames;
         viewingUsername = "";
         this.client = client;
         this.clientUsername = username;
+        this.messages = new ArrayList<>();
     }
 
     public void setMessages(ArrayList<String> messages) {
@@ -50,6 +55,10 @@ public class GUIClient implements Runnable {
             messages = client.getConversation(viewingUsername);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+        //this is necessary to ensure that if you have no messages with a user there is no error
+        if (messages == null) {
+            return content;
         }
         for (String message : messages) {
             String[] info = message.split("\\|");
@@ -109,6 +118,8 @@ public class GUIClient implements Runnable {
 
     public void run() {
         this.messages = new ArrayList<String>();
+
+        startMessageUpdater();
 
         JFrame frame = new JFrame("Social Media App(tm)");
         Container content = frame.getContentPane();
@@ -170,14 +181,17 @@ public class GUIClient implements Runnable {
                         error.printStackTrace();
                     }
                 } else if (e.getSource() == blockButton) {
-                    System.out.println("Block button clicked");
+                    try {
+                        client.blockOrUnblock(viewingUsername);
+                    } catch (Exception error) {
+                        error.printStackTrace();
+                    }
                 } else if (e.getSource() == searchButton) {
                     String username = searchField.getText();
                     searchForUser(username);
                 } else if (e.getSource() == sendButton) {
                     String message = messageField.getText();
                     sendMessage(message);
-                    System.out.println("Send button clicked");
                 }
             }
         };
@@ -241,11 +255,36 @@ public class GUIClient implements Runnable {
         frame.setVisible(true);
     }
     
+//this will run a timertask that will update the gui with new messages every three seconds
+//this also makes the other timertask in the media server uncessary now because it calls directly
+//upon the getConversation method. This also ensures messages are displayed in the same order universally
+    public void startMessageUpdater() {
+        //for some reason swing also has a timer class but I am using the java.util one
+        messageUpdateTimer = new java.util.Timer();
+        messageUpdateTimer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                //ensure that we are actually viewing someone
+                if (viewingUsername != null && !viewingUsername.isEmpty()) {
+                    try {
+                        ArrayList<String> updatedMessages = client.getConversation(viewingUsername);
+                        if (updatedMessages != null && !updatedMessages.equals(messages)) {
+                            messages = updatedMessages; // update the messages array
+                            messageJList.setListData(getMessages().toArray(new String[0]));
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }, 0, 3000); // Runs every 3 seconds
+    }
 
     public static void main(String[] args) {
         UserClient client = null;
-        String username = "anotherguh";
-        String password = "Password1";
+        Scanner sc = new Scanner(System.in);
+        String username = sc.nextLine();
+        String password = sc.nextLine();
         try {
             client = new UserClient(username, password);
         } catch (Exception e) {
@@ -253,6 +292,7 @@ public class GUIClient implements Runnable {
         }
         
         ArrayList<String> usernames = client.getUserList();
-        SwingUtilities.invokeLater(new GUIClient(usernames, client, username));
+        GUIClient newUserClient = new GUIClient(usernames, client, username);
+        SwingUtilities.invokeLater(newUserClient);
     }
 }

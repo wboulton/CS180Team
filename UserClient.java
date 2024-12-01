@@ -151,7 +151,9 @@ public class UserClient implements UserClientInt {
             messagesList.add(line);
         }
         //This is a really sketchy fix but it works
-        if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > 
+        if (messagesList.size() < 1) {
+            messagesList = null;
+        } else if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > 
             Integer.parseInt(messagesList.get(1).split("\\|")[0])) {
             messagesList.remove(0);
         }
@@ -172,9 +174,15 @@ public class UserClient implements UserClientInt {
 
     public void addOrRemoveFriend(String username) throws IOException {
         boolean something = addFriend(username);
-        System.out.println(something);
         if (!something) {
             removeFriend(username);
+        }
+    }
+
+    public void blockOrUnblock(String username) throws IOException {
+        boolean canUnblock = unblockUser(username);
+        if (!canUnblock) {
+            blockUser(username);
         }
     }
 

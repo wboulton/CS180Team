@@ -20,4 +20,5 @@ public interface UserClientInt {
     boolean setUserName(String name) throws IOException;
     void setPassword(String password);
     void addOrRemoveFriend(String username) throws IOException;
+    void blockOrUnblock(String username) throws IOException;
 }
