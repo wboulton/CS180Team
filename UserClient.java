@@ -26,6 +26,12 @@ public class UserClient implements UserClientInt {
     public UserClient(String username, String password) throws IOException, BadDataException {
         connectToServer();
         login(username, password);
+        //here we collect a list of usernames
+        userList = new ArrayList<String>();
+        String line = null;
+        while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
+            userList.add(line);
+        }
     }
 
     // Constructor for new user
@@ -33,6 +39,12 @@ public class UserClient implements UserClientInt {
         String profilePicture) throws IOException, BadDataException {
         connectToServer();
         createNewUser(username, password, firstName, lastName, profilePicture);
+        //here we collect a list of usernames
+        userList = new ArrayList<String>();
+        String line = null;
+        while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
+            userList.add(line);
+        }
     }
 
     private void kill() {
@@ -45,12 +57,6 @@ public class UserClient implements UserClientInt {
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         input = new ObjectInputStream(socket.getInputStream());
-        //here we collect a list of usernames
-        userList = new ArrayList<String>();
-        String line = null;
-        while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
-            userList.add(line);
-        }
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -162,6 +168,8 @@ public class UserClient implements UserClientInt {
         //This is a really sketchy fix but it works
         if (messagesList.size() < 1) {
             messagesList = null;
+        } else if (messagesList.size() == 1) {
+            return messagesList;
         } else if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > 
             Integer.parseInt(messagesList.get(1).split("\\|")[0])) {
             messagesList.remove(0);

@@ -1,5 +1,4 @@
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.*;
 import java.io.*;
 import java.net.*;
@@ -32,15 +31,7 @@ public class MediaServer extends Thread implements ServerInterface {
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             System.out.println("connected");
-            ArrayList<User> users = database.getUsers();
-            for (User item : users) {
-                writer.write(item.getUsername());
-                writer.println();
-                writer.flush();
-            }
-            writer.println("|ENDED HERE 857725|");
-            writer.flush();
-
+            
             String line = reader.readLine();
             if (line.equals("login")) {
                 while (true) {
@@ -87,6 +78,31 @@ public class MediaServer extends Thread implements ServerInterface {
                 return;
             }
             
+//this will order the list of users to display friends first
+            ArrayList<User> users = database.getUsers();
+            ArrayList<String> friends = user.getFriends();
+            ArrayList<User> toRemove = new ArrayList<>();
+            for (User item : users) {
+                String username = item.getUsername();
+                if (friends.contains(username)) {
+                    writer.write(username);
+                    writer.println();
+                    writer.flush();
+                    toRemove.add(item);
+                }
+            }
+            toRemove.add(user);
+            for (User item : users) {
+                if (toRemove.contains(item)) {
+                    continue;
+                }
+                writer.write(item.getUsername());
+                writer.println();
+                writer.flush();
+            }
+            writer.println("|ENDED HERE 857725|");
+            writer.flush();
+
             //update DMs periodically
             final int updateDelay = 3000; // 3 seconds
 //this uses the TimerTask object included in the java.util package. Essentially what this does is 

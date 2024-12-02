@@ -143,7 +143,6 @@ public class GUIClient implements Runnable {
         messageField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
         // Enable wrapping with styling
-        StyledDocument doc = messageField.getStyledDocument();
         Style style = messageField.addStyle("WrapStyle", null);
         StyleConstants.setLineSpacing(style, 0.2f); 
         messageField.setParagraphAttributes(style, true);
@@ -328,6 +327,7 @@ public class GUIClient implements Runnable {
         Scanner sc = new Scanner(System.in);
         String username = sc.nextLine();
         String password = sc.nextLine();
+        sc.close();
         try {
             client = new UserClient(username, password);
         } catch (Exception e) {

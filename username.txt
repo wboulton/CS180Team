@@ -46,3 +46,7 @@
 50|anotherguh|username|I am going to try to write you a message|false
 51|anotherguh|username|I will write another message|false
 52|username|anotherguh|oh it seems to work fine without the lambda thread but this one is|false
+70|username|thisguy|I want to send you a message|false
+71|username|anotheruser|am I missing something from you?|false
+72|username|anotheruser|message?|false
+73|username|person|message|false
