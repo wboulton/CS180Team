@@ -4,3 +4,4 @@ person|FakePassword1|william|you thought|||null|true
 anotheruser|fakePassword1|william|nope|||null|true
 thisguy|Password1|william|tryagain|||null|true
 anotherguh|Password1|william|Don't You already know this?|,username||null|true
+Skibiddi|Password123|Alan|Yi|||null|true
