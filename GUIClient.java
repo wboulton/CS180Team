@@ -10,6 +10,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.FocusListener;
 import java.io.File;
 import java.awt.event.FocusEvent;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 
 import java.awt.*;
 import java.util.*;
@@ -228,6 +230,7 @@ public class GUIClient implements Runnable {
 
         JFrame frame = new JFrame("Social Media App(tm)");
         Container content = frame.getContentPane();
+        frame.setSize(1900, 1000);
         content.setLayout(new BorderLayout());
 
         profileButton = new JButton("edit profile");
@@ -397,7 +400,13 @@ public class GUIClient implements Runnable {
         //this will make messages include a scroll bar if it resizes so that messages are not viewable
         messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
-        messageScrollPane.setPreferredSize(new Dimension(1630, 800)); 
+        frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+            messageScrollPane.setPreferredSize(new Dimension(frame.getWidth() - 260, frame.getHeight() - 200));
+            messageScrollPane.revalidate();
+            }
+        });
         messageScrollPane.setMinimumSize(new Dimension(500, 200)); 
         messagePanel.add(messageScrollPane, BorderLayout.CENTER);
     
@@ -406,7 +415,6 @@ public class GUIClient implements Runnable {
         content.add(rightPanel, BorderLayout.EAST);
         content.add(messagePanel, BorderLayout.WEST);
     
-        frame.setSize(1900, 1000);
         frame.setLocationRelativeTo(null);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
@@ -438,19 +446,31 @@ public class GUIClient implements Runnable {
     }
 
     public static void main(String[] args) {
+        String username;
+        String password;
         UserClient client = null;
         Scanner sc = new Scanner(System.in);
-        String username = sc.nextLine();
-        String password = sc.nextLine();
-        sc.close();
-        try {
-            client = new UserClient(username, password);
-        } catch (Exception e) {
-            e.printStackTrace();
+        while (true) {
+            username = sc.nextLine();
+            password = sc.nextLine();
+            try {
+                client = new UserClient(username, password);
+                sc.close();
+                break;
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(null, "Invalid Login Credentials", "Social Media App(tm)",
+                    JOptionPane.ERROR_MESSAGE);
+                continue;
+            }
         }
         
         ArrayList<String> usernames = client.getUserList();
         GUIClient newUserClient = new GUIClient(usernames, client, username);
         SwingUtilities.invokeLater(newUserClient);
+
+        final UserClient shutdownClient = client;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            shutdownClient.kill();
+        }));
     }
 }

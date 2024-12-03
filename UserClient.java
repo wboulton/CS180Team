@@ -47,7 +47,7 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    private void kill() {
+    public void kill() {
         writer.println("77288937499272");
         writer.flush();
     }

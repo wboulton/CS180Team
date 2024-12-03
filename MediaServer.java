@@ -30,7 +30,6 @@ public class MediaServer extends Thread implements ServerInterface {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-            System.out.println("connected");
             
             String line = reader.readLine();
             if (line.equals("login")) {
@@ -38,8 +37,6 @@ public class MediaServer extends Thread implements ServerInterface {
                     //login
                     String username = reader.readLine();
                     String password = reader.readLine();
-                    System.out.println(username);
-                    System.out.println(password);
                     boolean allowed = database.verifyLogin(username, password);
                     if (allowed) {
                         user = UserDatabase.getUser(username);
@@ -103,6 +100,7 @@ public class MediaServer extends Thread implements ServerInterface {
             writer.println("|ENDED HERE 857725|");
             writer.flush();
 
+            System.out.println(client.toString() + " connected.");
             //update DMs periodically
             final int updateDelay = 3000; // 3 seconds
 //this uses the TimerTask object included in the java.util package. Essentially what this does is 
@@ -135,6 +133,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 //random numbers for kill message, this should not be vulnerable because all other lines
                 //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
+                    System.out.println(client.toString() + " disconnected.");
                     break;
                 }
                 //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
