@@ -229,9 +229,10 @@ public class UserClient implements UserClientInt {
     }
 
     @Override
-    public void setPassword(String password) {
+    public boolean setPassword(String password) throws IOException {
         writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
         writer.flush();
+        return reader.readLine().equals("true");
     }
 
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,

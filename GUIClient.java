@@ -1,11 +1,14 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.Style;
 import javax.swing.text.StyledDocument;
+import java.awt.image.BufferedImage;
 
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.FocusListener;
+import java.io.File;
 import java.awt.event.FocusEvent;
 
 import java.awt.*;
@@ -20,6 +23,7 @@ public class GUIClient implements Runnable {
 
     UserClient client;
 
+    JButton profileButton;
     JButton friendButton;
     JButton blockButton;
     JLabel userImage;
@@ -120,6 +124,103 @@ public class GUIClient implements Runnable {
         });
     }
 
+    private void editProfile() {
+//edit your profile using the Jbutton
+        JFrame frame = new JFrame("Social Media App(tm)");
+        Container content = frame.getContentPane();
+        JPanel panel = new JPanel();
+        content.add(panel, BorderLayout.CENTER);
+        JButton editUsername = new JButton("Change Username");
+        JButton editPassword = new JButton("Change Password");
+        JButton editProfilePicture = new JButton("Upload Profile Picture");
+
+        JTextArea usernameArea = new JTextArea(clientUsername);
+        usernameArea.setWrapStyleWord(true);
+        //TODO Profile picture is displayed here too 
+//TODO this may help with implementation https://stackoverflow.com/questions/299495/how-to-add-an-image-to-a-jpanel
+        /* BufferedImage myPicture = null;
+        try {
+            myPicture = ImageIO.read(new File("path-to-file"));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        JLabel profilePicture = new JLabel(new ImageIcon(myPicture));
+        */
+        ActionListener listener = new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() == editUsername) {
+                    String newUsername;
+                    Boolean success = true;
+                        do {
+                            newUsername = JOptionPane.showInputDialog("What would you like to change to?",
+                                clientUsername);
+                            if (newUsername == null) {
+                                break;
+                            }
+                            try {
+                                success = client.setUserName(newUsername);
+                                if (!success) {
+                                    JOptionPane.showMessageDialog(null, "Cannot use this username",
+                                        "Social Media App(tm)", JOptionPane.ERROR_MESSAGE);
+                                } else {
+                                    clientUsername = newUsername;
+                                    usernameArea.setText(newUsername);
+                                }
+                            } catch (Exception error) {
+                                error.printStackTrace();
+                            }
+                        } while (!success);
+                } else if (e.getSource() == editPassword) {
+                    String newPassword;
+                    Boolean success = true;
+                        do {
+                            newPassword = JOptionPane.showInputDialog("What would you like to change to?","");
+                            if (newPassword == null) {
+                                break; // Exit the loop if the user clicks the X or Cancel button
+                            }
+                            try {
+                                success = client.setPassword(newPassword);
+                                if (!success) {
+                                    JOptionPane.showMessageDialog(null, 
+                                        "Illegal Password, Legal passwords must be 8 characters" + 
+                                        " long with a capital letter and a special character",
+                                        "Social Media App(tm)", JOptionPane.ERROR_MESSAGE);
+                                }
+                            } catch (Exception error) {
+                                error.printStackTrace();
+                            }
+                        } while (!success);
+                } else if (e.getSource() == editProfilePicture) {
+                    //TODO Mukund, add profile picture changing here
+                }
+            }
+        };
+
+        editPassword.addActionListener(listener);
+        editUsername.addActionListener(listener);
+        editProfilePicture.addActionListener(listener);
+
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.add(editPassword);
+        bottomPanel.add(editUsername);
+        bottomPanel.add(editProfilePicture);
+
+        JPanel topPanel = new JPanel(new BorderLayout());
+        topPanel.add(new JScrollPane(usernameArea), BorderLayout.CENTER);
+        
+        JPanel centerPanel = new JPanel();
+        //TODO centerPanel.add(profilePicture);
+
+        content.add(topPanel, BorderLayout.NORTH);
+        content.add(bottomPanel, BorderLayout.SOUTH);
+        content.add(centerPanel, BorderLayout.CENTER);
+
+        frame.setSize(700, 500);
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+    }
+
     public void run() {
         this.messages = new ArrayList<String>();
 
@@ -127,22 +228,25 @@ public class GUIClient implements Runnable {
 
         JFrame frame = new JFrame("Social Media App(tm)");
         Container content = frame.getContentPane();
-        JPanel panel = new JPanel();
-        content.add(panel, BorderLayout.CENTER);
-    
+        content.setLayout(new BorderLayout());
+
+        profileButton = new JButton("edit profile");
         friendButton = new JButton("friend/unfriend");
         blockButton = new JButton("block/unblock");
         sendButton = new JButton("<html>send<br>message</html>");
         sendButton.setPreferredSize(new Dimension(100, 100));
         searchButton = new JButton("search");
-        userImage = new JLabel("User Image Placeholder"); 
+        //TODO Mukund, here the user image will be your profile picture
+        userImage = new JLabel("User Image Placeholder", JLabel.CENTER);
+        userImage.setHorizontalAlignment(SwingConstants.CENTER);
+        userImage.setVerticalAlignment(SwingConstants.CENTER); 
+
         messageField = new JTextPane();
         messageField.setPreferredSize(new Dimension(1700, 100));
         messageField.setFont(new Font("Arial", Font.PLAIN, 16));
         messageField.setEditable(true); 
         messageField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 
-        // Enable wrapping with styling
         Style style = messageField.addStyle("WrapStyle", null);
         StyleConstants.setLineSpacing(style, 0.2f); 
         messageField.setParagraphAttributes(style, true);
@@ -150,7 +254,7 @@ public class GUIClient implements Runnable {
         searchField = new JTextField();
         searchField.setPreferredSize(new Dimension(100,25));
         viewingUser = new JTextArea(String.format("Currently viewing %s", viewingUsername));
-        viewingUser.setEditable(false); // Make the text area non-editable
+        viewingUser.setEditable(false); 
         messageJList = new JList<String>();
         messageJList.setPreferredSize(new Dimension(1600, 800));
                 //this handles alignment by sender The logged in user appears on the left and the 
@@ -194,6 +298,8 @@ public class GUIClient implements Runnable {
                 } else if (e.getSource() == sendButton) {
                     String message = messageField.getText();
                     sendMessage(message);
+                } else if (e.getSource() == profileButton) {
+                    editProfile();
                 }
             }
         };
@@ -259,32 +365,41 @@ public class GUIClient implements Runnable {
         blockButton.addActionListener(actionListener);
         searchButton.addActionListener(actionListener);
         sendButton.addActionListener(actionListener);
+        profileButton.addActionListener(actionListener);
     
-        JPanel topPanel = new JPanel();
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        topPanel.add(profileButton);
         topPanel.add(viewingUser);
         topPanel.add(friendButton);
         topPanel.add(blockButton);
         topPanel.add(userImage);
         
     
-        JPanel bottomPanel = new JPanel();
-        bottomPanel.add(messageField);
-        bottomPanel.add(sendButton);
+        JPanel bottomPanel = new JPanel(new BorderLayout());
+        bottomPanel.add(new JScrollPane(messageField), BorderLayout.CENTER);
+        bottomPanel.add(sendButton, BorderLayout.EAST);
     
-        JPanel rightPanel = new JPanel();
+        JPanel rightPanel = new JPanel(new BorderLayout());
         rightPanel.setLayout(new BoxLayout(rightPanel, BoxLayout.Y_AXIS));
         
-        JPanel searchPanel = new JPanel();
+        JPanel searchPanel = new JPanel(new BorderLayout());
         searchPanel.setLayout(new BoxLayout(searchPanel, BoxLayout.X_AXIS));
         searchField.setMaximumSize(new Dimension(Integer.MAX_VALUE, searchField.getPreferredSize().height));
-        searchPanel.add(searchField);
-        searchPanel.add(searchButton);
+        searchPanel.add(searchField, BorderLayout.CENTER);
+        searchPanel.add(searchButton, BorderLayout.EAST);
         
-        rightPanel.add(searchPanel);
-        rightPanel.add(userList);
+        rightPanel.add(searchPanel, BorderLayout.NORTH);
+        rightPanel.add(new JScrollPane(userList), BorderLayout.CENTER);
 
-        JPanel messagePanel = new JPanel();
-        messagePanel.add(messageJList);
+        //TODO make width resizing work
+        JPanel messagePanel = new JPanel(new BorderLayout());
+        JScrollPane messageScrollPane = new JScrollPane(messageJList);
+        //this will make messages include a scroll bar if it resizes so that messages are not viewable
+        messageScrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        messageScrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        messageScrollPane.setPreferredSize(new Dimension(1630, 800)); 
+        messageScrollPane.setMinimumSize(new Dimension(500, 200)); 
+        messagePanel.add(messageScrollPane, BorderLayout.CENTER);
     
         content.add(topPanel, BorderLayout.NORTH);
         content.add(bottomPanel, BorderLayout.SOUTH);

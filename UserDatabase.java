@@ -26,7 +26,7 @@ Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private static ArrayList<User> users;
-    private static final String OUTPUT_FILE = "users.txt";
+    private static final String OUTPUT_FILE = "resources/users.txt";
     private static final Object LOCK = new Object();
     public UserDatabase() {
         // This is a constructor
@@ -194,12 +194,14 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         return false;
     }
     //change password
-    public void changePassword(User user, String newPassword) {
+    public boolean changePassword(User user, String newPassword) {
         //if the password is legal, change the password
         synchronized (LOCK) {
             if (legalPassword(newPassword)) {
                 user.changePassword(newPassword);
+                return true;
             }
+            return false;
         }
     }
     //legal password

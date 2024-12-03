@@ -280,6 +280,13 @@ public class MediaServer extends Thread implements ServerInterface {
                     writer.println();
                     writer.flush();
                     break;
+                case CHANGE_PASSWORD:
+                    User user5 = UserDatabase.getUser(inputs[1]);
+                    boolean success = database.changePassword(user5, inputs[2]);
+                    writer.write(String.valueOf(success));
+                    writer.println();
+                    writer.flush();
+                    break;
                 default:
                     break;
             }            
