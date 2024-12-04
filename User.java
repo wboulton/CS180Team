@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.*;
@@ -54,7 +55,7 @@ public class User implements UserInt, Serializable {
             this.profilePicture = null;
         } else {
             //parse profile picture
-            String[] profileInfo = info[6].split(",");
+            String[] profileInfo = info[6].split(";");
             boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
             if (containsPicture) {
                 try {
@@ -205,5 +206,15 @@ public class User implements UserInt, Serializable {
     }
     public void setAllowAll(boolean newBoolean) {
         allowAll = newBoolean;
+    }
+    public void setProfilePicture(byte[] newProfilePicture) {
+        profilePicture = newProfilePicture;
+    }
+    public BufferedImage getProfilePictureImage() {
+        try {
+            return ImageIO.read(new ByteArrayInputStream(profilePicture));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

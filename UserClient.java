@@ -1,3 +1,5 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
@@ -211,6 +213,14 @@ public class UserClient implements UserClientInt {
         }
         return sb.toString();
     }
+    private byte[] stringToByteArray(String string) {
+        String[] stringArray = string.split(",");
+        byte[] byteArray = new byte[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            byteArray[i] = Byte.parseByte(stringArray[i]);
+        }
+        return byteArray;
+    }
     public String search(String username) {
         writer.println("user|SEARCH|" + username);
         writer.flush();
@@ -234,7 +244,20 @@ public class UserClient implements UserClientInt {
         writer.flush();
         return reader.readLine().equals("true");
     }
+    public void changeProfilePicture(byte[] picture) throws IOException {
+        String result = byteArrayToString(picture);
+        writer.println("user|CHANGE_PICTURE|" + user.getUsername() + "|" + result);
+        writer.flush();
+    }
 
+    public BufferedImage getProfilePicture() {
+        try {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(user.getProfilePicture()));
+            return image;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
 //for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
     public static void main(String[] args) {      

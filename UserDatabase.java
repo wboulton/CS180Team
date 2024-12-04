@@ -252,4 +252,20 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             }
         }
     }
+    private byte[] stringToByteArray(String string) {
+        String[] stringArray = string.split(",");
+        byte[] byteArray = new byte[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            byteArray[i] = Byte.parseByte(stringArray[i]);
+        }
+        return byteArray;
+    }
+    public static void changePicture(User user, String picture) {
+        // This method changes a user's profile picture
+        synchronized (LOCK) {
+            byte[] pictureBytes = user.getProfilePicture();
+            user.setProfilePicture(pictureBytes);
+            updateDB();
+        }
+    }
 }

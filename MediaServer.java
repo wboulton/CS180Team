@@ -286,10 +286,14 @@ public class MediaServer extends Thread implements ServerInterface {
                     writer.println();
                     writer.flush();
                     break;
+                case CHANGE_PICTURE:
+                    User user6 = UserDatabase.getUser(inputs[1]);
+                    String picture = inputs[2];
+                    UserDatabase.changePicture(user6, picture);
+                    break;
                 default:
                     break;
-            }            
-
+            }
         } catch (IndexOutOfBoundsException e) {
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
         } catch (Exception e) {

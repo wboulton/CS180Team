@@ -140,14 +140,16 @@ public class GUIClient implements Runnable {
         usernameArea.setWrapStyleWord(true);
         //TODO Profile picture is displayed here too 
 //TODO this may help with implementation https://stackoverflow.com/questions/299495/how-to-add-an-image-to-a-jpanel
-        /* BufferedImage myPicture = null;
-        try {
-            myPicture = ImageIO.read(new File("path-to-file"));
-        } catch (Exception e) {
-            e.printStackTrace();
+        //get profile picture from client
+        BufferedImage profilePicture = client.getProfilePicture();
+        if (profilePicture != null) {
+            ImageIcon icon = new ImageIcon(profilePicture);
+            JLabel profilePic = new JLabel(icon);
+            panel.add(profilePic);
+        } else {
+            JLabel noProfilePic = new JLabel("No Profile Picture");
+            panel.add(noProfilePic);
         }
-        JLabel profilePicture = new JLabel(new ImageIcon(myPicture));
-        */
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
