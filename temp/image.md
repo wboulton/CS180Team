@@ -21,5 +21,6 @@ the file location to this picture is then stored in the message data
 private String pictureFile;
 ```
 messages with images have the following format: "id|sender|reciever|content|containsPicture(true)|pathToImage.png
+How this image file is created is not of importance to you.
 
 You can then convert this image to a byte array and send it to the client that way, currently the network does not handle this very well but you can add this in very quickly. For help with this implementation see [imageNetwork.java](imageNetwork.java). 
