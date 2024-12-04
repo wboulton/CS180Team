@@ -1,7 +1,9 @@
 import java.io.*;
 import java.net.Socket;
 import java.nio.file.Files;
+import java.security.PrivateKey;
 import java.util.*;
+import crypto.*;
 
 /**
  * Team Project -- UserClient
@@ -21,6 +23,10 @@ public class UserClient implements UserClientInt {
     private ObjectInputStream input;
     private static final int portNumber = 8080;
     private static final int MAX_LENGTH = 5_000;
+
+    //RSA keys
+    private PublicKey publicKey;
+    private RSAKey privatKey;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -53,10 +59,13 @@ public class UserClient implements UserClientInt {
     }
 
     private void connectToServer() throws IOException {
+        privatKey = new RSAKey();
         socket = new Socket("localhost", portNumber);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-        writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
+        writer = new PrintWriter(socket.getOutputStream(), true); 
         input = new ObjectInputStream(socket.getInputStream());
+        writer.println(privatKey.getPublicKey());
+        publicKey = new PublicKey(reader.readLine());
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -108,7 +117,8 @@ public class UserClient implements UserClientInt {
         if (content.length() > MAX_LENGTH) {
             return "String too long";
         }
-        writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
+        String message = "message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content;
+        writer.println(publicKey.encryptText(message));
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
             File imageFile = new File(picture);
@@ -120,8 +130,8 @@ public class UserClient implements UserClientInt {
                 throw new BadDataException("Picture not found");
             }
         }
-        String message = reader.readLine();
-        return message;
+        String response = reader.readLine();
+        return response;
     }
 
     public ArrayList<String> getUserList() {
@@ -154,8 +164,8 @@ public class UserClient implements UserClientInt {
     }
 
     public ArrayList<String> getConversation(String username) throws IOException {
-        writer.println("message|SET_VIEWING|" + username);
-        writer.println("message|GET_CONVERSATION|" + username);
+        writer.println(publicKey.encryptText("message|SET_VIEWING|" + username));
+        writer.println(publicKey.encryptText("message|GET_CONVERSATION|" + username));
         ArrayList<String> messagesList = new ArrayList<String>();
         messagesList.clear();
         String line;

@@ -1,7 +1,11 @@
 import java.util.*;
 import java.util.concurrent.atomic.*;
+
+import crypto.*;
+
 import java.io.*;
 import java.net.*;
+import java.security.PrivateKey;
 /**
  * Team Project -- MediaServer
  *
@@ -30,6 +34,11 @@ public class MediaServer extends Thread implements ServerInterface {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+            RSAKey privateKey = new RSAKey();
+            String keyString = reader.readLine();
+            PublicKey publicKey = new PublicKey(keyString);
+            writer.println(privateKey.getPublicKey());
+            writer.flush();
             
             String line = reader.readLine();
             if (line.equals("login")) {
@@ -130,12 +139,16 @@ public class MediaServer extends Thread implements ServerInterface {
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
+                System.out.println(line);
                 //random numbers for kill message, this should not be vulnerable because all other lines
                 //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     System.out.println(client.toString() + " disconnected.");
                     break;
                 }
+                System.out.println("YOU ARE HERE");
+                line = privateKey.decryptCiphertext(line);
+                System.out.println(line);
                 //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
                 //System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
