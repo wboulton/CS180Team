@@ -107,22 +107,22 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
             } else if (e.getSource() == changeToButton) {
                 if (signInFlag) {
                     signInFlag = false;
-                    changeToButton.setText("Already have an account? Sign In");
                     pane.removeAll();
                     pane.revalidate();
                     pane.repaint();
                     JPanel panel = createMainPanel();
+                    changeToButton.setText("Already have an account? Sign In");
                     pane.add(panel);
-                    frame.setSize(300, 500);
+                    frame.setSize(600, 1000);
                 } else {
                     signInFlag = true;
-                    changeToButton.setText("Don't have an account? Sign Up");
                     pane.removeAll();
                     pane.revalidate();
                     pane.repaint();
                     JPanel panel = createMainPanel();
+                    changeToButton.setText("Don't have an account? Sign Up");
                     pane.add(panel);
-                    frame.setSize(300, 330);
+                    frame.setSize(600, 660);
                 }
             }
         }
@@ -155,46 +155,50 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
             title.setText("Sign In");
         else
             title.setText("Sign Up");
-        title.setFont(new Font("Arial", Font.BOLD, 20));
+        title.setFont(new Font("Arial", Font.BOLD, 40));
 
         JLabel subTitle = new JLabel("Login to start chatting with friends!");
         if (!signInFlag)
             subTitle.setText("Create an account to start chatting with friends!");
 
-        subTitle.setFont(new Font("Arial", Font.PLAIN, 12));
+        subTitle.setFont(new Font("Arial", Font.PLAIN, 24));
 
         // headings
         JLabel usernameHeading = new JLabel("Username");
-        usernameHeading.setFont(new Font("Arial", Font.PLAIN, 12));
+        usernameHeading.setFont(new Font("Arial", Font.PLAIN, 24));
 
         JLabel passwordHeading = new JLabel("Password");
-        passwordHeading.setFont(new Font("Arial", Font.PLAIN, 12));
+        passwordHeading.setFont(new Font("Arial", Font.PLAIN, 24));
 
         JLabel firstNameHeading = new JLabel("First Name");
-        firstNameHeading.setFont(new Font("Arial", Font.PLAIN, 12));
+        firstNameHeading.setFont(new Font("Arial", Font.PLAIN, 24));
 
         JLabel lastNameHeading = new JLabel("Last Name");
-        lastNameHeading.setFont(new Font("Arial", Font.PLAIN, 12));
+        lastNameHeading.setFont(new Font("Arial", Font.PLAIN, 24));
 
         JLabel profilePictureHeading = new JLabel("Profile Picture");
-        profilePictureHeading.setFont(new Font("Arial", Font.PLAIN, 12));
+        profilePictureHeading.setFont(new Font("Arial", Font.PLAIN, 24));
 
         // text fields
         username = new JTextField("Enter username...", 10);
         setPlaceHolder(username, "Enter username...");
-        username.setMaximumSize(new Dimension(1000, 40));
+        username.setMaximumSize(new Dimension(2000, 80));
+        username.setFont(new Font("Arial", Font.BOLD, 18));
 
         password = new JTextField("Enter password...", 10);
         setPlaceHolder(password, "Enter password...");
-        password.setMaximumSize(new Dimension(1000, 40));
+        password.setMaximumSize(new Dimension(2000, 80));
+        password.setFont(new Font("Arial", Font.BOLD, 18));
 
         firstName = new JTextField("Enter first name...", 10);
         setPlaceHolder(firstName, "Enter first name...");
-        firstName.setMaximumSize(new Dimension(1000, 40));
+        firstName.setMaximumSize(new Dimension(2000, 80));
+        firstName.setFont(new Font("Arial", Font.BOLD, 18));
 
         lastName = new JTextField("Enter last name...", 10);
         setPlaceHolder(lastName, "Enter last name...");
-        lastName.setMaximumSize(new Dimension(1000, 40));
+        lastName.setMaximumSize(new Dimension(2000, 80));
+        lastName.setFont(new Font("Arial", Font.BOLD, 18));
 
         profilePicture = new JFileChooser();
 
@@ -206,18 +210,22 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
         changeToButton = new JButton("Don't have an account? Sign Up");
         profilePictureButton = new JButton("Select Profile Picture");
         profilePictureButton.addActionListener(actionListener);
+        profilePictureButton.setFont(new Font("Arial", Font.BOLD, 18));
         changeToButton.addActionListener(actionListener);
 
         signIn.setAlignmentY(Component.CENTER_ALIGNMENT);
         signUp.setAlignmentY(Component.CENTER_ALIGNMENT);
         changeToButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-        signIn.setMaximumSize(new Dimension(280, 35));
-        signUp.setMaximumSize(new Dimension(280, 35));
-        changeToButton.setMaximumSize(new Dimension(280, 35));
+        signIn.setMaximumSize(new Dimension(560, 70));
+        signIn.setFont(new Font("Arial", Font.BOLD, 20));
+        signUp.setMaximumSize(new Dimension(560, 70));
+        signUp.setFont(new Font("Arial", Font.BOLD, 20));
+        changeToButton.setMaximumSize(new Dimension(560, 70));
+        changeToButton.setFont(new Font("Arial", Font.BOLD, 20));
         signIn.setBackground(new Color(0, 92, 230));
         signIn.setForeground(Color.white);
         changeToButton.setBackground(Color.white);
-        changeToButton.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        changeToButton.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         signUp.setForeground(Color.white);
         signUp.setBackground(new Color(0, 92, 230));
 
@@ -225,12 +233,12 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
         JPanel panel = new JPanel();
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
         panel.setBackground(Color.WHITE);
-        panel.setBorder(new EmptyBorder(10, 10, 10, 10));
+        panel.setBorder(new EmptyBorder(20, 20, 20, 20));
 
         panel.add(title);
-        panel.add(Box.createVerticalStrut(5));
+        panel.add(Box.createVerticalStrut(10));
         panel.add(subTitle);
-        panel.add(Box.createVerticalStrut(20));
+        panel.add(Box.createVerticalStrut(40));
 
         // sign up panel
 
@@ -240,13 +248,13 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
 
         signUpPanel.add(firstNameHeading);
         signUpPanel.add(firstName);
-        signUpPanel.add(Box.createVerticalStrut(10));
+        signUpPanel.add(Box.createVerticalStrut(20));
         signUpPanel.add(lastNameHeading);
         signUpPanel.add(lastName);
-        signUpPanel.add(Box.createVerticalStrut(10));
+        signUpPanel.add(Box.createVerticalStrut(20));
         signUpPanel.add(profilePictureHeading);
         signUpPanel.add(profilePictureButton);
-        signUpPanel.add(Box.createVerticalStrut(10));
+        signUpPanel.add(Box.createVerticalStrut(20));
 
         if (!signInFlag)
             panel.add(signUpPanel);
@@ -255,10 +263,10 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
 
         panel.add(usernameHeading);
         panel.add(username);
-        panel.add(Box.createVerticalStrut(10));
+        panel.add(Box.createVerticalStrut(20));
         panel.add(passwordHeading);
         panel.add(password);
-        panel.add(Box.createVerticalStrut(15));
+        panel.add(Box.createVerticalStrut(30));
 
         // sign in/up buttons panel
         JPanel panel2 = new JPanel();
@@ -287,7 +295,7 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
 
         pane.add(panel);
 
-        frame.setSize(300, 330);
+        frame.setSize(600, 660);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
