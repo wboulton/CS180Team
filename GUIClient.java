@@ -85,6 +85,14 @@ public class GUIClient implements Runnable {
                 displayUsers.add(user);
             }
         }
+        //if you have blocked a user, the only way to see them is to search their exact username
+        if (displayUsers.size() < 1) {
+            if (client.search(username) != null) {
+                displayUsers.add(client.search(username));
+            } else {
+                displayUsers.add("No Applicable Users");
+            }
+        }
         userList.setListData(displayUsers.toArray(new String[0]));
     }
 
@@ -317,7 +325,15 @@ public class GUIClient implements Runnable {
                 int index = userList.locationToIndex(evt.getPoint());
                 if (index >= 0) {
                     viewingUsername = userList.getModel().getElementAt(index);
-                    viewingUser.setText(String.format("Currently viewing: %s", viewingUsername));
+                    String fieldString = String.format("Currently viewing: %s", viewingUsername);
+                    try {
+                        if (client.isFriend(viewingUsername)) {
+                            fieldString += " FRIEND";
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    viewingUser.setText(fieldString);
                     try {
                         messages = client.getConversation(viewingUsername);
                         messageJList.setListData(getMessages().toArray(new String[0])); 
