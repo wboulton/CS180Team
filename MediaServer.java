@@ -20,6 +20,24 @@ import java.security.PrivateKey;
 public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
     public static final Object LOCK = new Object();
+
+    private static void RSASend(String send, PublicKey publicKey, PrintWriter writer) {
+        String encryptedMessage = publicKey.encryptText(send);
+        writer.println(encryptedMessage);
+        writer.flush();
+    }
+
+    private static String RSARead(RSAKey privateKey, BufferedReader reader) {
+        try {
+            String read = reader.readLine();
+            String decryptedRead = privateKey.decryptCiphertext(read);
+            return decryptedRead;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "failed to read";
+        }
+    }
+
 //run method used to control each thread that is made. There is some weird stuff going on with 
 //atomic references and atomic integers to make sure these threads work properly with final values
 //and lambda functions. It seems atomic types are effectively final so we can use them in more threaded
@@ -125,9 +143,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         if (message.getMessageID() > recentID.get()) {
                             if (currentlyViewing.get() != null && 
                                 message.getSender().equals(currentlyViewing.get().getUsername())) {
-                                writer.write("INCOMING|" + message.toString());
-                                writer.println();
-                                writer.flush();   
+                                RSASend("INCOMING|" + message.toString(), publicKey, writer);
                                 recentID.set(message.getMessageID());
                             }
                         }
@@ -138,24 +154,21 @@ public class MediaServer extends Thread implements ServerInterface {
 
             // this stuff is just in testing state rn
             while (true) {
-                line = reader.readLine();
-                System.out.println(line);
+                line = RSARead(privateKey, reader);
                 //random numbers for kill message, this should not be vulnerable because all other lines
                 //should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     System.out.println(client.toString() + " disconnected.");
                     break;
                 }
-                System.out.println("YOU ARE HERE");
-                line = privateKey.decryptCiphertext(line);
-                System.out.println(line);
+                
                 //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
                 //System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
                     userHandling(writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
-                        messageDatabase, currentlyViewing.get()));
+                        messageDatabase, currentlyViewing.get(), publicKey));
                 }
             }
             //System.out.printf("Client %s disconnected\n", client);
@@ -164,7 +177,8 @@ public class MediaServer extends Thread implements ServerInterface {
         }
     }
 //handle all message related functions sent by the client
-    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing) {
+    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase,
+        User viewing, PublicKey publicKey) {
 //GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
         try {
             String temp = line.split("\\|")[0];
@@ -177,17 +191,15 @@ public class MediaServer extends Thread implements ServerInterface {
                     for (Message message : messageDatabase.getRecievedMessages()) {
                         messages.add(message);
                     }
-                    messages.sort(Comparator.comparingInt(Message::getMessageID));
-                    for (Message item : messages) {
+                    ArrayList<Message> sortedMessages = new ArrayList<>(messages);
+                    sortedMessages.sort(Comparator.comparingInt(Message::getMessageID));
+                    for (Message item : sortedMessages) {
                         if (viewing.getUsername().equals(item.getSender()) || 
                             viewing.getUsername().equals(item.getReciever())) {
-                            writer.write(item.toString());
-                            writer.println();
-                            writer.flush();
+                            RSASend(item.toString(), publicKey, writer);
                         }
                     }
-                    writer.println("|ENDED HERE 857725|");
-                    writer.flush();
+                    RSASend("|ENDED HERE 857725|", publicKey, writer);
                     return viewing;
 //public Message(User sender, User reciever, String content)
                 case SEND_MESSAGE:
@@ -218,13 +230,15 @@ public class MediaServer extends Thread implements ServerInterface {
                     return viewing;
                 case EDIT_MESSAGE:
                     ArrayList<Message> sentMessages = messageDatabase.getSentMessages();
+                    Message toEdit = null;
                     for (Message item : sentMessages) {
                         if (item.getMessageID() == Integer.parseInt(information.split("\\|")[0])) {
-                            Message editedMessage = new Message(UserDatabase.getUser(item.getSender()), 
-                                UserDatabase.getUser(item.getReciever()), information.split("\\|")[1]);
-                            messageDatabase.editMessage(item, editedMessage);
+                            toEdit = item;
                         }
                     }
+                    Message editedMessage = new Message(UserDatabase.getUser(toEdit.getSender()), 
+                        UserDatabase.getUser(toEdit.getReciever()), information.split("\\|")[1]);
+                    messageDatabase.editMessage(toEdit, editedMessage);
                     return viewing;
                 case SET_VIEWING:
                     viewing = UserDatabase.getUser(information);

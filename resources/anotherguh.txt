@@ -1,4 +1,3 @@
-6|username|anotherguh|hello there anotherguh|false
 12|username|anotherguh|sending message|false
 13|username|anotherguh|new message|false
 14|username|anotherguh|sending message here again for testing purposes|false
@@ -41,3 +40,7 @@
 51|anotherguh|username|I will write another message|false
 52|username|anotherguh|oh it seems to work fine without the lambda thread but this one is|false
 74|username|anotherguh|nerd|false
+77|username|anotherguh|encrypted message|false
+79|username|anotherguh|here is another encrypted message|false
+6|username|anotherguh|edit test|false
+81|anotherguh|username|so this RSA encryption makes it pretty slow, but it is cool so I will probably keep it as an option for fun|false

@@ -1,7 +1,6 @@
 0|username|name|hi|false
 1|username|name|goodbye|false
 2|username|name|something else|false
-6|username|anotherguh|hello there anotherguh|false
 7|username|thisguy|this guy?|false
 8|username|name|idk anymore|false
 9|username|name|lock in my guy|false
@@ -52,3 +51,7 @@
 73|username|person|message|false
 74|username|anotherguh|nerd|false
 76|username|Skibiddi|who done this?|false
+77|username|anotherguh|encrypted message|false
+79|username|anotherguh|here is another encrypted message|false
+6|username|anotherguh|edit test|false
+81|anotherguh|username|so this RSA encryption makes it pretty slow, but it is cool so I will probably keep it as an option for fun|false

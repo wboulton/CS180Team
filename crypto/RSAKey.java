@@ -30,6 +30,8 @@ public class RSAKey {
 
     public String decryptCiphertext(String ciphertext) {
         BigInteger cipherInt = new BigInteger(ciphertext);
-        return cipherInt.modPow(d, n).toString();
+        BigInteger decryptedInt = cipherInt.modPow(d, n);
+        byte[] decryptedBytes = decryptedInt.toByteArray();
+        return new String(decryptedBytes);
     }
 }

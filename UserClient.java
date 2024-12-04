@@ -26,7 +26,7 @@ public class UserClient implements UserClientInt {
 
     //RSA keys
     private PublicKey publicKey;
-    private RSAKey privatKey;
+    private RSAKey privateKey;
 
     // Constructor for existing user
     public UserClient(String username, String password) throws IOException, BadDataException {
@@ -53,18 +53,33 @@ public class UserClient implements UserClientInt {
         }
     }
 
+    private void RSASend(String send) {
+        String encryptedMessage = publicKey.encryptText(send);
+        writer.println(encryptedMessage);
+    }
+
+    private String RSARead() {
+        try {
+            String read = reader.readLine();
+            String decryptedRead = privateKey.decryptCiphertext(read);
+            return decryptedRead;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "failed to read";
+        }
+    }
+
     public void kill() {
-        writer.println("77288937499272");
-        writer.flush();
+        RSASend("77288937499272");
     }
 
     private void connectToServer() throws IOException {
-        privatKey = new RSAKey();
+        privateKey = new RSAKey();
         socket = new Socket("localhost", portNumber);
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); 
         input = new ObjectInputStream(socket.getInputStream());
-        writer.println(privatKey.getPublicKey());
+        writer.println(privateKey.getPublicKey());
         publicKey = new PublicKey(reader.readLine());
     }
 
@@ -118,13 +133,13 @@ public class UserClient implements UserClientInt {
             return "String too long";
         }
         String message = "message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content;
-        writer.println(publicKey.encryptText(message));
+        RSASend(message);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
             File imageFile = new File(picture);
             try {
                 byte[] imageData = Files.readAllBytes(imageFile.toPath());
-                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + 
+                RSASend("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + 
                     content + "|" + byteArrayToString(imageData));
             } catch (IOException e) {
                 throw new BadDataException("Picture not found");
@@ -140,7 +155,7 @@ public class UserClient implements UserClientInt {
 
     public void deleteMessage(int id) throws IOException {
         // Send DELETE_MESSAGE command
-        writer.println("message|DELETE_MESSAGE|" + user.getUsername() + "|" + id);
+        RSASend("message|DELETE_MESSAGE|" + user.getUsername() + "|" + id);
     }
 
     public String editMessage(int id, String newContent) throws IOException {
@@ -148,28 +163,32 @@ public class UserClient implements UserClientInt {
         if (newContent.length() > MAX_LENGTH) {
             return "String too long";
         }
-        writer.println("message|" + "EDIT_MESSAGE|" + id + "|" + newContent);
+        RSASend("message|" + "EDIT_MESSAGE|" + id + "|" + newContent);
         return "success";
     }
 
     public void blockUser(String usernameToBlock) throws IOException {
         // Send BLOCK command
-        writer.println("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
+        RSASend("user|BLOCK|" + user.getUsername() + "|" + usernameToBlock);
     }
 
     public boolean unblockUser(String usernameToUnblock) throws IOException {
         // Send UNBLOCK command
-        writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
+        RSASend("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
         return reader.readLine().equals("true");
     }
 
     public ArrayList<String> getConversation(String username) throws IOException {
-        writer.println(publicKey.encryptText("message|SET_VIEWING|" + username));
-        writer.println(publicKey.encryptText("message|GET_CONVERSATION|" + username));
+        RSASend("message|SET_VIEWING|" + username);
+        RSASend("message|GET_CONVERSATION|" + username);
         ArrayList<String> messagesList = new ArrayList<String>();
         messagesList.clear();
         String line;
-        while ((line = reader.readLine()) != null && !line.equals("|ENDED HERE 857725|")) {
+        while ((line = reader.readLine()) != null) {
+            line = privateKey.decryptCiphertext(line);
+            if (line.equals("|ENDED HERE 857725|")) {
+                break;
+            }
             if (line.contains("INCOMING|")) {
                 continue;
             }
@@ -188,14 +207,14 @@ public class UserClient implements UserClientInt {
     }
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
-        writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        RSASend("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
         String temp = reader.readLine();
         return temp.equals("true");
     }
 
     public boolean removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
-        writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
+        RSASend("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
         return reader.readLine().equals("true");
     }
 
@@ -213,7 +232,7 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    // Helper method to convert byte array to string format for transmission
+    // Helper method to convert byte array to string format for sending to the server
     private String byteArrayToString(byte[] byteArray) {
         StringBuilder sb = new StringBuilder();
         for (byte b : byteArray) {
@@ -221,9 +240,9 @@ public class UserClient implements UserClientInt {
         }
         return sb.toString();
     }
+
     public String search(String username) {
-        writer.println("user|SEARCH|" + username);
-        writer.flush();
+        RSASend("user|SEARCH|" + username);
         try {
             return reader.readLine();
         } catch (IOException e) {
@@ -233,15 +252,13 @@ public class UserClient implements UserClientInt {
     }
     @Override
     public boolean setUserName(String name) throws IOException {
-        writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
-        writer.flush();
+        RSASend("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
         return reader.readLine().equals("true");
     }
 
     @Override
     public boolean setPassword(String password) throws IOException {
-        writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
-        writer.flush();
+        RSASend("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
         return reader.readLine().equals("true");
     }
 
