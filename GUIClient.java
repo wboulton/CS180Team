@@ -18,7 +18,7 @@ import java.util.*;
 import java.net.*;
 import java.util.concurrent.atomic.*;
 
-public class GUIClient implements Runnable {
+public class GUIClient implements Runnable, GUIInterface {
     ArrayList<String> usernames;
     ArrayList<String> displayUsers;
     ArrayList<String> messages;
