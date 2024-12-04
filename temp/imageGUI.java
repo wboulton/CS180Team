@@ -2,7 +2,9 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.ObjectInputStream;
 import java.awt.*;
+import java.net.Socket;
 
 //here is an example of how to display pictures in a gui. This takes a bytearray and converts it to a displayable picture. 
 //What you will have TODO:
@@ -19,6 +21,7 @@ public class imageGUI implements Runnable {
     }
 
     public void run() {
+        
         JFrame frame = new JFrame("testing");
         Container content = frame.getContentPane();
         content.setLayout(new BorderLayout());
@@ -39,8 +42,10 @@ public class imageGUI implements Runnable {
         // Example usage with a byte array
         byte[] imageBytes = {}; // Replace with actual byte array
         try {
-            imageBytes = java.nio.file.Files.readAllBytes(java.nio.file.Paths.get("image.png"));
-        } catch (java.io.IOException e) {
+            Socket client = new Socket("localhost", 8282);
+            ObjectInputStream input = new ObjectInputStream(client.getInputStream());
+            imageBytes = (byte[]) input.readObject();
+        } catch (java.io.IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
         SwingUtilities.invokeLater(new imageGUI(imageBytes));
