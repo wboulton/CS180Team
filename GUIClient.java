@@ -100,6 +100,7 @@ public class GUIClient implements Runnable {
         if (message != null && !message.trim().isEmpty()) {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
+                sending = sending.replace(" FRIEND", "");
                 String toSend = client.sendMessage(sending, message, null);
                 if (toSend.equals("String too long")) {
                     JOptionPane.showMessageDialog(null, "The message was too long", "Social Media App(tm)",
@@ -294,8 +295,18 @@ public class GUIClient implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == friendButton) {
+                    String fieldString = viewingUser.getText();
                     try {
                         client.addOrRemoveFriend(viewingUsername);
+                        try {
+                            fieldString = fieldString.replace(" FRIEND", "");
+                            if (client.isFriend(viewingUsername)) {
+                                fieldString += " FRIEND";
+                            }
+                            viewingUser.setText(fieldString);
+                        } catch (Exception error) {
+                            error.printStackTrace();
+                        }
                     } catch (Exception error) {
                         error.printStackTrace();
                     }

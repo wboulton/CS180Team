@@ -44,7 +44,6 @@ public class MediaServer extends Thread implements ServerInterface {
                         messageDatabase.recoverMessages();
                         writer.println("Logged in!");
                         writer.flush();
-                        System.out.println(user instanceof User);
                         oos.writeObject(user);
                         break;
                     } else {
@@ -250,7 +249,6 @@ public class MediaServer extends Thread implements ServerInterface {
                     User user = UserDatabase.getUser(inputs[1]);
                     User otherUser = UserDatabase.getUser(inputs[2]);
                     boolean value = UserDatabase.addFriend(user, otherUser);
-                    System.out.println(value);
                     writer.write(String.valueOf(value));
                     writer.println();
                     writer.flush();
@@ -259,7 +257,6 @@ public class MediaServer extends Thread implements ServerInterface {
                     User user2 = UserDatabase.getUser(inputs[1]);
                     User otherUser2 = UserDatabase.getUser(inputs[2]);
                     boolean response = UserDatabase.removeFriend(user2, otherUser2);
-                    System.out.println(response);
                     writer.write(String.valueOf(response));
                     writer.println();
                     writer.flush();
