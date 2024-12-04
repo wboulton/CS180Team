@@ -1,5 +1,6 @@
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.Style;
 import javax.swing.text.StyledDocument;
@@ -37,7 +38,7 @@ public class GUIClient implements Runnable, GUIInterface {
     JTextField searchField;
     JTextArea viewingUser;
     JList<String> messageJList;
-
+    JFileChooser profilePictureChooser;
     String viewingUsername;
     String clientUsername;
 
@@ -207,17 +208,14 @@ public class GUIClient implements Runnable, GUIInterface {
                         } while (!success);
                 } else if (e.getSource() == editProfilePicture) {
                     //TODO Mukund, add profile picture changing here
-                    JFileChooser fileChooser = new JFileChooser();
-                    fileChooser.setDialogTitle("Choose a profile picture");
-                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-                    fileChooser.setAcceptAllFileFilterUsed(false);
-                    int returnValue = fileChooser.showOpenDialog(null);
-                    if (returnValue == JFileChooser.APPROVE_OPTION) {
-                        File file = fileChooser.getSelectedFile();
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif",
+                            "bmp");
+                    profilePictureChooser.setFileFilter(filter);
+                    int result = profilePictureChooser.showOpenDialog(null);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        File file = profilePictureChooser.getSelectedFile();
                         try {
-                            BufferedImage image = ImageIO.read(file);
-                            byte[] imageBytes = client.imageToBytes(image);
-                            client.changeProfilePicture(imageBytes);
+                            client.changeProfilePicture(Files.readAllBytes(file.toPath()));
                         } catch (Exception error) {
                             error.printStackTrace();
                         }
@@ -267,6 +265,8 @@ public class GUIClient implements Runnable, GUIInterface {
         sendButton.setPreferredSize(new Dimension(100, 100));
         searchButton = new JButton("search");
         //TODO Mukund, here the user image will be viewing user profile picture
+        profilePictureChooser = new JFileChooser();
+        profilePictureChooser.setDialogTitle("Choose a profile picture");
         userImage = new JLabel("User Image Placeholder", JLabel.CENTER);
         userImage.setHorizontalAlignment(SwingConstants.CENTER);
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
