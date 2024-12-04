@@ -44,6 +44,17 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         load();
 
     }
+
+    public static String byteArrayToString(byte[] picture) {
+        // This method converts a byte array to a string
+        StringBuilder sb = new StringBuilder();
+        for (byte b : picture) {
+            sb.append(b);
+            sb.append(",");
+        }
+        return sb.toString();
+    }
+
     public User createUser(String username, String password, String firstName, String lastName, String profilePicture)
         throws BadDataException {
         // This method creates a new user

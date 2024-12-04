@@ -25,11 +25,12 @@ public class MediaServer extends Thread implements ServerInterface {
         User user = null;
         AtomicInteger recentID = new AtomicInteger(0);
         MessageDatabase messageDatabase;
-        AtomicReference<User> currentlyViewing = new AtomicReference<>(null); 
+        AtomicReference<User> currentlyViewing = new AtomicReference<>(null);
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+            final ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
             
             String line = reader.readLine();
             if (line.equals("login")) {
@@ -142,7 +143,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
                 //System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
-                    userHandling(writer, line.substring(line.indexOf("|") + 1));
+                    userHandling(ois, writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
                         messageDatabase, currentlyViewing.get()));
@@ -229,7 +230,7 @@ public class MediaServer extends Thread implements ServerInterface {
     }
 
 //handle all user related functions sent by the client.
-    public static void userHandling(PrintWriter writer, String line) {
+    public static void userHandling(ObjectInputStream ois, PrintWriter writer, String line) {
         try {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
@@ -297,8 +298,10 @@ public class MediaServer extends Thread implements ServerInterface {
                     break;
                 case CHANGE_PICTURE:
                     User user6 = UserDatabase.getUser(inputs[1]);
-                    String picture = inputs[2];
-                    UserDatabase.changePicture(user6, picture);
+                    //get the byte array from the input stream
+                    byte[] picture = (byte[]) ois.readObject();
+                    String pictureString = UserDatabase.byteArrayToString(picture);
+                    UserDatabase.changePicture(user6, pictureString);
                     break;
                 default:
                     break;
