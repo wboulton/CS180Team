@@ -19,7 +19,7 @@ import java.util.*;
 import java.net.*;
 import java.util.concurrent.atomic.*;
 
-public class GUIClient implements Runnable {
+public class GUIClient implements Runnable, GUIInterface {
     ArrayList<String> usernames;
     ArrayList<String> displayUsers;
     ArrayList<String> messages;
@@ -86,6 +86,14 @@ public class GUIClient implements Runnable {
                 displayUsers.add(user);
             }
         }
+        //if you have blocked a user, the only way to see them is to search their exact username
+        if (displayUsers.size() < 1) {
+            if (client.search(username) != null) {
+                displayUsers.add(client.search(username));
+            } else {
+                displayUsers.add("No Applicable Users");
+            }
+        }
         userList.setListData(displayUsers.toArray(new String[0]));
     }
 
@@ -93,6 +101,7 @@ public class GUIClient implements Runnable {
         if (message != null && !message.trim().isEmpty()) {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
+                sending = sending.replace(" FRIEND", "");
                 String toSend = client.sendMessage(sending, message, null);
                 if (toSend.equals("String too long")) {
                     JOptionPane.showMessageDialog(null, "The message was too long", "Social Media App(tm)",
@@ -302,8 +311,18 @@ public class GUIClient implements Runnable {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() == friendButton) {
+                    String fieldString = viewingUser.getText();
                     try {
                         client.addOrRemoveFriend(viewingUsername);
+                        try {
+                            fieldString = fieldString.replace(" FRIEND", "");
+                            if (client.isFriend(viewingUsername)) {
+                                fieldString += " FRIEND";
+                            }
+                            viewingUser.setText(fieldString);
+                        } catch (Exception error) {
+                            error.printStackTrace();
+                        }
                     } catch (Exception error) {
                         error.printStackTrace();
                     }
@@ -333,7 +352,15 @@ public class GUIClient implements Runnable {
                 int index = userList.locationToIndex(evt.getPoint());
                 if (index >= 0) {
                     viewingUsername = userList.getModel().getElementAt(index);
-                    viewingUser.setText(String.format("Currently viewing: %s", viewingUsername));
+                    String fieldString = String.format("Currently viewing: %s", viewingUsername);
+                    try {
+                        if (client.isFriend(viewingUsername)) {
+                            fieldString += " FRIEND";
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                    viewingUser.setText(fieldString);
                     try {
                         messages = client.getConversation(viewingUsername);
                         messageJList.setListData(getMessages().toArray(new String[0])); 

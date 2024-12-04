@@ -2,6 +2,7 @@ import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -9,7 +10,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class signInGUI extends JComponent implements Runnable{
+public class signInGUI extends JComponent implements Runnable, signInGUIInterface {
 
     signInGUI signInPage;
     JTextField username;
@@ -28,20 +29,16 @@ public class signInGUI extends JComponent implements Runnable{
 
     private boolean signInFlag = true;
 
-    public static void main(String[] Args){
-        SwingUtilities.invokeLater(new signInGUI());  
+    public static void main(String[] Args) {
+        SwingUtilities.invokeLater(new signInGUI());
     }
 
-    public signInGUI(){
+    public signInGUI() {
 
     }
 
-    public String getUsername(){
-        return username.getText();
-    }
+    public void startMainGUI(String username) {
 
-    void startMainGUI(String username){
-        
         ArrayList<String> usernames = client.getUserList();
         GUIClient newUserClient = new GUIClient(usernames, client, username);
         SwingUtilities.invokeLater(newUserClient);
@@ -57,56 +54,58 @@ public class signInGUI extends JComponent implements Runnable{
             String lastNameText = lastName.getText();
 
             // if (usernameText.equals("Enter username..."))
-            //     usernameText = "";
+            // usernameText = "";
 
             // if (passwordText.equals("Enter password..."))
-            //     passwordText = "";
+            // passwordText = "";
 
             // if (firstNameText.equals("Enter first name..."))
-            //     firstNameText = "";
+            // firstNameText = "";
 
             // if (lastNameText.equals("Enter last name..."))
-            //     lastNameText = "";
+            // lastNameText = "";
 
             if (e.getSource() == signIn) {
                 try {
                     client = new UserClient(usernameText, passwordText);
-                    
+
                     startMainGUI(usernameText);
                     System.out.println("sign in ok");
                 } catch (Exception ee) {
                     ee.printStackTrace();
                     JOptionPane.showMessageDialog(null, "Invalid Login Credentials", "login error",
-                        JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
                 }
-            }
-            else if (e.getSource() == signUp) {
+            } else if (e.getSource() == signUp) {
                 try {
                     client = new UserClient(usernameText, passwordText, firstNameText, lastNameText, filePath);
                     System.out.println("user created ok");
-                    
+
                     startMainGUI(usernameText);
                 } catch (Exception ee) {
                     ee.printStackTrace();
                     JOptionPane.showMessageDialog(null, ee.getMessage(), "sign up error",
-                        JOptionPane.ERROR_MESSAGE);
+                            JOptionPane.ERROR_MESSAGE);
                 }
 
-            }
-            else if (e.getSource() == profilePictureButton){
+            } else if (e.getSource() == profilePictureButton) {
+                //image only
+                FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif",
+                        "bmp");
+                profilePicture.setFileFilter(filter);
+                
                 int result = profilePicture.showOpenDialog(null);
-
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = profilePicture.getSelectedFile();
                     filePath = selectedFile.getAbsolutePath();
-                    //change to byte stream
+                    // change to byte stream
                     profilePictureButton.setText(filePath);
                     System.out.println("Selected file: " + selectedFile.getAbsolutePath());
                 } else {
                     System.out.println("File selection cancelled.");
                 }
-            }else if (e.getSource() == changeToButton){  
-                if (signInFlag){
+            } else if (e.getSource() == changeToButton) {
+                if (signInFlag) {
                     signInFlag = false;
                     changeToButton.setText("Already have an account? Sign In");
                     pane.removeAll();
@@ -115,7 +114,7 @@ public class signInGUI extends JComponent implements Runnable{
                     JPanel panel = createMainPanel();
                     pane.add(panel);
                     frame.setSize(300, 500);
-                }else{
+                } else {
                     signInFlag = true;
                     changeToButton.setText("Don't have an account? Sign Up");
                     pane.removeAll();
@@ -129,8 +128,7 @@ public class signInGUI extends JComponent implements Runnable{
         }
     };
 
-    
-    void setPlaceHolder(JTextField textField, String placeholder){
+    void setPlaceHolder(JTextField textField, String placeholder) {
         textField.setForeground(Color.gray);
         textField.addFocusListener(new FocusListener() {
             @Override
@@ -151,28 +149,24 @@ public class signInGUI extends JComponent implements Runnable{
         });
     }
 
-    JPanel createMainPanel(){
+    public JPanel createMainPanel() {
         JLabel title = new JLabel();
         if (signInFlag)
             title.setText("Sign In");
-        else   
+        else
             title.setText("Sign Up");
         title.setFont(new Font("Arial", Font.BOLD, 20));
 
-        
         JLabel subTitle = new JLabel("Login to start chatting with friends!");
         if (!signInFlag)
             subTitle.setText("Create an account to start chatting with friends!");
 
         subTitle.setFont(new Font("Arial", Font.PLAIN, 12));
 
-        
-        
         // headings
         JLabel usernameHeading = new JLabel("Username");
         usernameHeading.setFont(new Font("Arial", Font.PLAIN, 12));
 
-        
         JLabel passwordHeading = new JLabel("Password");
         passwordHeading.setFont(new Font("Arial", Font.PLAIN, 12));
 
@@ -185,27 +179,26 @@ public class signInGUI extends JComponent implements Runnable{
         JLabel profilePictureHeading = new JLabel("Profile Picture");
         profilePictureHeading.setFont(new Font("Arial", Font.PLAIN, 12));
 
-        //text fields
+        // text fields
         username = new JTextField("Enter username...", 10);
-        setPlaceHolder(username,"Enter username...");
+        setPlaceHolder(username, "Enter username...");
         username.setMaximumSize(new Dimension(1000, 40));
 
         password = new JTextField("Enter password...", 10);
-        setPlaceHolder(password,"Enter password...");
+        setPlaceHolder(password, "Enter password...");
         password.setMaximumSize(new Dimension(1000, 40));
 
         firstName = new JTextField("Enter first name...", 10);
-        setPlaceHolder(firstName,"Enter first name...");
+        setPlaceHolder(firstName, "Enter first name...");
         firstName.setMaximumSize(new Dimension(1000, 40));
 
         lastName = new JTextField("Enter last name...", 10);
-        setPlaceHolder(lastName,"Enter last name...");
+        setPlaceHolder(lastName, "Enter last name...");
         lastName.setMaximumSize(new Dimension(1000, 40));
 
         profilePicture = new JFileChooser();
-        
 
-        //buttons
+        // buttons
         signIn = new JButton("Sign In");
         signIn.addActionListener(actionListener);
         signUp = new JButton("Sign Up");
@@ -218,9 +211,9 @@ public class signInGUI extends JComponent implements Runnable{
         signIn.setAlignmentY(Component.CENTER_ALIGNMENT);
         signUp.setAlignmentY(Component.CENTER_ALIGNMENT);
         changeToButton.setAlignmentY(Component.CENTER_ALIGNMENT);
-        signIn.setMaximumSize(new Dimension(280,35));
-        signUp.setMaximumSize(new Dimension(280,35));
-        changeToButton.setMaximumSize(new Dimension(280,35));
+        signIn.setMaximumSize(new Dimension(280, 35));
+        signUp.setMaximumSize(new Dimension(280, 35));
+        changeToButton.setMaximumSize(new Dimension(280, 35));
         signIn.setBackground(new Color(0, 92, 230));
         signIn.setForeground(Color.white);
         changeToButton.setBackground(Color.white);
@@ -239,8 +232,8 @@ public class signInGUI extends JComponent implements Runnable{
         panel.add(subTitle);
         panel.add(Box.createVerticalStrut(20));
 
-        //sign up panel
-        
+        // sign up panel
+
         JPanel signUpPanel = new JPanel();
         signUpPanel.setLayout(new BoxLayout(signUpPanel, BoxLayout.Y_AXIS));
         signUpPanel.setBackground(Color.WHITE);
@@ -267,13 +260,12 @@ public class signInGUI extends JComponent implements Runnable{
         panel.add(password);
         panel.add(Box.createVerticalStrut(15));
 
-        
-        //sign in/up buttons panel
+        // sign in/up buttons panel
         JPanel panel2 = new JPanel();
         panel2.setBackground(Color.WHITE);
         panel2.setAlignmentX(Component.LEFT_ALIGNMENT);
         panel2.setLayout(new BoxLayout(panel2, BoxLayout.Y_AXIS));
-        
+
         // panel2.add(Box.createRigidArea(new Dimension(60, 0)));
         if (signInFlag)
             panel2.add(signIn);
@@ -282,17 +274,17 @@ public class signInGUI extends JComponent implements Runnable{
         panel2.add(changeToButton);
         // panel2.add(Box.createRigidArea(new Dimension(10, 0)));
         // panel2.add(signUp);
-        
+
         panel.add(panel2);
         return panel;
     }
-    
+
     public void run() {
         frame = new JFrame("CS180 Messenger");
         pane = frame.getContentPane();
 
         JPanel panel = createMainPanel();
-       
+
         pane.add(panel);
 
         frame.setSize(300, 330);

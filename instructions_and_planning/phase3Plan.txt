@@ -23,3 +23,13 @@ TODO:
 
 
 Everyone must add to the report with what they have done for the project.
+
+DEMO:
+ 1) sign in
+ 2) search user
+ 3) select user & read messages
+ 4) send message (maybe have the other user open so you can see real time messaging)
+ 5) edit profile
+ 6) logout
+ 7) create new user
+ 8) add a friend/block user

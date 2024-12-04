@@ -45,7 +45,6 @@ public class MediaServer extends Thread implements ServerInterface {
                         messageDatabase.recoverMessages();
                         writer.println("Logged in!");
                         writer.flush();
-                        System.out.println(user instanceof User);
                         oos.writeObject(user);
                         break;
                     } else {
@@ -92,6 +91,10 @@ public class MediaServer extends Thread implements ServerInterface {
             toRemove.add(user);
             for (User item : users) {
                 if (toRemove.contains(item)) {
+                    continue;
+                }
+                //the user list will not display blocked users
+                if (user.getBlockedUsers().contains(item.getUsername())) {
                     continue;
                 }
                 writer.write(item.getUsername());
@@ -229,24 +232,24 @@ public class MediaServer extends Thread implements ServerInterface {
 //handle all user related functions sent by the client.
     public static void userHandling(ObjectInputStream ois, PrintWriter writer, String line) {
         try {
-            System.out.println(line);
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
 
             switch (action) {
                 case SEARCH: 
                     User userFound = UserDatabase.getUser(inputs[1]);
-                    writer.write("USER|" + userFound.toString());
+                    if (userFound == null) {
+                        writer.write("USER|" + null);
+                    } else {
+                        writer.write("USER|" + userFound.getUsername());
+                    }
                     writer.println();
                     writer.flush();   
                     break;
                 case ADD_FRIEND:
                     User user = UserDatabase.getUser(inputs[1]);
                     User otherUser = UserDatabase.getUser(inputs[2]);
-                    System.out.println(user);
-                    System.out.println(otherUser);
                     boolean value = UserDatabase.addFriend(user, otherUser);
-                    System.out.println(value);
                     writer.write(String.valueOf(value));
                     writer.println();
                     writer.flush();
@@ -255,8 +258,14 @@ public class MediaServer extends Thread implements ServerInterface {
                     User user2 = UserDatabase.getUser(inputs[1]);
                     User otherUser2 = UserDatabase.getUser(inputs[2]);
                     boolean response = UserDatabase.removeFriend(user2, otherUser2);
-                    System.out.println(response);
                     writer.write(String.valueOf(response));
+                    writer.println();
+                    writer.flush();
+                    break;
+                case GET_FRIEND:
+                    User thisUser = UserDatabase.getUser(inputs[1]);
+                    User friendUser = UserDatabase.getUser(inputs[2]);
+                    writer.write(String.valueOf(thisUser.getFriends().contains(friendUser.getUsername())));
                     writer.println();
                     writer.flush();
                     break;

@@ -192,6 +192,11 @@ public class UserClient implements UserClientInt {
         return reader.readLine().equals("true");
     }
 
+    public boolean isFriend(String username) throws IOException{
+        writer.println(String.format("user|GET_FRIEND|%s|%s", user.getUsername(), username));
+        return reader.readLine().equals("true");
+    }
+
     public void addOrRemoveFriend(String username) throws IOException {
         boolean something = addFriend(username);
         if (!something) {
@@ -226,7 +231,7 @@ public class UserClient implements UserClientInt {
         writer.println("user|SEARCH|" + username);
         writer.flush();
         try {
-            return reader.readLine();
+            return reader.readLine().replace("USER|", "");
         } catch (IOException e) {
             e.printStackTrace();
         }
