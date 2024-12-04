@@ -19,6 +19,7 @@ import java.security.PrivateKey;
 
 public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
+    private static RSAKey privateKey;
     public static final Object LOCK = new Object();
 
     private static void RSASend(String send, PublicKey publicKey, PrintWriter writer) {
@@ -52,7 +53,6 @@ public class MediaServer extends Thread implements ServerInterface {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
             final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
-            RSAKey privateKey = new RSAKey();
             String keyString = reader.readLine();
             PublicKey publicKey = new PublicKey(keyString);
             writer.println(privateKey.getPublicKey());
@@ -327,6 +327,7 @@ public class MediaServer extends Thread implements ServerInterface {
     public static void main(String[] args) {
         System.out.println("Server started");
         database = new UserDatabase();
+        privateKey = new RSAKey();
         int port;
         try {
             port = Integer.parseInt(args[0]);
