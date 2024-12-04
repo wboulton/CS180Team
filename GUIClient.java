@@ -278,7 +278,7 @@ public class GUIClient implements Runnable {
             }
         });
 
-        placeHolder(searchField, "user");
+        placeHolder(searchField, "username");
         
         ActionListener actionListener = new ActionListener() {
             @Override
@@ -297,6 +297,9 @@ public class GUIClient implements Runnable {
                     }
                 } else if (e.getSource() == searchButton) {
                     String username = searchField.getText();
+                    if (username.equals("username")) {
+                        username = "";
+                    }
                     searchForUser(username);
                 } else if (e.getSource() == sendButton) {
                     String message = messageField.getText();
