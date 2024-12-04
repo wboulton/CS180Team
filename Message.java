@@ -107,7 +107,7 @@ public class Message implements MessageInterface {
             }
             pictureFile = String.format("%d.jpg", pictureLocation);
             try (BufferedWriter bwr = new BufferedWriter(new FileWriter(pictureNumbers))) {
-                bwr.write(pictureLocation);
+                bwr.write(Integer.toString(++pictureLocation));
             } catch (Exception e) {
                 System.out.println("Error writing picture number");
             }
