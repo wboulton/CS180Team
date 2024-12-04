@@ -239,7 +239,7 @@ public class GUIClient implements Runnable {
         sendButton = new JButton("<html>send<br>message</html>");
         sendButton.setPreferredSize(new Dimension(100, 100));
         searchButton = new JButton("search");
-        //TODO Mukund, here the user image will be your profile picture
+        //TODO Mukund, here the user image will be viewing user profile picture
         userImage = new JLabel("User Image Placeholder", JLabel.CENTER);
         userImage.setHorizontalAlignment(SwingConstants.CENTER);
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
