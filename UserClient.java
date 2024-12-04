@@ -21,6 +21,7 @@ public class UserClient implements UserClientInt {
     private PrintWriter writer;
     private Socket socket;
     private ObjectInputStream input;
+    private ObjectOutputStream output;
     private static final int portNumber = 8080;
     private static final int MAX_LENGTH = 5_000;
 
@@ -245,8 +246,8 @@ public class UserClient implements UserClientInt {
         return reader.readLine().equals("true");
     }
     public void changeProfilePicture(byte[] picture) throws IOException {
-        String result = byteArrayToString(picture);
-        writer.println("user|CHANGE_PICTURE|" + user.getUsername() + "|" + result);
+        writer.println("user|CHANGE_PICTURE|" + user.getUsername() + "|");
+        output.writeObject(picture);
         writer.flush();
     }
 
@@ -487,5 +488,15 @@ public class UserClient implements UserClientInt {
                 }
             }
         }
+    }
+
+    public byte[] imageToBytes(BufferedImage image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "jpg", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return baos.toByteArray();
     }
 }

@@ -14,6 +14,7 @@ import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 
 import java.awt.*;
+import java.nio.file.Files;
 import java.util.*;
 import java.net.*;
 import java.util.concurrent.atomic.*;
@@ -197,6 +198,21 @@ public class GUIClient implements Runnable {
                         } while (!success);
                 } else if (e.getSource() == editProfilePicture) {
                     //TODO Mukund, add profile picture changing here
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Choose a profile picture");
+                    fileChooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+                    fileChooser.setAcceptAllFileFilterUsed(false);
+                    int returnValue = fileChooser.showOpenDialog(null);
+                    if (returnValue == JFileChooser.APPROVE_OPTION) {
+                        File file = fileChooser.getSelectedFile();
+                        try {
+                            BufferedImage image = ImageIO.read(file);
+                            byte[] imageBytes = client.imageToBytes(image);
+                            client.changeProfilePicture(imageBytes);
+                        } catch (Exception error) {
+                            error.printStackTrace();
+                        }
+                    }
                 }
             }
         };
