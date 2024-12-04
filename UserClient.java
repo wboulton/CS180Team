@@ -60,6 +60,7 @@ public class UserClient implements UserClientInt {
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         input = new ObjectInputStream(socket.getInputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
