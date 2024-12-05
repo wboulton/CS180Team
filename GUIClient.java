@@ -4,20 +4,17 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.StyleConstants;
 import javax.swing.text.Style;
 import javax.swing.text.StyledDocument;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-import java.awt.event.ActionListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.FocusListener;
 import java.io.File;
-import java.awt.event.FocusEvent;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
 
 import java.awt.*;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.util.*;
 import java.net.*;
+import java.util.Timer;
 import java.util.concurrent.atomic.*;
 
 public class GUIClient implements Runnable, GUIInterface {
@@ -41,8 +38,9 @@ public class GUIClient implements Runnable, GUIInterface {
     JFileChooser profilePictureChooser;
     String viewingUsername;
     String clientUsername;
+    JButton addPicToMessage;
 
-    private java.util.Timer messageUpdateTimer;
+    private Timer messageUpdateTimer;
 
     public GUIClient(ArrayList<String> usernames, UserClient client, String username) {
         this.usernames = usernames;
@@ -267,15 +265,15 @@ public class GUIClient implements Runnable, GUIInterface {
         //TODO Mukund, here the user image will be viewing user profile picture
         profilePictureChooser = new JFileChooser();
         profilePictureChooser.setDialogTitle("Choose a profile picture");
+        addPicToMessage = new JButton("Add Picture to Message");
         //get the viewing user's profile picture
-//        BufferedImage viewingProfilePicture = UserDatabase.getProfilePicture(viewingUsername);
-//        if (viewingProfilePicture != null) {
-//            ImageIcon icon = new ImageIcon(viewingProfilePicture);
-//            userImage = new JLabel(icon);
-//        } else {
-//            userImage = new JLabel("No Profile Picture");
-//        }
-        userImage = new JLabel("User Image Placeholder", JLabel.CENTER);
+        BufferedImage viewingProfilePicture = UserDatabase.getProfilePicture(viewingUsername);
+        if (viewingProfilePicture != null) {
+            ImageIcon icon = new ImageIcon(viewingProfilePicture);
+            userImage = new JLabel(icon);
+        } else {
+            userImage = new JLabel("No Profile Picture");
+        }
         userImage.setHorizontalAlignment(SwingConstants.CENTER);
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
 
@@ -284,7 +282,7 @@ public class GUIClient implements Runnable, GUIInterface {
         messageField.setFont(new Font("Arial", Font.PLAIN, 16));
         messageField.setEditable(true); 
         messageField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
-
+        
         Style style = messageField.addStyle("WrapStyle", null);
         StyleConstants.setLineSpacing(style, 0.2f); 
         messageField.setParagraphAttributes(style, true);
@@ -318,6 +316,7 @@ public class GUIClient implements Runnable, GUIInterface {
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                File sendPic = null;
                 if (e.getSource() == friendButton) {
                     String fieldString = viewingUser.getText();
                     try {
@@ -347,15 +346,40 @@ public class GUIClient implements Runnable, GUIInterface {
                     }
                     searchForUser(username);
                 } else if (e.getSource() == sendButton) {
+                    byte[] picBytes = null;
+                    if (sendPic != null) {
+                        try {
+                            picBytes = Files.readAllBytes(sendPic.toPath());
+                        } catch (Exception error) {
+                            error.printStackTrace();
+                        }
+                    }
                     String message = messageField.getText();
-                    sendMessage(message);
+                    try {
+                        client.sendMessage(viewingUsername, message, byteArraytoString(picBytes));
+                    } catch (Exception error) {
+                        JOptionPane.showMessageDialog(null, "The message was too long", 
+                                "Social Media App(tm)",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
                 } else if (e.getSource() == profileButton) {
                     editProfile();
+                } else if (e.getSource() == addPicToMessage) {
+                    //TODO Mukund, add picture to message here
+                    JFileChooser fileChooser = new JFileChooser();
+                    fileChooser.setDialogTitle("Choose a picture to send");
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif",
+                            "bmp");
+                    fileChooser.setFileFilter(filter);
+                    int result = fileChooser.showOpenDialog(null);
+                    if (result == JFileChooser.APPROVE_OPTION) {
+                        sendPic = fileChooser.getSelectedFile();
+                    }
                 }
             }
         };
-    userList.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
+    userList.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent evt) {
             if (evt.getClickCount() == 2) {
                 int index = userList.locationToIndex(evt.getPoint());
                 if (index >= 0) {
@@ -380,8 +404,8 @@ public class GUIClient implements Runnable, GUIInterface {
         }
     });
 
-    messageJList.addMouseListener(new java.awt.event.MouseAdapter() {
-        public void mouseClicked(java.awt.event.MouseEvent evt) {
+    messageJList.addMouseListener(new MouseAdapter() {
+        public void mouseClicked(MouseEvent evt) {
             if (evt.getClickCount() == 2) {
                 int index = messageJList.locationToIndex(evt.getPoint());
                 if (index >= 0) {
@@ -475,13 +499,25 @@ public class GUIClient implements Runnable, GUIInterface {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-    
-//this will run a timertask that will update the gui with new messages every three seconds
+
+    private String byteArraytoString(byte[] picBytes) {
+        if (picBytes == null) {
+            return null;
+        }
+        StringBuilder picString = new StringBuilder();
+        for (byte b : picBytes) {
+            picString.append(b);
+            picString.append(",");
+        }
+        return picString.toString();
+    }
+
+    //this will run a timertask that will update the gui with new messages every three seconds
 //this also makes the other timertask in the media server uncessary now because it calls directly
 //upon the getConversation method. This also ensures messages are displayed in the same order universally
     public void startMessageUpdater() {
         //for some reason swing also has a timer class but I am using the java.util one
-        messageUpdateTimer = new java.util.Timer();
+        messageUpdateTimer = new Timer();
         messageUpdateTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
