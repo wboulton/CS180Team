@@ -144,6 +144,18 @@ public class GUIClient implements Runnable, GUIInterface {
         JButton editUsername = new JButton("Change Username");
         JButton editPassword = new JButton("Change Password");
         JButton editProfilePicture = new JButton("Upload Profile Picture");
+        JButton allowAll = new JButton();
+        boolean allowed = true;
+        try {
+            allowed = client.isAllowAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (allowed) {
+            allowAll.setText("All users can message");
+        } else {
+            allowAll.setText("only friends can message");
+        }
 
         JTextArea usernameArea = new JTextArea(clientUsername);
         usernameArea.setWrapStyleWord(true);
@@ -218,6 +230,17 @@ public class GUIClient implements Runnable, GUIInterface {
                             error.printStackTrace();
                         }
                     }
+                } else if (e.getSource() == allowAll) {
+                    try {
+                        boolean allowed2 = client.changeAllowAll();
+                        if (allowed2) {
+                            allowAll.setText("All users can message");
+                        } else {
+                            allowAll.setText("only friends can message");
+                        }
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                    }
                 }
             }
         };
@@ -225,6 +248,7 @@ public class GUIClient implements Runnable, GUIInterface {
         editPassword.addActionListener(listener);
         editUsername.addActionListener(listener);
         editProfilePicture.addActionListener(listener);
+        allowAll.addActionListener(listener);
 
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         bottomPanel.add(editPassword);

@@ -157,6 +157,16 @@ public class UserClient implements UserClientInt {
         return reader.readLine().equals("true");
     }
 
+    public boolean changeAllowAll() throws IOException {
+        writer.println(String.format("user|ALLOW_ALL|%s", user.getUsername()));
+        user.setAllowAll(!user.isAllowAll());
+        return user.isAllowAll();
+    }
+
+    public boolean isAllowAll() throws IOException {
+        return user.isAllowAll();
+    }
+
     public ArrayList<String> getConversation(String username) throws IOException {
         writer.println("message|SET_VIEWING|" + username);
         writer.println("message|GET_CONVERSATION|" + username);

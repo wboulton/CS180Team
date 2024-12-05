@@ -303,6 +303,14 @@ public class MediaServer extends Thread implements ServerInterface {
                     String pictureString = UserDatabase.byteArrayToString(picture);
                     UserDatabase.changePicture(user6, pictureString);
                     break;
+                case ALLOW_ALL:
+                    User user7 = UserDatabase.getUser(inputs[1]);
+                    boolean allowAll = user7.isAllowAll();
+                    user7.setAllowAll(!allowAll);
+                    writer.write(String.valueOf(!allowAll));
+                    writer.println();
+                    writer.flush();
+                    break;
                 default:
                     break;
             }
@@ -326,6 +334,20 @@ public class MediaServer extends Thread implements ServerInterface {
         try {
             ServerSocket server = new ServerSocket(port);
             final ArrayList<Socket> socket = new ArrayList<>();
+            //this shutdown hook will handle when the Server is force closed
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                try {
+                    UserDatabase.updateDB();
+                    for (Socket s : socket) {
+                        s.close();
+                    }
+                    server.close();
+                    System.out.println("Server shut down");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }));
+            //this will run forever
             while (true) {
                 final Socket newSocket = server.accept();
                 if (!socket.contains(newSocket)) {
