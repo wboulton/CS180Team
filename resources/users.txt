@@ -6,3 +6,6 @@ thisguy|Password1|william|tryagain|||null|true
 anotherguh|Password1|william|Don't You already know this?|,username||null|true
 Skibiddi|Password123|Alan|Yi|||null|true
 fakeUsername|fakePassword1|william|boulton|||null|true
+JohnDoe|Password1|John|Doe|||null|true
+JohnDoe2|Password1|john|doe|||null|true
+JohnDoe3|Password1|John|Doe|||null|true

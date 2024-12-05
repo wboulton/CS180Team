@@ -48,6 +48,10 @@ public class GUIClient implements Runnable, GUIInterface {
         this.client = client;
         this.clientUsername = username;
         this.messages = new ArrayList<>();
+        final UserClient shutdownClient = client;
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            shutdownClient.kill();
+        }));
     }
 
     public void setMessages(ArrayList<String> messages) {
@@ -291,7 +295,13 @@ public class GUIClient implements Runnable, GUIInterface {
         profilePictureChooser.setDialogTitle("Choose a profile picture");
         addPicToMessage = new JButton("Add Picture to Message");
         //get the viewing user's profile picture
-        BufferedImage viewingProfilePicture = UserDatabase.getProfilePicture(viewingUsername);
+        BufferedImage viewingProfilePicture;
+        try {
+            viewingProfilePicture = UserDatabase.getProfilePicture(viewingUsername);
+        } catch (Exception e) {
+            viewingProfilePicture = null;
+        }
+        
         if (viewingProfilePicture != null) {
             ImageIcon icon = new ImageIcon(viewingProfilePicture);
             userImage = new JLabel(icon);
