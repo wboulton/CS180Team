@@ -2,6 +2,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.nio.file.Files;
 import java.util.*;
 
@@ -216,6 +217,17 @@ public class UserClient implements UserClientInt {
         if (!canUnblock) {
             blockUser(username);
         }
+    }
+
+    public BufferedImage getViewingProfilePicture(String username) throws IOException {
+        writer.println(String.format("user|GET_PROFILEPICTURE|%s", username));
+        BufferedImage picture = null;
+        try {
+            picture = (BufferedImage) input.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return picture;
     }
 
     // Helper method to convert byte array to string format for transmission

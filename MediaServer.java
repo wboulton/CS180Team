@@ -2,6 +2,7 @@ import java.util.*;
 import java.util.concurrent.atomic.*;
 import java.io.*;
 import java.net.*;
+import java.awt.image.BufferedImage;
 /**
  * Team Project -- MediaServer
  *
@@ -143,7 +144,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
                 //System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
-                    userHandling(ois, writer, line.substring(line.indexOf("|") + 1));
+                    userHandling(ois, oos, writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
                         messageDatabase, currentlyViewing.get()));
@@ -230,7 +231,7 @@ public class MediaServer extends Thread implements ServerInterface {
     }
 
 //handle all user related functions sent by the client.
-    public static void userHandling(ObjectInputStream ois, PrintWriter writer, String line) {
+    public static void userHandling(ObjectInputStream ois, ObjectOutputStream oos, PrintWriter writer, String line) {
         try {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
@@ -311,10 +312,16 @@ public class MediaServer extends Thread implements ServerInterface {
                     writer.println();
                     writer.flush();
                     break;
+                case GET_PROFILEPICTURE:
+                    User user8 = UserDatabase.getUser(inputs[1]);
+                    BufferedImage image = user8.getProfilePictureImage();
+                    oos.writeObject(image);
+                    break;
                 default:
                     break;
             }
         } catch (IndexOutOfBoundsException e) {
+            e.printStackTrace();
             System.out.println("OUT OF BOUNDS, CHECK PARAMETERS");
         } catch (Exception e) {
             e.printStackTrace();

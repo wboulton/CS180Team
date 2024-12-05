@@ -164,9 +164,7 @@ public class GUIClient implements Runnable, GUIInterface {
 
         JTextArea usernameArea = new JTextArea(clientUsername);
         usernameArea.setWrapStyleWord(true);
-        //TODO Profile picture is displayed here too 
-//TODO this may help with implementation https://stackoverflow.com/questions/299495/how-to-add-an-image-to-a-jpanel
-        //get profile picture from client
+       
         BufferedImage pfp = client.getProfilePicture();
         if (pfp != null) {
             ImageIcon icon = new ImageIcon(pfp);
@@ -229,6 +227,13 @@ public class GUIClient implements Runnable, GUIInterface {
                         File file = profilePictureChooser.getSelectedFile();
                         try {
                             client.changeProfilePicture(Files.readAllBytes(file.toPath()));
+                            BufferedImage pfp = client.getProfilePicture();
+                            if (pfp != null) {
+                                ImageIcon icon = new ImageIcon(pfp);
+                                profilePicture.setIcon(icon);
+                            } else {
+                                profilePicture.setIcon(null);;
+                            }
                         } catch (Exception error) {
                             error.printStackTrace();
                         }
@@ -289,24 +294,12 @@ public class GUIClient implements Runnable, GUIInterface {
         sendButton = new JButton("<html>send<br>message</html>");
         sendButton.setPreferredSize(new Dimension(100, 100));
         searchButton = new JButton("search");
-        //TODO Mukund, here the user image will be viewing user profile picture
         profilePictureChooser = new JFileChooser();
         profilePictureChooser.setDialogTitle("Choose a profile picture");
         addPicToMessage = new JButton("Add Picture to Message");
         //get the viewing user's profile picture
-        BufferedImage viewingProfilePicture;
-        try {
-            viewingProfilePicture = UserDatabase.getProfilePicture(viewingUsername);
-        } catch (Exception e) {
-            viewingProfilePicture = null;
-        }
-        
-        if (viewingProfilePicture != null) {
-            ImageIcon icon = new ImageIcon(viewingProfilePicture);
-            userImage = new JLabel(icon);
-        } else {
-            userImage = new JLabel("No Profile Picture");
-        }
+        userImage = new JLabel("No Profile Picture");
+    
         userImage.setHorizontalAlignment(SwingConstants.CENTER);
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
 
@@ -425,6 +418,21 @@ public class GUIClient implements Runnable, GUIInterface {
                         messageJList.setListData(getMessages().toArray(new String[0])); 
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }
+                    BufferedImage viewingProfilePicture;
+                    try {
+                        //TODO get viewing user pfp from server
+                        viewingProfilePicture = client.getViewingProfilePicture(viewingUsername);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        viewingProfilePicture = null;
+                    }
+                    
+                    if (viewingProfilePicture != null) {
+                        ImageIcon icon = new ImageIcon(viewingProfilePicture);
+                        userImage.setIcon(icon);
+                    } else {
+                        userImage.setIcon(null);;
                     }
                 }
             }
