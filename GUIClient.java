@@ -96,7 +96,7 @@ public class GUIClient implements Runnable, GUIInterface {
         userList.setListData(displayUsers.toArray(new String[0]));
     }
 
-    private void sendMessage(String message) {
+    private void sendMessage(String message, String picture) {
         if (message != null && !message.trim().isEmpty()) {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
@@ -355,13 +355,7 @@ public class GUIClient implements Runnable, GUIInterface {
                         }
                     }
                     String message = messageField.getText();
-                    try {
-                        client.sendMessage(viewingUsername, message, byteArraytoString(picBytes));
-                    } catch (Exception error) {
-                        JOptionPane.showMessageDialog(null, "The message was too long", 
-                                "Social Media App(tm)",
-                            JOptionPane.ERROR_MESSAGE);
-                    }
+                    sendMessage(message, byteArraytoString(picBytes));
                 } else if (e.getSource() == profileButton) {
                     editProfile();
                 } else if (e.getSource() == addPicToMessage) {
