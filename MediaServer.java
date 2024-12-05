@@ -58,7 +58,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 String password = reader.readLine();
                 String firstname = reader.readLine();
                 String lastname = reader.readLine();
-                String pfp = reader.readLine();
+                byte[] pfp = (byte[]) ois.readObject();
                 try {
                     user = database.createUser(username, password, firstname, lastname, pfp);
                     System.out.println("user created");

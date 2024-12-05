@@ -70,7 +70,7 @@ public class User implements UserInt, Serializable {
 
     }
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
-    public User(String username, String password, String firstName, String lastName, String profile) {
+    public User(String username, String password, String firstName, String lastName, byte[] pfp) {
         //username rules - no commas, doesn't already exist, not empty
         //if userDatabase is null, create a new userDatabase
         this.username = username;
@@ -80,20 +80,10 @@ public class User implements UserInt, Serializable {
         this.friends = new ArrayList<String>();
         this.blockedUsers = new ArrayList<String>();
         //if there is no comma in the profile, there is no profile picture
-        if (!profile.contains(",") || profile.equals("null")) {
+        if (pfp == null || pfp.length < 1) {
             this.profilePicture = null;
         } else {
-            //parse profile picture
-            String[] profileInfo = profile.split(",");
-            boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
-            if (containsPicture) {
-                try {
-                    File imageFile = new File(profileInfo[1]);
-                    profilePicture = Files.readAllBytes(imageFile.toPath());
-                } catch (Exception e) {
-                    this.profilePicture = null;
-                }
-            }
+            this.profilePicture = pfp;
         }
         // allow all is set to true by default
         allowAll = true;

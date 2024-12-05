@@ -39,7 +39,7 @@ public class UserClient implements UserClientInt {
 
     // Constructor for new user
     public UserClient(String username, String password, String firstName, String lastName,
-        String profilePicture) throws IOException, BadDataException {
+        byte[] profilePicture) throws IOException, BadDataException {
         connectToServer();
         createNewUser(username, password, firstName, lastName, profilePicture);
         //here we collect a list of usernames
@@ -75,8 +75,6 @@ public class UserClient implements UserClientInt {
         System.out.println("Login successful.");
         try {
             this.user = (User) input.readObject();
-            System.out.println(this.user.toString());
-            System.out.println("USER CREATION SUCCESSFUL: " + this.user.toString());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("the object was not a user");
@@ -84,16 +82,14 @@ public class UserClient implements UserClientInt {
     }
 
     private void createNewUser(String username, String password, String firstName, String lastName, 
-        String profilePicture) throws IOException, BadDataException {
+        byte[] profilePicture) throws IOException, BadDataException {
         writer.println("new user");  // Send new user command to the server
         writer.println(username);
         writer.println(password);
         writer.println(firstName);
         writer.println(lastName);
-        System.out.println(profilePicture);
-        writer.println(profilePicture);
+        output.writeObject(profilePicture);
         String response = reader.readLine();
-        System.out.println(response);
         if (response.equals("user created")) {
             try {
                 this.user = (User) input.readObject();
@@ -305,7 +301,7 @@ public class UserClient implements UserClientInt {
             String lastName = sc.nextLine();
             String profilePicture = "false";
             try {
-                client = new UserClient(username, password, firstName, lastName, profilePicture);
+                client = new UserClient(username, password, firstName, lastName, null);
                 client.input = new ObjectInputStream(client.socket.getInputStream());
             } catch (Exception e) {
                 e.printStackTrace();

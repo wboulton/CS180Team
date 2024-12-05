@@ -9,6 +9,8 @@ import java.awt.event.*;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
+import java.io.IOException;
+import java.nio.file.Files;
 
 public class signInGUI extends JComponent implements Runnable, signInGUIInterface {
 
@@ -23,7 +25,7 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
     JButton profilePictureButton;
     JButton changeToButton;
     UserClient client = null;
-    String filePath = null;
+    byte[] picture;
     JFrame frame;
     Container pane;
 
@@ -80,7 +82,7 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
                 }
             } else if (e.getSource() == signUp) {
                 try {
-                    client = new UserClient(usernameText, passwordText, firstNameText, lastNameText, filePath);
+                    client = new UserClient(usernameText, passwordText, firstNameText, lastNameText, picture);
                     System.out.println("user created ok");
 
                     startMainGUI(usernameText);
@@ -98,11 +100,16 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
 
                 int result = profilePicture.showOpenDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
-                    File selectedFile = profilePicture.getSelectedFile();
-                    filePath = selectedFile.getAbsolutePath();
-                    // change to byte stream
-                    profilePictureButton.setText(filePath);
-                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                    File pfp = profilePicture.getSelectedFile();
+                    try {
+                        picture = Files.readAllBytes(pfp.toPath());
+                        String filePath = pfp.getAbsolutePath();
+                        profilePictureButton.setText(filePath);
+                    } catch (IOException ioException) {
+                        ioException.printStackTrace();
+                        JOptionPane.showMessageDialog(null, "Error reading file",
+                            "File error", JOptionPane.ERROR_MESSAGE);
+                    }
                 } else {
                     System.out.println("File selection cancelled.");
                 }

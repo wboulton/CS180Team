@@ -148,6 +148,7 @@ public class GUIClient implements Runnable, GUIInterface {
         JButton editUsername = new JButton("Change Username");
         JButton editPassword = new JButton("Change Password");
         JButton editProfilePicture = new JButton("Upload Profile Picture");
+        JLabel profilePicture;
         JButton allowAll = new JButton();
         boolean allowed = true;
         try {
@@ -166,14 +167,12 @@ public class GUIClient implements Runnable, GUIInterface {
         //TODO Profile picture is displayed here too 
 //TODO this may help with implementation https://stackoverflow.com/questions/299495/how-to-add-an-image-to-a-jpanel
         //get profile picture from client
-        BufferedImage profilePicture = client.getProfilePicture();
-        if (profilePicture != null) {
-            ImageIcon icon = new ImageIcon(profilePicture);
-            JLabel profilePic = new JLabel(icon);
-            panel.add(profilePic);
+        BufferedImage pfp = client.getProfilePicture();
+        if (pfp != null) {
+            ImageIcon icon = new ImageIcon(pfp);
+            profilePicture = new JLabel(icon);
         } else {
-            JLabel noProfilePic = new JLabel("No Profile Picture");
-            panel.add(noProfilePic);
+            profilePicture = new JLabel("No Profile Picture");
         }
         ActionListener listener = new ActionListener() {
             @Override
@@ -263,7 +262,7 @@ public class GUIClient implements Runnable, GUIInterface {
         topPanel.add(new JScrollPane(usernameArea), BorderLayout.CENTER);
         
         JPanel centerPanel = new JPanel();
-        //TODO centerPanel.add(profilePicture);
+        centerPanel.add(profilePicture);
 
         content.add(topPanel, BorderLayout.NORTH);
         content.add(bottomPanel, BorderLayout.SOUTH);

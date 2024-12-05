@@ -78,7 +78,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
     }
 
-    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)
+    public User createUser(String username, String password, String firstName, String lastName, byte[] profilePicture)
         throws BadDataException {
         // This method creates a new user
         //if the username is not taken, create a new user
@@ -97,14 +97,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         //if the profile picture is not found, throw exception
         //split the profile pic string by comma, and check if the file exists
-        if (profilePicture != null && !profilePicture.equals("false")) {
-            try {
-                File imageFile = new File(profilePicture);
-                byte[] imageData = Files.readAllBytes(imageFile.toPath());
-            } catch (Exception e) {
-                throw new BadDataException("Profile picture not found");
-            }
-        }
+        
         User user = new User(username, password, firstName, lastName, profilePicture);
         writeDB(user);
         //create a new user
