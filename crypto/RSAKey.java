@@ -3,7 +3,7 @@ import java.math.BigInteger;
 import java.security.SecureRandom;
 
 public class RSAKey {
-    private final int bitLength = 1024;
+    private final int bitLength = 2048;
     private SecureRandom random;
     private BigInteger e;
     private BigInteger n;
