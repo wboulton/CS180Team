@@ -27,7 +27,7 @@ public class MessageDatabaseThread extends Thread {
                 case GET_SENT_MESSAGES:
                     ArrayList sentMessages = this.messageDatabase.getSentMessages();
                     break;
-                case GET_RECIEVED_MESSAGES:
+                case GET_RECEIVED_MESSAGES:
                     ArrayList recievedMessages = this.messageDatabase.getRecievedMessages();
                     break;
                 case RECOVER_MESSAGES:

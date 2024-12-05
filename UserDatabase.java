@@ -1,4 +1,7 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -53,6 +56,26 @@ Extra credit opportunity – Add support to upload and display profile pictures.
             sb.append(",");
         }
         return sb.toString();
+    }
+
+    public static BufferedImage getProfilePicture(String viewingUsername) {
+        // This method gets the profile picture of a user
+        synchronized (LOCK) {
+            User user = getUser(viewingUsername);
+            if (user == null) {
+                return null;
+            }
+            byte[] picture = user.getProfilePicture();
+            if (picture == null) {
+                return null;
+            }
+            try {
+                return ImageIO.read(new ByteArrayInputStream(picture));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
     }
 
     public User createUser(String username, String password, String firstName, String lastName, String profilePicture)

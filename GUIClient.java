@@ -267,6 +267,14 @@ public class GUIClient implements Runnable, GUIInterface {
         //TODO Mukund, here the user image will be viewing user profile picture
         profilePictureChooser = new JFileChooser();
         profilePictureChooser.setDialogTitle("Choose a profile picture");
+        //get the viewing user's profile picture
+//        BufferedImage viewingProfilePicture = UserDatabase.getProfilePicture(viewingUsername);
+//        if (viewingProfilePicture != null) {
+//            ImageIcon icon = new ImageIcon(viewingProfilePicture);
+//            userImage = new JLabel(icon);
+//        } else {
+//            userImage = new JLabel("No Profile Picture");
+//        }
         userImage = new JLabel("User Image Placeholder", JLabel.CENTER);
         userImage.setHorizontalAlignment(SwingConstants.CENTER);
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
