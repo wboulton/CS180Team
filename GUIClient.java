@@ -104,7 +104,7 @@ public class GUIClient implements Runnable, GUIInterface {
     private void sendMessage(String message, byte[] picture) {
         //TODO Alan, the app seems to be collecting a picture, you just need to handle how it is sent.
         if (message.contains("|")) {
-            JOptionPane.showMessageDialog(null, "'|' character not allowed", "Social Media App(tm)",
+            JOptionPane.showMessageDialog(null, "'|' character not allowed", "<html>Social Media App <sup>TM</sup></html>",
                         JOptionPane.ERROR_MESSAGE);
             return;
         }
@@ -114,7 +114,7 @@ public class GUIClient implements Runnable, GUIInterface {
                 sending = sending.replace(" FRIEND", "");
                 String toSend = client.sendMessage(sending, message, null);
                 if (toSend.equals("String too long")) {
-                    JOptionPane.showMessageDialog(null, "The message was too long", "Social Media App(tm)",
+                    JOptionPane.showMessageDialog(null, "The message was too long", "<html>Social Media App <sup>TM</sup></html>",
                         JOptionPane.ERROR_MESSAGE);
                 }
             } catch (Exception e) {
@@ -148,7 +148,7 @@ public class GUIClient implements Runnable, GUIInterface {
 
     private void editProfile() {
 //edit your profile using the Jbutton
-        JFrame frame = new JFrame("Social Media App(tm)");
+        JFrame frame = new JFrame("<html>Social Media App <sup>TM</sup></html>");
         Container content = frame.getContentPane();
         JPanel panel = new JPanel();
         content.add(panel, BorderLayout.CENTER);
@@ -195,7 +195,7 @@ public class GUIClient implements Runnable, GUIInterface {
                                 success = client.setUserName(newUsername);
                                 if (!success) {
                                     JOptionPane.showMessageDialog(null, "Cannot use this username",
-                                        "Social Media App(tm)", JOptionPane.ERROR_MESSAGE);
+                                        "<html>Social Media App <sup>TM</sup></html>", JOptionPane.ERROR_MESSAGE);
                                 } else {
                                     clientUsername = newUsername;
                                     usernameArea.setText(newUsername);
@@ -218,7 +218,7 @@ public class GUIClient implements Runnable, GUIInterface {
                                     JOptionPane.showMessageDialog(null, 
                                         "Illegal Password, Legal passwords must be 8 characters" + 
                                         " long with a capital letter and a special character",
-                                        "Social Media App(tm)", JOptionPane.ERROR_MESSAGE);
+                                        "<html>Social Media App <sup>TM</sup></html>", JOptionPane.ERROR_MESSAGE);
                                 }
                             } catch (Exception error) {
                                 error.printStackTrace();
@@ -289,7 +289,7 @@ public class GUIClient implements Runnable, GUIInterface {
 
         startMessageUpdater();
 
-        JFrame frame = new JFrame("Social Media App(tm)");
+        JFrame frame = new JFrame("<html>Social Media App <sup>TM</sup></html>");
         Container content = frame.getContentPane();
         frame.setSize(1900, 1000);
         content.setLayout(new BorderLayout());
@@ -457,7 +457,7 @@ public class GUIClient implements Runnable, GUIInterface {
                     try {
                         String viewingMessage = client.getConversation(viewingUsername).get(index);
                         int messageAlter = JOptionPane.showOptionDialog(null, viewingMessage.split("\\|")[3],
-                            "Social Media App(tm)", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
+                            "<html>Social Media App <sup>TM</sup></html>", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null,
                             new String[]{"Edit", "Delete", "Cancel"}, null);
                         if (messageAlter == 0) {
                             //edit
@@ -469,7 +469,7 @@ public class GUIClient implements Runnable, GUIInterface {
                                     edit = client.editMessage(Integer.parseInt(viewingMessage.split("\\|")[0]), newText);
                                     if (edit.equals("String too long")) {
                                         JOptionPane.showMessageDialog(null, "The message was too long",
-                                            "Social Media App(tm)", JOptionPane.ERROR_MESSAGE);
+                                            "<html>Social Media App <sup>TM</sup></html>", JOptionPane.ERROR_MESSAGE);
                                     }
                                     messageJList.setListData(getMessages().toArray(new String[0]));
                                 } else {
@@ -598,7 +598,7 @@ public class GUIClient implements Runnable, GUIInterface {
                 sc.close();
                 break;
             } catch (Exception e) {
-                JOptionPane.showMessageDialog(null, "Invalid Login Credentials", "Social Media App(tm)",
+                JOptionPane.showMessageDialog(null, "Invalid Login Credentials", "<html>Social Media App <sup>TM</sup></html>",
                     JOptionPane.ERROR_MESSAGE);
                 continue;
             }
