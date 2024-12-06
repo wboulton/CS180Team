@@ -112,7 +112,7 @@ public class GUIClient implements Runnable, GUIInterface {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
                 sending = sending.replace(" FRIEND", "");
-                String toSend = client.sendMessage(sending, message, null);
+                String toSend = client.sendMessage(sending, message, byteArraytoString(picture));
                 if (toSend.equals("String too long")) {
                     JOptionPane.showMessageDialog(null, "The message was too long", "<html>Social Media App <sup>TM</sup></html>",
                         JOptionPane.ERROR_MESSAGE);

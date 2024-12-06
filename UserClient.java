@@ -111,17 +111,13 @@ public class UserClient implements UserClientInt {
         if (content.length() > MAX_LENGTH) {
             return "String too long";
         }
-        writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
+
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
-            File imageFile = new File(picture);
-            try {
-                byte[] imageData = Files.readAllBytes(imageFile.toPath());
-                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + 
-                    content + "|" + byteArrayToString(imageData));
-            } catch (IOException e) {
-                throw new BadDataException("Picture not found");
-            }
+            writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content + "|" +
+                    picture);
+        } else {
+            writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
         }
         String message = reader.readLine();
         return message;
