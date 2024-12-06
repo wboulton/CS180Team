@@ -101,6 +101,11 @@ public class GUIClient implements Runnable, GUIInterface {
     }
 
     private void sendMessage(String message, String picture) {
+        if (message.contains("|")) {
+            JOptionPane.showMessageDialog(null, "'|' character not allowed", "Social Media App(tm)",
+                        JOptionPane.ERROR_MESSAGE);
+            return;
+        }
         if (message != null && !message.trim().isEmpty()) {
             try {
                 String sending = viewingUser.getText().replace("Currently viewing: ", "");
@@ -388,8 +393,8 @@ public class GUIClient implements Runnable, GUIInterface {
                     //TODO Mukund, add picture to message here
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setDialogTitle("Choose a picture to send");
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif",
-                            "bmp");
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg",
+                        "jpeg", "png", "gif", "bmp");
                     fileChooser.setFileFilter(filter);
                     int result = fileChooser.showOpenDialog(null);
                     if (result == JFileChooser.APPROVE_OPTION) {
@@ -421,7 +426,6 @@ public class GUIClient implements Runnable, GUIInterface {
                     }
                     byte[] viewingProfilePicture;
                     try {
-                        //TODO get viewing user pfp from server
                         viewingProfilePicture = client.getViewingProfilePicture(viewingUsername);
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -430,7 +434,9 @@ public class GUIClient implements Runnable, GUIInterface {
                     
                     if (viewingProfilePicture != null) {
                         ImageIcon icon = new ImageIcon(viewingProfilePicture);
-                        userImage.setIcon(icon);
+                        Image image = icon.getImage();
+                        Image scaledImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                        userImage.setIcon(new ImageIcon(scaledImage));
                         userImage.setText("");
                     } else {
                         userImage.setIcon(null);;
