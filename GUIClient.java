@@ -328,7 +328,7 @@ public class GUIClient implements Runnable, GUIInterface {
         viewingUser = new JTextArea(String.format("Currently viewing %s", viewingUsername));
         viewingUser.setEditable(false); 
         messageJList = new JList<String>();
-        messageJList.setPreferredSize(new Dimension(1600, 800));
+        messageJList.setPreferredSize(new Dimension((int) (1600 * widthMultiplier), 800));
                 //this handles alignment by sender The logged in user appears on the left and the 
                 //user they are viewing appears on the right
 
@@ -406,6 +406,16 @@ public class GUIClient implements Runnable, GUIInterface {
                     if (result == JFileChooser.APPROVE_OPTION) {
                         sendPic = fileChooser.getSelectedFile();
                     }
+                    try{
+                        BufferedImage image = ImageIO.read(sendPic);
+                        ImageIcon icon = new ImageIcon(image);
+                        Image iconImage = icon.getImage();
+                        Image scaledImage = iconImage.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                        addPicToMessage.setIcon(new ImageIcon(scaledImage));
+                    }
+                    catch(Exception eee){
+                        eee.printStackTrace();
+                    }
                 }
             }
         };
@@ -416,6 +426,8 @@ public class GUIClient implements Runnable, GUIInterface {
                 if (index >= 0) {
                     viewingUsername = userList.getModel().getElementAt(index);
                     String fieldString = String.format("Currently viewing: %s", viewingUsername);
+                    sendPic = null; //reset images
+                    addPicToMessage.setIcon(null);
                     try {
                         if (client.isFriend(viewingUsername)) {
                             fieldString += " FRIEND";
@@ -445,7 +457,8 @@ public class GUIClient implements Runnable, GUIInterface {
                         userImage.setIcon(new ImageIcon(scaledImage));
                         userImage.setText("");
                     } else {
-                        userImage.setIcon(null);;
+                        userImage.setIcon(null);
+                        userImage.setText("No profile picture");
                     }
                 }
             }

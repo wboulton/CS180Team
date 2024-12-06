@@ -112,13 +112,13 @@ public class UserClient implements UserClientInt {
             return "String too long";
         }
 
-
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
             writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content + "|" +
                     picture);
         } else {
             writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
         }
+        
         String message = reader.readLine();
         return message;
     }
