@@ -268,6 +268,7 @@ public class GUIClient implements Runnable, GUIInterface {
         bottomPanel.add(editPassword);
         bottomPanel.add(editUsername);
         bottomPanel.add(editProfilePicture);
+        bottomPanel.add(allowAll);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.add(new JScrollPane(usernameArea), BorderLayout.CENTER);
@@ -279,7 +280,7 @@ public class GUIClient implements Runnable, GUIInterface {
         content.add(bottomPanel, BorderLayout.SOUTH);
         content.add(centerPanel, BorderLayout.CENTER);
 
-        frame.setSize(700, 500);
+        frame.setSize(900, 500);
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
