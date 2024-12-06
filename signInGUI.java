@@ -12,10 +12,10 @@ import java.util.Random;
 import java.io.IOException;
 import java.nio.file.Files;
 
-public class signInGUI extends JComponent implements Runnable, signInGUIInterface {
+public class SignInGUI extends JComponent implements Runnable, signInGUIInterface {
 
     static int portNumber;
-    signInGUI signInPage;
+    SignInGUI signInPage;
     JTextField username;
     JTextField password;
     JTextField firstName;
@@ -36,10 +36,10 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
 
     public static void main(String[] Args) {
         portNumber = Integer.parseInt(Args[0]);
-        SwingUtilities.invokeLater(new signInGUI());
+        SwingUtilities.invokeLater(new SignInGUI());
     }
 
-    public signInGUI() {
+    public SignInGUI() {
 
     }
 

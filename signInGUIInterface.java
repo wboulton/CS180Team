@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 public interface signInGUIInterface {
-    signInGUI signInPage = null;
+    SignInGUI signInPage = null;
     JTextField username = null;
     JTextField password = null;
     JTextField firstName = null;
