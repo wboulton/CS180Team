@@ -224,8 +224,8 @@ public class GUIClient implements Runnable, GUIInterface {
                         } while (!success);
                 } else if (e.getSource() == editProfilePicture) {
                     //TODO Mukund, add profile picture changing here
-                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg", "jpeg", "png", "gif",
-                            "bmp");
+                    FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg",
+                        "jpeg", "png", "gif", "bmp", "webp");
                     profilePictureChooser.setFileFilter(filter);
                     int result = profilePictureChooser.showOpenDialog(null);
                     if (result == JFileChooser.APPROVE_OPTION) {
@@ -580,6 +580,7 @@ public class GUIClient implements Runnable, GUIInterface {
     }
 
     public static void main(String[] args) {
+//obsolete main method for testing
         String username;
         String password;
         UserClient client = null;
