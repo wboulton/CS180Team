@@ -172,6 +172,16 @@ These functions handle all of the requests that may be sent to the server while 
 # GUI
 GUI is created and processed in two different files, SignInGUI.java and GUIClient.java. The GUIClient.java file handles the main GUI that a user interacts with to send messages, view users, edit their profile, add friends or block users, and interact with messages. The SignInGUI.java file creates the sign in page and opens the GUIClient if sign in is a success. 
 
+_SignInGUI.java_
+This file creates the GUI for users to interact with to either create a new account or sign in to an existing account. When Started, it asks for a username and password that will be used to try to find an existing account, if the account does not or exist or the server is not available, it will show an error pop-up. If you need to create a new account, you can click the text at the bottom that reads "Don't have an account? Sign Up". After clicking this, the sign-in page will change to prompting for a first name, last name, profile picture, username, and password to sign up. All fields are required and it will give an error pop-up if a field is illegal (username is in use or password does not fit requirements). 
+![alt text](Docs/signin.png)
+![alt text](Docs/newuser.png)
+
+_GUIClient.java_
+This file creates the main gui for interacting with messages and adjusting your profile. The main GUI looks like this: ![alt text](Docs/gui.png) The friend/unfriend and block/unblock buttons adjust the friend/block status of the user that you are currently viewing. To view a user (and the messages between you and that user), double click a user from the user list in the right bar. Friends appear first on the user list to the right, blocked users do not appear at all unless you search their exact username. On the far right of the top bar is the profile picture of the user that you are currently viewing. This picutre is limited to 100x100 pixels. On the bottom bar you are able to write messages in the text field, add pictures, and send messages. To edit a messsage or view the image associated with it, double click on the message. This will give the option to edit or delete messages from other users, however, no changes will be made to their messages as you are only allowed to edit/delete your own messages. In the top left there is an edit profile button, this will show your profile and allow you to change your username, password, or profile picture. 
+
+For details about the implementation of the GUI, see [GUI.md](Docs/GUI.md).
+
 # Exceptions
 This project has one custom exception: BadDataException. In general this exception is used when a user input passed contains an invalid character or does not fufill requriements (i.e. password requirements). This exception is very standard and just calls the constructor of the Exception class with the passed message. 
 
