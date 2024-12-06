@@ -442,7 +442,8 @@ public class GUIClient implements Runnable, GUIInterface {
                         userImage.setIcon(new ImageIcon(scaledImage));
                         userImage.setText("");
                     } else {
-                        userImage.setIcon(null);;
+                        //userImage.setIcon(null);;
+                        userImage = new JLabel("No Profile Picture");
                     }
                 }
             }
