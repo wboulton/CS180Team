@@ -24,7 +24,8 @@ public class UserDatabaseThread extends Thread {
         try {
             switch (action) {
                 case CREATE_USER:
-                    this.userDB.createUser(values[0], values[1], values[2], values[3], values[4]);
+                    byte[] byteArray = values[4].getBytes();
+                    this.userDB.createUser(values[0], values[1], values[2], values[3], byteArray);
                     break;
                 case VERIFY_LOGIN:
                     boolean login = this.userDB.verifyLogin(values[0], values[1]);

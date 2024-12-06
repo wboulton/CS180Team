@@ -9,12 +9,15 @@ $ java MediaServer 8080
 ``` 
 in your terminal. Then run the Client by typing in your terminal:
 ```bash
-$ java UserClient 8080
+$ java SignInGUI 8080
 ```
 Then you should be able to interact with the client based on the terminal prompts. For information about the prompts visit [Client.md](Docs/Client.md). If you cannot use the port 8080, you can change the port just by running them with different arguments. This means you should not need to recompile any of the classes already in the compiled folder.
 
 # Submissions
 William Boulton - Phase 1 submitted on Vocarium on November 3. 
+William Boulton - Phase 2 submitted on Vocarium on November 17.
+William Boulton - Phase 3 submitted to Vocarium workspace on December .
+William Boulton - Report and Presentation submitted on Brightspace on December .
 
 # Interfaces
 Our file contains four interfaces, one for each main file. This means we have an interface for users, the userDatabase, messages, and the messageDatabase. The interfaces pair with the java classes as follows:
@@ -152,17 +155,22 @@ This class has the following fields:
 ```
 and the following methods per the interface:
 ```java
-    void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
+    String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException;
     void deleteMessage(int id) throws BadDataException, IOException;
-    void editMessage(int id, String newContent) throws IOException;
+    String editMessage(int id, String newContent) throws IOException;
     void blockUser(String u) throws IOException;
     boolean unblockUser(String u) throws IOException;
     boolean addFriend(String u) throws IOException;
     boolean removeFriend(String u) throws IOException;
     boolean setUserName(String name) throws IOException;
-    void setPassword(String password);
+    boolean setPassword(String password) throws IOException;
+    void addOrRemoveFriend(String username) throws IOException;
+    void blockOrUnblock(String username) throws IOException;
 ```
 These functions handle all of the requests that may be sent to the server while a client is interacting with the app. This class was entirly tested manually because it is not able to get any information from the database without the use of network io. To learn more about this class, view [Client.md](Docs/Client.md).
+
+# GUI
+GUI is created and processed in two different files, SignInGUI.java and GUIClient.java. The GUIClient.java file handles the main GUI that a user interacts with to send messages, view users, edit their profile, add friends or block users, and interact with messages. The SignInGUI.java file creates the sign in page and opens the GUIClient if sign in is a success. 
 
 # Exceptions
 This project has one custom exception: BadDataException. In general this exception is used when a user input passed contains an invalid character or does not fufill requriements (i.e. password requirements). This exception is very standard and just calls the constructor of the Exception class with the passed message. 

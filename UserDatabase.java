@@ -1,4 +1,7 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileWriter;
 import java.util.ArrayList;
@@ -26,7 +29,7 @@ Add, block, and remove friend features.
 Extra credit opportunity – Add support to upload and display profile pictures.
 */
     private static ArrayList<User> users;
-    private static final String OUTPUT_FILE = "users.txt";
+    private static final String OUTPUT_FILE = "resources/users.txt";
     private static final Object LOCK = new Object();
     public UserDatabase() {
         // This is a constructor
@@ -44,7 +47,38 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         load();
 
     }
-    public User createUser(String username, String password, String firstName, String lastName, String profilePicture)
+
+    public static String byteArrayToString(byte[] picture) {
+        // This method converts a byte array to a string
+        StringBuilder sb = new StringBuilder();
+        for (byte b : picture) {
+            sb.append(b);
+            sb.append(",");
+        }
+        return sb.toString();
+    }
+
+    public static BufferedImage getProfilePicture(String viewingUsername) {
+        // This method gets the profile picture of a user
+        synchronized (LOCK) {
+            User user = getUser(viewingUsername);
+            if (user == null) {
+                return null;
+            }
+            byte[] picture = user.getProfilePicture();
+            if (picture == null) {
+                return null;
+            }
+            try {
+                return ImageIO.read(new ByteArrayInputStream(picture));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+    }
+
+    public User createUser(String username, String password, String firstName, String lastName, byte[] profilePicture)
         throws BadDataException {
         // This method creates a new user
         //if the username is not taken, create a new user
@@ -63,14 +97,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         }
         //if the profile picture is not found, throw exception
         //split the profile pic string by comma, and check if the file exists
-        if (profilePicture != null && !profilePicture.equals("false")) {
-            try {
-                File imageFile = new File(profilePicture);
-                byte[] imageData = Files.readAllBytes(imageFile.toPath());
-            } catch (Exception e) {
-                throw new BadDataException("Profile picture not found");
-            }
-        }
+        
         User user = new User(username, password, firstName, lastName, profilePicture);
         writeDB(user);
         //create a new user
@@ -154,6 +181,7 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         synchronized (LOCK) {
             if (user.getBlockedUsers().contains(blockedUser.getUsername())) {
                 user.unblockUser(blockedUser.getUsername());
+                updateDB();
                 return true;
             }
             return false;
@@ -193,12 +221,14 @@ Extra credit opportunity – Add support to upload and display profile pictures.
         return false;
     }
     //change password
-    public void changePassword(User user, String newPassword) {
+    public boolean changePassword(User user, String newPassword) {
         //if the password is legal, change the password
         synchronized (LOCK) {
             if (legalPassword(newPassword)) {
                 user.changePassword(newPassword);
+                return true;
             }
+            return false;
         }
     }
     //legal password
@@ -247,6 +277,20 @@ Extra credit opportunity – Add support to upload and display profile pictures.
                 users.add(user);
                 updateDB();
             }
+        }
+    }
+    private byte[] stringToByteArray(String string) {
+        String[] stringArray = string.split(",");
+        byte[] byteArray = new byte[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            byteArray[i] = Byte.parseByte(stringArray[i]);
+        }
+        return byteArray;
+    }
+    public static void changePicture(User user, byte[] picture) {
+        synchronized (LOCK) {
+            user.setProfilePicture(picture);
+            updateDB();
         }
     }
 }

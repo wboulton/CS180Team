@@ -1,7 +1,10 @@
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.net.Socket;
+import java.nio.Buffer;
 import java.nio.file.Files;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * Team Project -- UserClient
@@ -14,26 +17,43 @@ import java.util.Scanner;
  */
 public class UserClient implements UserClientInt {
     private User user;
+    private ArrayList<String> userList;
     private BufferedReader reader;
     private PrintWriter writer;
     private Socket socket;
     private ObjectInputStream input;
-    private static int portNumber;
+    private ObjectOutputStream output;
+    private int portNumber;
+    private static final int MAX_LENGTH = 5_000;
 
     // Constructor for existing user
-    public UserClient(String username, String password) throws IOException, BadDataException {
+    public UserClient(int port, String username, String password) throws IOException, BadDataException {
+        portNumber = port;
         connectToServer();
         login(username, password);
+        //here we collect a list of usernames
+        userList = new ArrayList<String>();
+        String line = null;
+        while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
+            userList.add(line);
+        }
     }
 
     // Constructor for new user
-    public UserClient(String username, String password, String firstName, String lastName,
-        String profilePicture) throws IOException, BadDataException {
+    public UserClient(int port, String username, String password, String firstName, String lastName,
+        byte[] profilePicture) throws IOException, BadDataException {
+        portNumber = port;
         connectToServer();
         createNewUser(username, password, firstName, lastName, profilePicture);
+        //here we collect a list of usernames
+        userList = new ArrayList<String>();
+        String line = null;
+        while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
+            userList.add(line);
+        }
     }
 
-    private void kill() {
+    public void kill() {
         writer.println("77288937499272");
         writer.flush();
     }
@@ -43,6 +63,7 @@ public class UserClient implements UserClientInt {
         reader = new BufferedReader(new InputStreamReader(socket.getInputStream()));
         writer = new PrintWriter(socket.getOutputStream(), true); // Auto-flush
         input = new ObjectInputStream(socket.getInputStream());
+        output = new ObjectOutputStream(socket.getOutputStream());
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
@@ -57,8 +78,6 @@ public class UserClient implements UserClientInt {
         System.out.println("Login successful.");
         try {
             this.user = (User) input.readObject();
-            System.out.println(this.user.toString());
-            System.out.println("USER CREATION SUCCESSFUL: " + this.user.toString());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("the object was not a user");
@@ -66,16 +85,14 @@ public class UserClient implements UserClientInt {
     }
 
     private void createNewUser(String username, String password, String firstName, String lastName, 
-        String profilePicture) throws IOException, BadDataException {
+        byte[] profilePicture) throws IOException, BadDataException {
         writer.println("new user");  // Send new user command to the server
         writer.println(username);
         writer.println(password);
         writer.println(firstName);
         writer.println(lastName);
-        System.out.println(profilePicture);
-        writer.println(profilePicture);
+        output.writeObject(profilePicture);
         String response = reader.readLine();
-        System.out.println(response);
         if (response.equals("user created")) {
             try {
                 this.user = (User) input.readObject();
@@ -87,10 +104,13 @@ public class UserClient implements UserClientInt {
         }
 
     }
-
+//messages that are too long are canceled because when they get sent over network bad things happen.
     @Override
-    public void sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
+    public String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
         // Send SEND_MESSAGE command to the server
+        if (content.length() > MAX_LENGTH) {
+            return "String too long";
+        }
         writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
@@ -103,6 +123,12 @@ public class UserClient implements UserClientInt {
                 throw new BadDataException("Picture not found");
             }
         }
+        String message = reader.readLine();
+        return message;
+    }
+
+    public ArrayList<String> getUserList() {
+        return userList;
     }
 
     public void deleteMessage(int id) throws IOException {
@@ -110,9 +136,13 @@ public class UserClient implements UserClientInt {
         writer.println("message|DELETE_MESSAGE|" + user.getUsername() + "|" + id);
     }
 
-    public void editMessage(int id, String newContent) throws IOException {
+    public String editMessage(int id, String newContent) throws IOException {
         // Send EDIT_MESSAGE command
+        if (newContent.length() > MAX_LENGTH) {
+            return "String too long";
+        }
         writer.println("message|" + "EDIT_MESSAGE|" + id + "|" + newContent);
+        return "success";
     }
 
     public void blockUser(String usernameToBlock) throws IOException {
@@ -125,24 +155,81 @@ public class UserClient implements UserClientInt {
         writer.println("user|UNBLOCK|" + user.getUsername() + "|" + usernameToUnblock);
         return reader.readLine().equals("true");
     }
-    public void getConversation(String username) throws IOException {
+
+    public boolean changeAllowAll() throws IOException {
+        writer.println(String.format("user|ALLOW_ALL|%s", user.getUsername()));
+        user.setAllowAll(!user.isAllowAll());
+        return user.isAllowAll();
+    }
+
+    public boolean isAllowAll() throws IOException {
+        return user.isAllowAll();
+    }
+
+    public ArrayList<String> getConversation(String username) throws IOException {
         writer.println("message|SET_VIEWING|" + username);
         writer.println("message|GET_CONVERSATION|" + username);
+        ArrayList<String> messagesList = new ArrayList<String>();
+        messagesList.clear();
         String line;
-        while ((line = reader.readLine()) != null) {
-            System.out.println(line);
+        while ((line = reader.readLine()) != null && !line.equals("|ENDED HERE 857725|")) {
+            if (line.contains("INCOMING|")) {
+                continue;
+            }
+            messagesList.add(line);
         }
+        //This is a really sketchy fix but it works
+        if (messagesList.size() < 1) {
+            messagesList = null;
+        } else if (messagesList.size() == 1) {
+            return messagesList;
+        } else if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > 
+            Integer.parseInt(messagesList.get(1).split("\\|")[0])) {
+            messagesList.remove(0);
+        }
+        return messagesList;
     }
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
         writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
-        return reader.readLine().equals("true");
+        String temp = reader.readLine();
+        return temp.equals("true");
     }
 
     public boolean removeFriend(String friendUsername) throws IOException {
         // Send REMOVE_FRIEND command
         writer.println("user|REMOVE_FRIEND|" + user.getUsername() + "|" + friendUsername);
         return reader.readLine().equals("true");
+    }
+
+    public boolean isFriend(String username) throws IOException{
+        writer.println(String.format("user|GET_FRIEND|%s|%s", user.getUsername(), username));
+        return reader.readLine().equals("true");
+    }
+
+    public void addOrRemoveFriend(String username) throws IOException {
+        boolean something = addFriend(username);
+        if (!something) {
+            removeFriend(username);
+        }
+    }
+
+    public void blockOrUnblock(String username) throws IOException {
+        boolean canUnblock = unblockUser(username);
+        if (!canUnblock) {
+            blockUser(username);
+        }
+    }
+
+    public byte[] getViewingProfilePicture(String username) throws IOException {
+        writer.println(String.format("user|GET_PROFILEPICTURE|%s", username));
+        byte[] picture = null;
+        try {
+            picture = (byte[]) input.readObject();
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return picture;
     }
 
     // Helper method to convert byte array to string format for transmission
@@ -153,11 +240,19 @@ public class UserClient implements UserClientInt {
         }
         return sb.toString();
     }
+    private byte[] stringToByteArray(String string) {
+        String[] stringArray = string.split(",");
+        byte[] byteArray = new byte[stringArray.length];
+        for (int i = 0; i < stringArray.length; i++) {
+            byteArray[i] = Byte.parseByte(stringArray[i]);
+        }
+        return byteArray;
+    }
     public String search(String username) {
         writer.println("user|SEARCH|" + username);
         writer.flush();
         try {
-            return reader.readLine();
+            return reader.readLine().replace("USER|", "");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -171,15 +266,30 @@ public class UserClient implements UserClientInt {
     }
 
     @Override
-    public void setPassword(String password) {
+    public boolean setPassword(String password) throws IOException {
         writer.println("user|CHANGE_PASSWORD|" + user.getUsername() + "|" + password);
         writer.flush();
+        return reader.readLine().equals("true");
+    }
+    public void changeProfilePicture(byte[] picture) throws IOException {
+        writer.println("user|CHANGE_PICTURE|" + user.getUsername());
+        writer.flush();
+        output.writeObject(picture);
+        user.setProfilePicture(picture);
     }
 
+    public BufferedImage getProfilePicture() {
+        try {
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(user.getProfilePicture()));
+            return image;
+        } catch (Exception e) {
+            return null;
+        }
+    }
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
 //for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
-    public static void main(String[] args) {      
-        portNumber = Integer.parseInt(args[0]); 
+    public static void main(String[] args) {
+        int port = Integer.parseInt(args[0]);      
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();
@@ -191,7 +301,7 @@ public class UserClient implements UserClientInt {
             System.out.println("Password: ");
             String password = sc.nextLine();
             try {
-                client = new UserClient(username, password);
+                client = new UserClient(port, username, password);
             } catch (Exception e) {
                 e.printStackTrace();
                 client.kill();
@@ -207,7 +317,7 @@ public class UserClient implements UserClientInt {
             String lastName = sc.nextLine();
             String profilePicture = "false";
             try {
-                client = new UserClient(username, password, firstName, lastName, profilePicture);
+                client = new UserClient(port, username, password, firstName, lastName, null);
                 client.input = new ObjectInputStream(client.socket.getInputStream());
             } catch (Exception e) {
                 e.printStackTrace();
@@ -406,5 +516,15 @@ public class UserClient implements UserClientInt {
                 }
             }
         }
+    }
+
+    public byte[] imageToBytes(BufferedImage image) {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try {
+            ImageIO.write(image, "jpg", baos);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return baos.toByteArray();
     }
 }

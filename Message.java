@@ -22,8 +22,8 @@ public class Message implements MessageInterface {
     private static int pictureLocation;
     private int messageID;
     private String pictureFile;
-    private final String pictureNumbers = "picture.txt";
-    private final String messageIDFile = "MessageIDCounter.txt";
+    private final String pictureNumbers = "resources/picture.txt";
+    private final String messageIDFile = "resources/MessageIDCounter.txt";
     public final static Object LOCK = new Object();
     //the file containing all sent and recieved messages for each user is just username.txt
 //this should parse psv of some format, probably: messageID|sender|reciever|content|containsPicture|pictureFile
@@ -107,7 +107,7 @@ public class Message implements MessageInterface {
             }
             pictureFile = String.format("%d.jpg", pictureLocation);
             try (BufferedWriter bwr = new BufferedWriter(new FileWriter(pictureNumbers))) {
-                bwr.write(pictureLocation);
+                bwr.write(Integer.toString(++pictureLocation));
             } catch (Exception e) {
                 System.out.println("Error writing picture number");
             }

@@ -4,7 +4,7 @@
  * @version November 1, 2024
  */
 public interface UserDBInt {
-    User createUser(String username, String password, String firstName, String lastName, String profilePicture)
+    User createUser(String username, String password, String firstName, String lastName, byte[] profilePicture)
         throws BadDataException;
 
     static void removeFriend(User user, User friend) {

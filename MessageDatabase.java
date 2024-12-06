@@ -23,7 +23,7 @@ public class MessageDatabase extends Thread implements MData {
 //this creates a message database for the specified user, which is a csv file with name "username.txt"
     public MessageDatabase(User user) {
         this.user = user;
-        filePath = String.format("%s.txt", user.getUsername());
+        filePath = String.format("resources/%s.txt", user.getUsername());
         //if a file does not exist for this user, create it
         try {
             File file = new File(filePath);
@@ -97,8 +97,8 @@ public class MessageDatabase extends Thread implements MData {
         //this system allows illegal messages to be created but never sent, that is subject to change. 
         synchronized (LOCK) {
             sentMessages.add(m);
-            String senderFile = String.format("%s.txt", m.getSender());
-            String recieverFile = String.format("%s.txt", m.getReciever());
+            String senderFile = String.format("resources/%s.txt", m.getSender());
+            String recieverFile = String.format("resources/%s.txt", m.getReciever());
             try (PrintWriter out = new PrintWriter(new FileWriter(senderFile, true))) {
                 out.println(m);
             } catch (Exception e) {
@@ -116,8 +116,8 @@ public class MessageDatabase extends Thread implements MData {
     @Override
     public void deleteMessage(Message m) throws BadDataException {
         synchronized (LOCK) {
+            recoverMessages();
             int id = m.getMessageID();
-            System.out.println(id);
             try {
                 if (!sentMessages.remove(m)) {
                     throw new BadDataException("This message did not exist");
@@ -128,8 +128,11 @@ public class MessageDatabase extends Thread implements MData {
             }
             //here I use the arraylist to generate the new list of messages after the delete, this means 
             //the array list must be up to date before deleting.
+            ArrayList<Message> messages = sentMessages;
+            messages.addAll(recievedMessages);
+            messages.sort(Comparator.comparingInt(Message::getMessageID));
             try (BufferedWriter sender = new BufferedWriter(new FileWriter(filePath))) {
-                for (Message message : sentMessages) {
+                for (Message message : messages) {
                     sender.write(message.toString());
                     sender.newLine();
                 }
@@ -137,7 +140,7 @@ public class MessageDatabase extends Thread implements MData {
                 e.printStackTrace();
             }
             String receiver = m.getReciever();
-            String receiveFile = String.format("%s.txt", receiver);
+            String receiveFile = String.format("resources/%s.txt", receiver);
             ArrayList<Message> messagesToWrite = new ArrayList<>();
             try (BufferedReader get = new BufferedReader(new FileReader(receiveFile))) {
                 String line;

@@ -1,4 +1,5 @@
 import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.io.*;
@@ -53,23 +54,17 @@ public class User implements UserInt, Serializable {
         if (!info[6].contains(",")) {
             this.profilePicture = null;
         } else {
-            //parse profile picture
-            String[] profileInfo = info[6].split(",");
-            boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
-            if (containsPicture) {
-                try {
-                    File imageFile = new File(profileInfo[1]);
-                    profilePicture = Files.readAllBytes(imageFile.toPath());
-                } catch (Exception e) {
-                    this.profilePicture = null;
-                }
+            String[] byteValues = info[6].substring(1, info[6].length() - 1).split(",");
+            profilePicture = new byte[byteValues.length];
+            for (int i = 0; i < byteValues.length; i++) {
+                profilePicture[i] = Byte.parseByte(byteValues[i].trim());
             }
         }
         allowAll = Boolean.parseBoolean(info[7]);
 
     }
     // you probably want a constructor which can take in a csv line from the database and make a user based on that
-    public User(String username, String password, String firstName, String lastName, String profile) {
+    public User(String username, String password, String firstName, String lastName, byte[] pfp) {
         //username rules - no commas, doesn't already exist, not empty
         //if userDatabase is null, create a new userDatabase
         this.username = username;
@@ -79,20 +74,10 @@ public class User implements UserInt, Serializable {
         this.friends = new ArrayList<String>();
         this.blockedUsers = new ArrayList<String>();
         //if there is no comma in the profile, there is no profile picture
-        if (!profile.contains(",") || profile.equals("null")) {
+        if (pfp == null || pfp.length < 1) {
             this.profilePicture = null;
         } else {
-            //parse profile picture
-            String[] profileInfo = profile.split(",");
-            boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
-            if (containsPicture) {
-                try {
-                    File imageFile = new File(profileInfo[1]);
-                    profilePicture = Files.readAllBytes(imageFile.toPath());
-                } catch (Exception e) {
-                    this.profilePicture = null;
-                }
-            }
+            this.profilePicture = pfp;
         }
         // allow all is set to true by default
         allowAll = true;
@@ -205,5 +190,15 @@ public class User implements UserInt, Serializable {
     }
     public void setAllowAll(boolean newBoolean) {
         allowAll = newBoolean;
+    }
+    public void setProfilePicture(byte[] newProfilePicture) {
+        profilePicture = newProfilePicture;
+    }
+    public BufferedImage getProfilePictureImage() {
+        try {
+            return ImageIO.read(new ByteArrayInputStream(profilePicture));
+        } catch (Exception e) {
+            return null;
+        }
     }
 }
