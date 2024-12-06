@@ -219,11 +219,11 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    public BufferedImage getViewingProfilePicture(String username) throws IOException {
+    public byte[] getViewingProfilePicture(String username) throws IOException {
         writer.println(String.format("user|GET_PROFILEPICTURE|%s", username));
-        BufferedImage picture = null;
+        byte[] picture = null;
         try {
-            picture = (BufferedImage) input.readObject();
+            picture = (byte[]) input.readObject();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
@@ -270,9 +270,10 @@ public class UserClient implements UserClientInt {
         return reader.readLine().equals("true");
     }
     public void changeProfilePicture(byte[] picture) throws IOException {
-        writer.println("user|CHANGE_PICTURE|" + user.getUsername() + "|");
-        output.writeObject(picture);
+        writer.println("user|CHANGE_PICTURE|" + user.getUsername());
         writer.flush();
+        output.writeObject(picture);
+        user.setProfilePicture(picture);
     }
 
     public BufferedImage getProfilePicture() {

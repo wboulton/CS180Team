@@ -301,8 +301,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     User user6 = UserDatabase.getUser(inputs[1]);
                     //get the byte array from the input stream
                     byte[] picture = (byte[]) ois.readObject();
-                    String pictureString = UserDatabase.byteArrayToString(picture);
-                    UserDatabase.changePicture(user6, pictureString);
+                    UserDatabase.changePicture(user6, picture);
                     break;
                 case ALLOW_ALL:
                     User user7 = UserDatabase.getUser(inputs[1]);
@@ -314,7 +313,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     break;
                 case GET_PROFILEPICTURE:
                     User user8 = UserDatabase.getUser(inputs[1]);
-                    BufferedImage image = user8.getProfilePictureImage();
+                    byte[] image = user8.getProfilePicture();
                     oos.writeObject(image);
                     break;
                 default:
@@ -331,6 +330,7 @@ public class MediaServer extends Thread implements ServerInterface {
     public static void main(String[] args) {
         System.out.println("Server started");
         database = new UserDatabase();
+        
         int port;
         try {
             port = Integer.parseInt(args[0]);

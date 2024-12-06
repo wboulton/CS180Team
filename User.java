@@ -54,16 +54,10 @@ public class User implements UserInt, Serializable {
         if (!info[6].contains(",")) {
             this.profilePicture = null;
         } else {
-            //parse profile picture
-            String[] profileInfo = info[6].split(";");
-            boolean containsPicture = Boolean.parseBoolean(profileInfo[0]);
-            if (containsPicture) {
-                try {
-                    File imageFile = new File(profileInfo[1]);
-                    profilePicture = Files.readAllBytes(imageFile.toPath());
-                } catch (Exception e) {
-                    this.profilePicture = null;
-                }
+            String[] byteValues = info[6].substring(1, info[6].length() - 1).split(",");
+            profilePicture = new byte[byteValues.length];
+            for (int i = 0; i < byteValues.length; i++) {
+                profilePicture[i] = Byte.parseByte(byteValues[i].trim());
             }
         }
         allowAll = Boolean.parseBoolean(info[7]);

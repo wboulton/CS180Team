@@ -419,7 +419,7 @@ public class GUIClient implements Runnable, GUIInterface {
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
-                    BufferedImage viewingProfilePicture;
+                    byte[] viewingProfilePicture;
                     try {
                         //TODO get viewing user pfp from server
                         viewingProfilePicture = client.getViewingProfilePicture(viewingUsername);
@@ -431,6 +431,7 @@ public class GUIClient implements Runnable, GUIInterface {
                     if (viewingProfilePicture != null) {
                         ImageIcon icon = new ImageIcon(viewingProfilePicture);
                         userImage.setIcon(icon);
+                        userImage.setText("");
                     } else {
                         userImage.setIcon(null);;
                     }
