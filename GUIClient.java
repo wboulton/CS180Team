@@ -41,6 +41,7 @@ public class GUIClient implements Runnable, GUIInterface {
     JButton addPicToMessage;
 
     private Timer messageUpdateTimer;
+    private File sendPic;
 
     public GUIClient(ArrayList<String> usernames, UserClient client, String username) {
         this.usernames = usernames;
@@ -100,7 +101,8 @@ public class GUIClient implements Runnable, GUIInterface {
         userList.setListData(displayUsers.toArray(new String[0]));
     }
 
-    private void sendMessage(String message, String picture) {
+    private void sendMessage(String message, byte[] picture) {
+        //TODO Alan, the app seems to be collecting a picture, you just need to handle how it is sent.
         if (message.contains("|")) {
             JOptionPane.showMessageDialog(null, "'|' character not allowed", "Social Media App(tm)",
                         JOptionPane.ERROR_MESSAGE);
@@ -223,7 +225,6 @@ public class GUIClient implements Runnable, GUIInterface {
                             }
                         } while (!success);
                 } else if (e.getSource() == editProfilePicture) {
-                    //TODO Mukund, add profile picture changing here
                     FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg",
                         "jpeg", "png", "gif", "bmp", "webp");
                     profilePictureChooser.setFileFilter(filter);
@@ -302,6 +303,7 @@ public class GUIClient implements Runnable, GUIInterface {
         profilePictureChooser = new JFileChooser();
         profilePictureChooser.setDialogTitle("Choose a profile picture");
         addPicToMessage = new JButton("Add Picture to Message");
+        addPicToMessage.setPreferredSize(new Dimension(100, 100));
         //get the viewing user's profile picture
         userImage = new JLabel("No Profile Picture");
     
@@ -309,7 +311,7 @@ public class GUIClient implements Runnable, GUIInterface {
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
 
         messageField = new JTextPane();
-        messageField.setPreferredSize(new Dimension(1700, 100));
+        messageField.setPreferredSize(new Dimension(1620, 100));
         messageField.setFont(new Font("Arial", Font.PLAIN, 16));
         messageField.setEditable(true); 
         messageField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
@@ -326,6 +328,9 @@ public class GUIClient implements Runnable, GUIInterface {
         messageJList.setPreferredSize(new Dimension(1600, 800));
                 //this handles alignment by sender The logged in user appears on the left and the 
                 //user they are viewing appears on the right
+
+        sendPic = null;
+
         messageJList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -347,7 +352,6 @@ public class GUIClient implements Runnable, GUIInterface {
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                File sendPic = null;
                 if (e.getSource() == friendButton) {
                     String fieldString = viewingUser.getText();
                     try {
@@ -377,20 +381,19 @@ public class GUIClient implements Runnable, GUIInterface {
                     }
                     searchForUser(username);
                 } else if (e.getSource() == sendButton) {
-                    byte[] picBytes = null;
+                    byte[] image = null;
                     if (sendPic != null) {
                         try {
-                            picBytes = Files.readAllBytes(sendPic.toPath());
+                            image = Files.readAllBytes(sendPic.toPath());
                         } catch (Exception error) {
                             error.printStackTrace();
                         }
                     }
                     String message = messageField.getText();
-                    sendMessage(message, byteArraytoString(picBytes));
+                    sendMessage(message, image);
                 } else if (e.getSource() == profileButton) {
                     editProfile();
                 } else if (e.getSource() == addPicToMessage) {
-                    //TODO Mukund, add picture to message here
                     JFileChooser fileChooser = new JFileChooser();
                     fileChooser.setDialogTitle("Choose a picture to send");
                     FileNameExtensionFilter filter = new FileNameExtensionFilter("Image Files", "jpg",
@@ -491,6 +494,7 @@ public class GUIClient implements Runnable, GUIInterface {
         searchButton.addActionListener(actionListener);
         sendButton.addActionListener(actionListener);
         profileButton.addActionListener(actionListener);
+        addPicToMessage.addActionListener(actionListener);
     
         JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
         topPanel.add(profileButton);
@@ -501,7 +505,8 @@ public class GUIClient implements Runnable, GUIInterface {
         
     
         JPanel bottomPanel = new JPanel(new BorderLayout());
-        bottomPanel.add(new JScrollPane(messageField), BorderLayout.CENTER);
+        bottomPanel.add(new JScrollPane(messageField), BorderLayout.WEST);
+        bottomPanel.add(addPicToMessage, BorderLayout.CENTER);
         bottomPanel.add(sendButton, BorderLayout.EAST);
     
         JPanel rightPanel = new JPanel(new BorderLayout());
@@ -516,7 +521,6 @@ public class GUIClient implements Runnable, GUIInterface {
         rightPanel.add(searchPanel, BorderLayout.NORTH);
         rightPanel.add(new JScrollPane(userList), BorderLayout.CENTER);
 
-        //TODO make width resizing work
         JPanel messagePanel = new JPanel(new BorderLayout());
         JScrollPane messageScrollPane = new JScrollPane(messageJList);
         //this will make messages include a scroll bar if it resizes so that messages are not viewable
