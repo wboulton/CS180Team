@@ -14,6 +14,7 @@ import java.nio.file.Files;
 
 public class signInGUI extends JComponent implements Runnable, signInGUIInterface {
 
+    static int portNumber;
     signInGUI signInPage;
     JTextField username;
     JTextField password;
@@ -34,6 +35,7 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
     float heightMultiplier;
 
     public static void main(String[] Args) {
+        portNumber = Integer.parseInt(Args[0]);
         SwingUtilities.invokeLater(new signInGUI());
     }
 
@@ -71,7 +73,7 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
 
             if (e.getSource() == signIn) {
                 try {
-                    client = new UserClient(usernameText, passwordText);
+                    client = new UserClient(portNumber, usernameText, passwordText);
 
                     startMainGUI(usernameText);
                     System.out.println("sign in ok");
@@ -82,7 +84,7 @@ public class signInGUI extends JComponent implements Runnable, signInGUIInterfac
                 }
             } else if (e.getSource() == signUp) {
                 try {
-                    client = new UserClient(usernameText, passwordText, firstNameText, lastNameText, picture);
+                    client = new UserClient(portNumber, usernameText, passwordText, firstNameText, lastNameText, picture);
                     System.out.println("user created ok");
 
                     startMainGUI(usernameText);

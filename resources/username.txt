@@ -61,3 +61,11 @@
 83|JohnDoe4|username|of course|false
 84|JohnDoe4|username|here|false
 85|username|JohnDoe4|that didn't work|false
+86|JohnDoe4|username|is the server still open?|false
+87|username|JohnDoe4|it is now|false
+88|JohnDoe4|username|good 4 u|false
+89|username|JohnDoe4|there's this cool thing where if you message window is miss-sized you can just double click on the user you are trying to view again and it will resize it again for you|false
+90|username|JohnDoe4|There is a minimum size though so you may still need to use the scroll bar|false
+91|JohnDoe4|username|hmm interesting|false
+92|JohnDoe4|username|alr I am leaving now|false
+93|username|JohnDoe4|bye|false

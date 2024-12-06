@@ -23,11 +23,12 @@ public class UserClient implements UserClientInt {
     private Socket socket;
     private ObjectInputStream input;
     private ObjectOutputStream output;
-    private static final int portNumber = 8080;
+    private int portNumber;
     private static final int MAX_LENGTH = 5_000;
 
     // Constructor for existing user
-    public UserClient(String username, String password) throws IOException, BadDataException {
+    public UserClient(int port, String username, String password) throws IOException, BadDataException {
+        portNumber = port;
         connectToServer();
         login(username, password);
         //here we collect a list of usernames
@@ -39,8 +40,9 @@ public class UserClient implements UserClientInt {
     }
 
     // Constructor for new user
-    public UserClient(String username, String password, String firstName, String lastName,
+    public UserClient(int port, String username, String password, String firstName, String lastName,
         byte[] profilePicture) throws IOException, BadDataException {
+        portNumber = port;
         connectToServer();
         createNewUser(username, password, firstName, lastName, profilePicture);
         //here we collect a list of usernames
@@ -286,7 +288,8 @@ public class UserClient implements UserClientInt {
     }
 //this main method is set up for testing, the final app will use a GUI to run all of these functions,
 //for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
-    public static void main(String[] args) {      
+    public static void main(String[] args) {
+        int port = Integer.parseInt(args[0]);      
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();
@@ -298,7 +301,7 @@ public class UserClient implements UserClientInt {
             System.out.println("Password: ");
             String password = sc.nextLine();
             try {
-                client = new UserClient(username, password);
+                client = new UserClient(port, username, password);
             } catch (Exception e) {
                 e.printStackTrace();
                 client.kill();
@@ -314,7 +317,7 @@ public class UserClient implements UserClientInt {
             String lastName = sc.nextLine();
             String profilePicture = "false";
             try {
-                client = new UserClient(username, password, firstName, lastName, null);
+                client = new UserClient(port, username, password, firstName, lastName, null);
                 client.input = new ObjectInputStream(client.socket.getInputStream());
             } catch (Exception e) {
                 e.printStackTrace();

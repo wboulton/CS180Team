@@ -585,6 +585,7 @@ public class GUIClient implements Runnable, GUIInterface {
 
     public static void main(String[] args) {
 //obsolete main method for testing
+        int port = Integer.parseInt(args[0]);
         String username;
         String password;
         UserClient client = null;
@@ -593,7 +594,7 @@ public class GUIClient implements Runnable, GUIInterface {
             username = sc.nextLine();
             password = sc.nextLine();
             try {
-                client = new UserClient(username, password);
+                client = new UserClient(port, username, password);
                 sc.close();
                 break;
             } catch (Exception e) {
