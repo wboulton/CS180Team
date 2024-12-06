@@ -101,27 +101,30 @@ public class GUIClient implements Runnable, GUIInterface {
         userList.setListData(displayUsers.toArray(new String[0]));
     }
 
-    private void sendMessage(String message, byte[] picture) {
+    private void sendMessage(String content, byte[] picture) {
         //TODO Alan, the app seems to be collecting a picture, you just need to handle how it is sent.
-        if (message.contains("|")) {
-            JOptionPane.showMessageDialog(null, "'|' character not allowed", "Social Media App(tm)",
-                        JOptionPane.ERROR_MESSAGE);
-            return;
-        }
-        if (message != null && !message.trim().isEmpty()) {
-            try {
-                String sending = viewingUser.getText().replace("Currently viewing: ", "");
-                sending = sending.replace(" FRIEND", "");
-                String toSend = client.sendMessage(sending, message, null);
-                if (toSend.equals("String too long")) {
-                    JOptionPane.showMessageDialog(null, "The message was too long", "Social Media App(tm)",
-                        JOptionPane.ERROR_MESSAGE);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+        String[] messages = content.split("\n");
+        for (String message : messages) {
+            if (message.contains("|")) {
+                JOptionPane.showMessageDialog(null, "'|' character not allowed", "Social Media App(tm)",
+                            JOptionPane.ERROR_MESSAGE);
+                return;
             }
-            messageField.setText("");
-            messageJList.setListData(getMessages().toArray(new String[0]));
+            if (message != null && !message.trim().isEmpty()) {
+                try {
+                    String sending = viewingUser.getText().replace("Currently viewing: ", "");
+                    sending = sending.replace(" FRIEND", "");
+                    String toSend = client.sendMessage(sending, message, null);
+                    if (toSend.equals("String too long")) {
+                        JOptionPane.showMessageDialog(null, "The message was too long", "Social Media App(tm)",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                messageField.setText("");
+                messageJList.setListData(getMessages().toArray(new String[0]));
+            }
         }
     }
 

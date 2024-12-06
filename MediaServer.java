@@ -147,7 +147,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     userHandling(ois, oos, writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
-                        messageDatabase, currentlyViewing.get()));
+                        messageDatabase, currentlyViewing.get(), ois));
                 }
             }
             //System.out.printf("Client %s disconnected\n", client);
@@ -156,7 +156,7 @@ public class MediaServer extends Thread implements ServerInterface {
         }
     }
 //handle all message related functions sent by the client
-    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing) {
+    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing, ObjectInputStream ois) {
 //GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
         try {
             String temp = line.split("\\|")[0];
