@@ -85,8 +85,8 @@ public class UserClient implements UserClientInt {
 
     private void login(String username, String password) throws IOException, BadDataException {
         writer.println("login");  // Send login command to the server
-        writer.println(username);
-        writer.println(password);
+        RSASend(username);
+        RSASend(password);
 
         String response = reader.readLine();
         if (response.equals("could not log in")) {
@@ -95,8 +95,6 @@ public class UserClient implements UserClientInt {
         System.out.println("Login successful.");
         try {
             this.user = (User) input.readObject();
-            System.out.println(this.user.toString());
-            System.out.println("USER CREATION SUCCESSFUL: " + this.user.toString());
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("the object was not a user");
@@ -106,14 +104,12 @@ public class UserClient implements UserClientInt {
     private void createNewUser(String username, String password, String firstName, String lastName, 
         String profilePicture) throws IOException, BadDataException {
         writer.println("new user");  // Send new user command to the server
-        writer.println(username);
-        writer.println(password);
-        writer.println(firstName);
-        writer.println(lastName);
-        System.out.println(profilePicture);
+        RSASend(username);
+        RSASend(password);
+        RSASend(firstName);
+        RSASend(lastName);
         writer.println(profilePicture);
         String response = reader.readLine();
-        System.out.println(response);
         if (response.equals("user created")) {
             try {
                 this.user = (User) input.readObject();

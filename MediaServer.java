@@ -62,8 +62,8 @@ public class MediaServer extends Thread implements ServerInterface {
             if (line.equals("login")) {
                 while (true) {
                     //login
-                    String username = reader.readLine();
-                    String password = reader.readLine();
+                    String username = RSARead(privateKey, reader);
+                    String password = RSARead(privateKey, reader);
                     boolean allowed = database.verifyLogin(username, password);
                     if (allowed) {
                         user = UserDatabase.getUser(username);
@@ -81,10 +81,10 @@ public class MediaServer extends Thread implements ServerInterface {
                     }
                 }
             } else if (line.equals("new user")) {
-                String username = reader.readLine();
-                String password = reader.readLine();
-                String firstname = reader.readLine();
-                String lastname = reader.readLine();
+                String username = RSARead(privateKey, reader);
+                String password = RSARead(privateKey, reader);
+                String firstname = RSARead(privateKey, reader);
+                String lastname = RSARead(privateKey, reader);
                 String pfp = reader.readLine();
                 try {
                     user = database.createUser(username, password, firstname, lastname, pfp);
