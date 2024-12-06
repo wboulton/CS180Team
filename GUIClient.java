@@ -313,8 +313,11 @@ public class GUIClient implements Runnable, GUIInterface {
         userImage.setHorizontalAlignment(SwingConstants.CENTER);
         userImage.setVerticalAlignment(SwingConstants.CENTER); 
 
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        double widthMultiplier = screenSize.getWidth() / 2048; // built in 1024px
+        
         messageField = new JTextPane();
-        messageField.setPreferredSize(new Dimension(1620, 100));
+        messageField.setPreferredSize(new Dimension((int)(1620 * widthMultiplier), 100));
         messageField.setFont(new Font("Arial", Font.PLAIN, 16));
         messageField.setEditable(true); 
         messageField.setBorder(BorderFactory.createLineBorder(Color.GRAY));
