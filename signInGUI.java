@@ -12,6 +12,15 @@ import java.util.Random;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * Team Project -- SignInGUI
+ *
+ * This file contains the sign in GUI
+ *
+ * @author Alan Yi
+ *
+ * @version December 7, 2024
+ */
 public class SignInGUI extends JComponent implements Runnable, signInGUIInterface {
 
     static int portNumber;
@@ -71,6 +80,7 @@ public class SignInGUI extends JComponent implements Runnable, signInGUIInterfac
             // if (lastNameText.equals("Enter last name..."))
             // lastNameText = "";
 
+            //check which button has been clicked on and perform the following action
             if (e.getSource() == signIn) {
                 try {
                     client = new UserClient(portNumber, usernameText, passwordText);
@@ -117,6 +127,7 @@ public class SignInGUI extends JComponent implements Runnable, signInGUIInterfac
                     System.out.println("File selection cancelled.");
                 }
             } else if (e.getSource() == changeToButton) {
+                // if the current page is on the sign in, change it to sign up
                 if (signInFlag) {
                     signInFlag = false;
                     pane.removeAll();
@@ -161,6 +172,7 @@ public class SignInGUI extends JComponent implements Runnable, signInGUIInterfac
         });
     }
 
+    //refresh the main panel for the sign in gui
     public JPanel createMainPanel() {
         JLabel title = new JLabel();
         if (signInFlag)
