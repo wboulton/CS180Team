@@ -31,7 +31,7 @@ public class UserClient implements UserClientInt {
         portNumber = port;
         connectToServer();
         login(username, password);
-        //here we collect a list of usernames
+        // here we collect a list of usernames
         userList = new ArrayList<String>();
         String line = null;
         while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
@@ -41,11 +41,11 @@ public class UserClient implements UserClientInt {
 
     // Constructor for new user
     public UserClient(int port, String username, String password, String firstName, String lastName,
-        byte[] profilePicture) throws IOException, BadDataException {
+            byte[] profilePicture) throws IOException, BadDataException {
         portNumber = port;
         connectToServer();
         createNewUser(username, password, firstName, lastName, profilePicture);
-        //here we collect a list of usernames
+        // here we collect a list of usernames
         userList = new ArrayList<String>();
         String line = null;
         while (!(line = reader.readLine()).equals("|ENDED HERE 857725|")) {
@@ -67,7 +67,7 @@ public class UserClient implements UserClientInt {
     }
 
     private void login(String username, String password) throws IOException, BadDataException {
-        writer.println("login");  // Send login command to the server
+        writer.println("login"); // Send login command to the server
         writer.println(username);
         writer.println(password);
 
@@ -84,9 +84,9 @@ public class UserClient implements UserClientInt {
         }
     }
 
-    private void createNewUser(String username, String password, String firstName, String lastName, 
-        byte[] profilePicture) throws IOException, BadDataException {
-        writer.println("new user");  // Send new user command to the server
+    private void createNewUser(String username, String password, String firstName, String lastName,
+            byte[] profilePicture) throws IOException, BadDataException {
+        writer.println("new user"); // Send new user command to the server
         writer.println(username);
         writer.println(password);
         writer.println(firstName);
@@ -104,25 +104,23 @@ public class UserClient implements UserClientInt {
         }
 
     }
-//messages that are too long are canceled because when they get sent over network bad things happen.
+
+    // messages that are too long are canceled because when they get sent over
+    // network bad things happen.
     @Override
     public String sendMessage(String receiver, String content, String picture) throws BadDataException, IOException {
         // Send SEND_MESSAGE command to the server
         if (content.length() > MAX_LENGTH) {
             return "String too long";
         }
-        writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
 
         if (picture != null && !picture.isEmpty() && !picture.equals("false")) {
-            File imageFile = new File(picture);
-            try {
-                byte[] imageData = Files.readAllBytes(imageFile.toPath());
-                writer.println("SEND_PICTURE|" + user.getUsername() + "|" + receiver + "|" + 
-                    content + "|" + byteArrayToString(imageData));
-            } catch (IOException e) {
-                throw new BadDataException("Picture not found");
-            }
+            writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content + "|" +
+                    picture);
+        } else {
+            writer.println("message|" + "SEND_MESSAGE|" + user.getUsername() + "|" + receiver + "|" + content);
         }
+
         String message = reader.readLine();
         return message;
     }
@@ -178,17 +176,18 @@ public class UserClient implements UserClientInt {
             }
             messagesList.add(line);
         }
-        //This is a really sketchy fix but it works
+        // This is a really sketchy fix but it works
         if (messagesList.size() < 1) {
             messagesList = null;
         } else if (messagesList.size() == 1) {
             return messagesList;
-        } else if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > 
-            Integer.parseInt(messagesList.get(1).split("\\|")[0])) {
+        } else if (Integer.parseInt(messagesList.get(0).split("\\|")[0]) > Integer
+                .parseInt(messagesList.get(1).split("\\|")[0])) {
             messagesList.remove(0);
         }
         return messagesList;
     }
+
     public boolean addFriend(String friendUsername) throws IOException {
         // Send ADD_FRIEND command
         writer.println("user|ADD_FRIEND|" + user.getUsername() + "|" + friendUsername);
@@ -202,7 +201,7 @@ public class UserClient implements UserClientInt {
         return reader.readLine().equals("true");
     }
 
-    public boolean isFriend(String username) throws IOException{
+    public boolean isFriend(String username) throws IOException {
         writer.println(String.format("user|GET_FRIEND|%s|%s", user.getUsername(), username));
         return reader.readLine().equals("true");
     }
@@ -240,6 +239,7 @@ public class UserClient implements UserClientInt {
         }
         return sb.toString();
     }
+
     private byte[] stringToByteArray(String string) {
         String[] stringArray = string.split(",");
         byte[] byteArray = new byte[stringArray.length];
@@ -248,6 +248,7 @@ public class UserClient implements UserClientInt {
         }
         return byteArray;
     }
+
     public String search(String username) {
         writer.println("user|SEARCH|" + username);
         writer.flush();
@@ -258,6 +259,7 @@ public class UserClient implements UserClientInt {
         }
         return null;
     }
+
     @Override
     public boolean setUserName(String name) throws IOException {
         writer.println("user|CHANGE_USERNAME|" + user.getUsername() + "|" + name);
@@ -271,6 +273,7 @@ public class UserClient implements UserClientInt {
         writer.flush();
         return reader.readLine().equals("true");
     }
+
     public void changeProfilePicture(byte[] picture) throws IOException {
         writer.println("user|CHANGE_PICTURE|" + user.getUsername());
         writer.flush();
@@ -286,10 +289,13 @@ public class UserClient implements UserClientInt {
             return null;
         }
     }
-//this main method is set up for testing, the final app will use a GUI to run all of these functions,
-//for now, this uses terminal inputs from the client side so we can manually test the operation of the server/client
+
+    // this main method is set up for testing, the final app will use a GUI to run
+    // all of these functions,
+    // for now, this uses terminal inputs from the client side so we can manually
+    // test the operation of the server/client
     public static void main(String[] args) {
-        int port = Integer.parseInt(args[0]);      
+        int port = Integer.parseInt(args[0]);
         Scanner sc = new Scanner(System.in);
         System.out.println("new or existing user?");
         String existance = sc.nextLine();
@@ -331,16 +337,17 @@ public class UserClient implements UserClientInt {
             newWriter.flush();
         }));
 
-        //have a user or message option
-        //if user, have a search, add friend, remove friend, block, unblock, change username, change password
-        //if message, have a send, delete, edit
-        //dont make a new client, use the existing client
+        // have a user or message option
+        // if user, have a search, add friend, remove friend, block, unblock, change
+        // username, change password
+        // if message, have a send, delete, edit
+        // dont make a new client, use the existing client
         System.out.println("User or message?");
         String choice = sc.nextLine();
         switch (choice.toLowerCase()) {
             case "user" -> {
                 System.out.println("Search, add friend, remove friend, block, unblock, "
-                    + "change username, change password?");
+                        + "change username, change password?");
                 String userChoice = sc.nextLine();
                 switch (userChoice.toLowerCase()) {
                     case "search" -> {
@@ -365,8 +372,8 @@ public class UserClient implements UserClientInt {
                             if (value) {
                                 System.out.println("Friend added");
                             } else {
-                                System.out.println("Friend not added because they " + 
-                                    "are already a friend or blocked or do not exist");
+                                System.out.println("Friend not added because they " +
+                                        "are already a friend or blocked or do not exist");
                             }
                             client.kill();
                         } catch (Exception e) {
@@ -382,7 +389,7 @@ public class UserClient implements UserClientInt {
                                 System.out.println("Friend removed");
                             } else {
                                 System.out.println("Friend not removed because they are not " +
-                                    "a friend or blocked or do not exist");
+                                        "a friend or blocked or do not exist");
                             }
                             client.kill();
                         } catch (Exception e) {
@@ -393,7 +400,7 @@ public class UserClient implements UserClientInt {
                         System.out.println("Who do you want to block?");
 
                         String block = sc.nextLine();
-                        //check if user exists
+                        // check if user exists
                         String search = client.search(block);
                         if (search.equals("null")) {
                             System.out.println("User not found");

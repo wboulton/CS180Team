@@ -1,2 +1,0 @@
-7|username|thisguy|this guy?|false
-70|username|thisguy|I want to send you a message|false

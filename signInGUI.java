@@ -84,7 +84,8 @@ public class SignInGUI extends JComponent implements Runnable, signInGUIInterfac
                 }
             } else if (e.getSource() == signUp) {
                 try {
-                    client = new UserClient(portNumber, usernameText, passwordText, firstNameText, lastNameText, picture);
+                    client = new UserClient(portNumber, usernameText, passwordText, firstNameText, lastNameText,
+                            picture);
                     System.out.println("user created ok");
 
                     startMainGUI(usernameText);
@@ -110,7 +111,7 @@ public class SignInGUI extends JComponent implements Runnable, signInGUIInterfac
                     } catch (IOException ioException) {
                         ioException.printStackTrace();
                         JOptionPane.showMessageDialog(null, "Error reading file",
-                            "File error", JOptionPane.ERROR_MESSAGE);
+                                "File error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
                     System.out.println("File selection cancelled.");
@@ -304,17 +305,15 @@ public class SignInGUI extends JComponent implements Runnable, signInGUIInterfac
         frame = new JFrame("CS180 Messenger");
         pane = frame.getContentPane();
 
-        
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = (int) (screenSize.getWidth() * 0.8);
         int height = (int) (screenSize.getHeight() * 0.8);
         widthMultiplier = width / 1024; // built in 1024px
         heightMultiplier = height / 576; // built in 576px
-        
+
         JPanel panel = createMainPanel();
 
         pane.add(panel);
-
 
         frame.setSize((int) (300 * widthMultiplier), (int) (330 * heightMultiplier));
 
