@@ -1,2 +1,7 @@
 7|username|thisguy|this guy?|false
 70|username|thisguy|I want to send you a message|false
+106|username|thisguy|hii|false
+109|username|thisguy|hiii|false
+111|username|thisguy|wowww|true|resources/pictures/3.jpg
+112|username|thisguy|nico nico nii|true|resources/pictures/4.jpg
+113|username|thisguy|heres a cool project|true|resources/pictures/5.jpg

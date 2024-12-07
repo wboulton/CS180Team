@@ -74,3 +74,12 @@
 101|username|JohnDoe4|333|false
 102|username|JohnDoe4|yo|false
 103|username|fakeUsername|message her|false
+104|username|person|hello|false
+105|username|person|hasd|false
+106|username|thisguy|hii|false
+107|username|JohnDoe|chaji bala|false
+108|username|fakeUsername|hii|false
+109|username|thisguy|hiii|false
+111|username|thisguy|wowww|true|resources/pictures/3.jpg
+112|username|thisguy|nico nico nii|true|resources/pictures/4.jpg
+113|username|thisguy|heres a cool project|true|resources/pictures/5.jpg

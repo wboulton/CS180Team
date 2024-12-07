@@ -3,6 +3,7 @@ import java.util.concurrent.atomic.*;
 import java.io.*;
 import java.net.*;
 import java.awt.image.BufferedImage;
+
 /**
  * Team Project -- MediaServer
  *
@@ -17,10 +18,14 @@ import java.awt.image.BufferedImage;
 public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
     public static final Object LOCK = new Object();
-//run method used to control each thread that is made. There is some weird stuff going on with 
-//atomic references and atomic integers to make sure these threads work properly with final values
-//and lambda functions. It seems atomic types are effectively final so we can use them in more threaded
-//formats. 
+
+    // run method used to control each thread that is made. There is some weird
+    // stuff going on with
+    // atomic references and atomic integers to make sure these threads work
+    // properly with final values
+    // and lambda functions. It seems atomic types are effectively final so we can
+    // use them in more threaded
+    // formats.
     private static void run(Socket client, ServerSocket server) {
         Timer timer = new Timer();
         User user = null;
@@ -29,14 +34,14 @@ public class MediaServer extends Thread implements ServerInterface {
         AtomicReference<User> currentlyViewing = new AtomicReference<>(null);
         try {
             final BufferedReader reader = new BufferedReader(new InputStreamReader(client.getInputStream()));
-            final PrintWriter writer  = new PrintWriter(client.getOutputStream()); 
+            final PrintWriter writer = new PrintWriter(client.getOutputStream());
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             final ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
-            
+
             String line = reader.readLine();
             if (line.equals("login")) {
                 while (true) {
-                    //login
+                    // login
                     String username = reader.readLine();
                     String password = reader.readLine();
                     boolean allowed = database.verifyLogin(username, password);
@@ -75,8 +80,8 @@ public class MediaServer extends Thread implements ServerInterface {
             } else {
                 return;
             }
-            
-//this will order the list of users to display friends first
+
+            // this will order the list of users to display friends first
             ArrayList<User> users = database.getUsers();
             ArrayList<String> friends = user.getFriends();
             ArrayList<User> toRemove = new ArrayList<>();
@@ -94,7 +99,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 if (toRemove.contains(item)) {
                     continue;
                 }
-                //the user list will not display blocked users
+                // the user list will not display blocked users
                 if (user.getBlockedUsers().contains(item.getUsername())) {
                     continue;
                 }
@@ -106,24 +111,27 @@ public class MediaServer extends Thread implements ServerInterface {
             writer.flush();
 
             System.out.println(client.toString() + " connected.");
-            //update DMs periodically
+            // update DMs periodically
             final int updateDelay = 3000; // 3 seconds
-//this uses the TimerTask object included in the java.util package. Essentially what this does is 
-//it creates a timer on another thread that waits a set amount of time then runs the function after each interval
-//with how we have it set up this timertask will run recover messages then write new messages to the user every
-//three seconds. This allows "real time messaging". 
+            // this uses the TimerTask object included in the java.util package. Essentially
+            // what this does is
+            // it creates a timer on another thread that waits a set amount of time then
+            // runs the function after each interval
+            // with how we have it set up this timertask will run recover messages then
+            // write new messages to the user every
+            // three seconds. This allows "real time messaging".
             TimerTask task = new TimerTask() {
                 public void run() {
-                    //update messages
+                    // update messages
                     messageDatabase.recoverMessages();
                     ArrayList<Message> recievedMessages = messageDatabase.getRecievedMessages();
-                    for (Message message: recievedMessages) {
+                    for (Message message : recievedMessages) {
                         if (message.getMessageID() > recentID.get()) {
-                            if (currentlyViewing.get() != null && 
-                                message.getSender().equals(currentlyViewing.get().getUsername())) {
+                            if (currentlyViewing.get() != null &&
+                                    message.getSender().equals(currentlyViewing.get().getUsername())) {
                                 writer.write("INCOMING|" + message.toString());
                                 writer.println();
-                                writer.flush();   
+                                writer.flush();
                                 recentID.set(message.getMessageID());
                             }
                         }
@@ -135,29 +143,33 @@ public class MediaServer extends Thread implements ServerInterface {
             // this stuff is just in testing state rn
             while (true) {
                 line = reader.readLine();
-                //random numbers for kill message, this should not be vulnerable because all other lines
-                //should have some other function name/code in front when sent by the client
+                // random numbers for kill message, this should not be vulnerable because all
+                // other lines
+                // should have some other function name/code in front when sent by the client
                 if (line.equals("77288937499272")) {
                     System.out.println(client.toString() + " disconnected.");
                     break;
                 }
-                //System.out.printf("Recieved '%s' from %s\n", line, client.toString());
-                //System.out.println(line.split("\\|")[0]);
+                // System.out.printf("Recieved '%s' from %s\n", line, client.toString());
+                // System.out.println(line.split("\\|")[0]);
                 if (line.split("\\|")[0].equals("user")) {
                     userHandling(ois, oos, writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
                     currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
-                        messageDatabase, currentlyViewing.get(), ois));
+                            messageDatabase, currentlyViewing.get(), ois));
                 }
             }
-            //System.out.printf("Client %s disconnected\n", client);
+            // System.out.printf("Client %s disconnected\n", client);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-//handle all message related functions sent by the client
-    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing, ObjectInputStream ois) {
-//GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE, DELETE_MESSAGE, EDIT_MESSAGE
+
+    // handle all message related functions sent by the client
+    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing,
+            ObjectInputStream ois) {
+        // GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE,
+        // DELETE_MESSAGE, EDIT_MESSAGE
         try {
             String temp = line.split("\\|")[0];
             String information = line.replace(temp, "").substring(1);
@@ -171,9 +183,12 @@ public class MediaServer extends Thread implements ServerInterface {
                     }
                     messages.sort(Comparator.comparingInt(Message::getMessageID));
                     for (Message item : messages) {
-                        if (viewing.getUsername().equals(item.getSender()) || 
-                            viewing.getUsername().equals(item.getReciever())) {
-                            writer.write(item.toString());
+                        if (viewing.getUsername().equals(item.getSender()) ||
+                                viewing.getUsername().equals(item.getReciever())) {
+                            String itemInString = item.toString();
+                            if (item.hasPicture())
+                                itemInString += "|" + item.getPicture();
+                            writer.write(itemInString);
                             writer.println();
                             writer.flush();
                         }
@@ -181,21 +196,21 @@ public class MediaServer extends Thread implements ServerInterface {
                     writer.println("|ENDED HERE 857725|");
                     writer.flush();
                     return viewing;
-//public Message(User sender, User reciever, String content)
+                // public Message(User sender, User reciever, String content)
                 case SEND_MESSAGE:
                     String[] messageInfo = information.split("\\|");
                     User sender = UserDatabase.getUser(messageInfo[0]);
                     User reciever = UserDatabase.getUser(messageInfo[1]);
                     Message message = new Message(sender, reciever, messageInfo[2]);
-                    messageDatabase.sendMessage(message);
                     if (messageInfo.length > 3) {
-                        String[] pictureStrings = messageInfo[4].split(",");
+                        String[] pictureStrings = messageInfo[3].split(",");
                         byte[] picture = new byte[pictureStrings.length];
                         for (int i = 0; i < pictureStrings.length; i++) {
                             picture[i] = Byte.parseByte(pictureStrings[i]);
                         }
                         message.addPicture(picture);
                     }
+                    messageDatabase.sendMessage(message);
                     writer.println(message);
                     writer.flush();
                     return viewing;
@@ -212,8 +227,8 @@ public class MediaServer extends Thread implements ServerInterface {
                     ArrayList<Message> sentMessages = messageDatabase.getSentMessages();
                     for (Message item : sentMessages) {
                         if (item.getMessageID() == Integer.parseInt(information.split("\\|")[0])) {
-                            Message editedMessage = new Message(UserDatabase.getUser(item.getSender()), 
-                                UserDatabase.getUser(item.getReciever()), information.split("\\|")[1]);
+                            Message editedMessage = new Message(UserDatabase.getUser(item.getSender()),
+                                    UserDatabase.getUser(item.getReciever()), information.split("\\|")[1]);
                             messageDatabase.editMessage(item, editedMessage);
                         }
                     }
@@ -230,14 +245,14 @@ public class MediaServer extends Thread implements ServerInterface {
         }
     }
 
-//handle all user related functions sent by the client.
+    // handle all user related functions sent by the client.
     public static void userHandling(ObjectInputStream ois, ObjectOutputStream oos, PrintWriter writer, String line) {
         try {
             String[] inputs = line.split("\\|");
             Action action = Action.valueOf(inputs[0]);
 
             switch (action) {
-                case SEARCH: 
+                case SEARCH:
                     User userFound = UserDatabase.getUser(inputs[1]);
                     if (userFound == null) {
                         writer.write("USER|" + null);
@@ -245,7 +260,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         writer.write("USER|" + userFound.getUsername());
                     }
                     writer.println();
-                    writer.flush();   
+                    writer.flush();
                     break;
                 case ADD_FRIEND:
                     User user = UserDatabase.getUser(inputs[1]);
@@ -299,7 +314,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     break;
                 case CHANGE_PICTURE:
                     User user6 = UserDatabase.getUser(inputs[1]);
-                    //get the byte array from the input stream
+                    // get the byte array from the input stream
                     byte[] picture = (byte[]) ois.readObject();
                     UserDatabase.changePicture(user6, picture);
                     break;
@@ -330,7 +345,7 @@ public class MediaServer extends Thread implements ServerInterface {
     public static void main(String[] args) {
         System.out.println("Server started");
         database = new UserDatabase();
-        
+
         int port;
         try {
             port = Integer.parseInt(args[0]);
@@ -341,7 +356,7 @@ public class MediaServer extends Thread implements ServerInterface {
         try {
             ServerSocket server = new ServerSocket(port);
             final ArrayList<Socket> socket = new ArrayList<>();
-            //this shutdown hook will handle when the Server is force closed
+            // this shutdown hook will handle when the Server is force closed
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {
                 try {
                     UserDatabase.updateDB();
@@ -354,13 +369,14 @@ public class MediaServer extends Thread implements ServerInterface {
                     e.printStackTrace();
                 }
             }));
-            //this will run forever
+            // this will run forever
             while (true) {
                 final Socket newSocket = server.accept();
                 if (!socket.contains(newSocket)) {
                     socket.add(newSocket);
-// so this uses lambda functions to create a new thread with the run method dynamically set to the method above named
-// run. This way we can create threads without needing to create another class. 
+                    // so this uses lambda functions to create a new thread with the run method
+                    // dynamically set to the method above named
+                    // run. This way we can create threads without needing to create another class.
                     Thread clientThread = new Thread(() -> run(newSocket, server));
                     clientThread.start();
                 }
