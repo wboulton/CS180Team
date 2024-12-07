@@ -18,3 +18,6 @@
 100|username|JohnDoe4|222|false
 101|username|JohnDoe4|333|false
 102|username|JohnDoe4|yo|false
+115|username|JohnDoe4|do you like my pfp|false
+116|username|JohnDoe4|do you like my new pfp|false
+117|username|JohnDoe4|let me try one more time|true|resources/pictures/6.jpg

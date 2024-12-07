@@ -7,7 +7,7 @@ At this stage in the project (phase 2) this app does not run with an actual GUI.
 ```bash
 $ java MediaServer 8080
 ``` 
-in your terminal. Then run the Client by typing in your terminal:
+in your terminal. Then run the Client by typing in another terminal:
 ```bash
 $ java SignInGUI 8080
 ```
