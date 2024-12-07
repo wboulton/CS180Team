@@ -83,3 +83,6 @@
 111|username|thisguy|wowww|true|resources/pictures/3.jpg
 112|username|thisguy|nico nico nii|true|resources/pictures/4.jpg
 113|username|thisguy|heres a cool project|true|resources/pictures/5.jpg
+115|username|JohnDoe4|do you like my pfp|false
+116|username|JohnDoe4|do you like my new pfp|false
+117|username|JohnDoe4|let me try one more time|true|resources/pictures/6.jpg

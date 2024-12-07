@@ -437,41 +437,46 @@ public class GUIClient implements Runnable, GUIInterface {
                 if (evt.getClickCount() == 2) {
                     int index = userList.locationToIndex(evt.getPoint());
                     if (index >= 0) {
-                        viewingUsername = userList.getModel().getElementAt(index);
-                        String fieldString = String.format("Currently viewing: %s", viewingUsername);
-                        sendPic = null; // reset images
-                        addPicToMessage.setIcon(null);
+                        setClientBusy(true);
                         try {
-                            if (client.isFriend(viewingUsername)) {
-                                fieldString += " FRIEND";
+                            viewingUsername = userList.getModel().getElementAt(index);
+                            String fieldString = String.format("Currently viewing: %s", viewingUsername);
+                            sendPic = null; // reset images
+                            addPicToMessage.setIcon(null);
+                            try {
+                                if (client.isFriend(viewingUsername)) {
+                                    fieldString += " FRIEND";
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
                             }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        viewingUser.setText(fieldString);
-                        try {
-                            messages = client.getConversation(viewingUsername);
-                            messageJList.setListData(getMessages().toArray(new String[0]));
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                        byte[] viewingProfilePicture;
-                        try {
-                            viewingProfilePicture = client.getViewingProfilePicture(viewingUsername);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            viewingProfilePicture = null;
-                        }
+                            viewingUser.setText(fieldString);
+                            try {
+                                messages = client.getConversation(viewingUsername);
+                                messageJList.setListData(getMessages().toArray(new String[0]));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                            byte[] viewingProfilePicture;
+                            try {
+                                viewingProfilePicture = client.getViewingProfilePicture(viewingUsername);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                viewingProfilePicture = null;
+                            }
 
-                        if (viewingProfilePicture != null) {
-                            ImageIcon icon = new ImageIcon(viewingProfilePicture);
-                            Image image = icon.getImage();
-                            Image scaledImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
-                            userImage.setIcon(new ImageIcon(scaledImage));
-                            userImage.setText("");
-                        } else {
-                            userImage.setIcon(null);
-                            userImage.setText("No profile picture");
+                            if (viewingProfilePicture != null) {
+                                ImageIcon icon = new ImageIcon(viewingProfilePicture);
+                                Image image = icon.getImage();
+                                Image scaledImage = image.getScaledInstance(100, 100, Image.SCALE_SMOOTH);
+                                userImage.setIcon(new ImageIcon(scaledImage));
+                                userImage.setText("");
+                            } else {
+                                userImage.setIcon(null);
+                                userImage.setText("No profile picture");
+                            }
+                        } finally {
+                            setClientBusy(false);
                         }
                     }
                 }
@@ -483,6 +488,7 @@ public class GUIClient implements Runnable, GUIInterface {
                 if (evt.getClickCount() == 2) {
                     int index = messageJList.locationToIndex(evt.getPoint());
                     if (index >= 0) {
+                        setClientBusy(true);
                         try {
                             String viewingMessage = client.getConversation(viewingUsername).get(index);
                             JLabel labelToDisplay = new JLabel();
@@ -549,6 +555,8 @@ public class GUIClient implements Runnable, GUIInterface {
                             }
                         } catch (Exception e) {
                             e.printStackTrace();
+                        } finally {
+                            setClientBusy(false);
                         }
                     }
                 }
@@ -630,18 +638,19 @@ public class GUIClient implements Runnable, GUIInterface {
     // it calls directly
     // upon the getConversation method. This also ensures messages are displayed in
     // the same order universally
+    private volatile boolean clientBusy = false;
+
     public void startMessageUpdater() {
-        // for some reason swing also has a timer class but I am using the java.util one
         messageUpdateTimer = new Timer();
         messageUpdateTimer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                // ensure that we are actually viewing someone
-                if (viewingUsername != null && !viewingUsername.isEmpty()) {
+                // Ensure we are actually viewing someone
+                if (viewingUsername != null && !viewingUsername.isEmpty() && !clientBusy) {
                     try {
                         ArrayList<String> updatedMessages = client.getConversation(viewingUsername);
                         if (updatedMessages != null && !updatedMessages.equals(messages)) {
-                            messages = updatedMessages; // update the messages array
+                            messages = updatedMessages; // Update the messages array
                             messageJList.setListData(getMessages().toArray(new String[0]));
                         }
                     } catch (Exception e) {
@@ -652,6 +661,9 @@ public class GUIClient implements Runnable, GUIInterface {
         }, 0, 3000); // Runs every 3 seconds
     }
 
+    public void setClientBusy(boolean busy) {
+        clientBusy = busy;
+    }
     public static void main(String[] args) {
         // obsolete main method for testing
         int port = Integer.parseInt(args[0]);
