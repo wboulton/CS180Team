@@ -3,6 +3,7 @@ import java.util.concurrent.atomic.*;
 import java.io.*;
 import java.net.*;
 import java.awt.image.BufferedImage;
+import crypto.*;
 
 /**
  * Team Project -- MediaServer
@@ -17,7 +18,25 @@ import java.awt.image.BufferedImage;
 
 public class MediaServer extends Thread implements ServerInterface {
     private static UserDatabase database;
+    private static RSAKey privateKey;
     public static final Object LOCK = new Object();
+
+    private static void RSASend(String send, PublicKey publicKey, PrintWriter writer) {
+        String encryptedMessage = publicKey.encryptText(send);
+        writer.println(encryptedMessage);
+        writer.flush();
+    }
+
+    private static String RSARead(RSAKey privateKey, BufferedReader reader) {
+        try {
+            String read = reader.readLine();
+            String decryptedRead = privateKey.decryptCiphertext(read);
+            return decryptedRead;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "failed to read";
+        }
+    }
 
     // run method used to control each thread that is made. There is some weird
     // stuff going on with
@@ -37,13 +56,17 @@ public class MediaServer extends Thread implements ServerInterface {
             final PrintWriter writer = new PrintWriter(client.getOutputStream());
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             final ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
+            String keyString = reader.readLine();
+            PublicKey publicKey = new PublicKey(keyString);
+            writer.println(privateKey.getPublicKey());
+            writer.flush();
 
             String line = reader.readLine();
             if (line.equals("login")) {
                 while (true) {
                     // login
-                    String username = reader.readLine();
-                    String password = reader.readLine();
+                    String username = RSARead(privateKey, reader);
+                    String password = RSARead(privateKey, reader);
                     boolean allowed = database.verifyLogin(username, password);
                     if (allowed) {
                         user = UserDatabase.getUser(username);
@@ -60,10 +83,10 @@ public class MediaServer extends Thread implements ServerInterface {
                     }
                 }
             } else if (line.equals("new user")) {
-                String username = reader.readLine();
-                String password = reader.readLine();
-                String firstname = reader.readLine();
-                String lastname = reader.readLine();
+                String username = RSARead(privateKey, reader);
+                String password = RSARead(privateKey, reader);
+                String firstname = RSARead(privateKey, reader);
+                String lastname = RSARead(privateKey, reader);
                 byte[] pfp = (byte[]) ois.readObject();
                 try {
                     user = database.createUser(username, password, firstname, lastname, pfp);
@@ -120,7 +143,7 @@ public class MediaServer extends Thread implements ServerInterface {
             // with how we have it set up this timertask will run recover messages then
             // write new messages to the user every
             // three seconds. This allows "real time messaging".
-            TimerTask task = new TimerTask() {
+            /* TimerTask task = new TimerTask() {
                 public void run() {
                     // update messages
                     messageDatabase.recoverMessages();
@@ -128,21 +151,19 @@ public class MediaServer extends Thread implements ServerInterface {
                     for (Message message : recievedMessages) {
                         if (message.getMessageID() > recentID.get()) {
                             if (currentlyViewing.get() != null &&
-                                    message.getSender().equals(currentlyViewing.get().getUsername())) {
-                                writer.write("INCOMING|" + message.toString());
-                                writer.println();
-                                writer.flush();
+                                message.getSender().equals(currentlyViewing.get().getUsername())) {
+                                RSASend("INCOMING|" + message.toString(), publicKey, writer);
                                 recentID.set(message.getMessageID());
                             }
                         }
                     }
                 }
-            };
+            }; 
             timer.scheduleAtFixedRate(task, updateDelay, updateDelay);
-
+*/
             // this stuff is just in testing state rn
             while (true) {
-                line = reader.readLine();
+                line = RSARead(privateKey, reader);
                 // random numbers for kill message, this should not be vulnerable because all
                 // other lines
                 // should have some other function name/code in front when sent by the client
@@ -155,7 +176,7 @@ public class MediaServer extends Thread implements ServerInterface {
                 if (line.split("\\|")[0].equals("user")) {
                     userHandling(ois, oos, writer, line.substring(line.indexOf("|") + 1));
                 } else if (line.split("\\|")[0].equals("message")) {
-                    currentlyViewing.set(messageHandling(writer, line.substring(line.indexOf("|") + 1),
+                    currentlyViewing.set(messageHandling(publicKey, writer, line.substring(line.indexOf("|") + 1),
                             messageDatabase, currentlyViewing.get(), ois));
                 }
             }
@@ -166,7 +187,7 @@ public class MediaServer extends Thread implements ServerInterface {
     }
 
     // handle all message related functions sent by the client
-    public static User messageHandling(PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing,
+    public static User messageHandling(PublicKey publicKey, PrintWriter writer, String line, MessageDatabase messageDatabase, User viewing,
             ObjectInputStream ois) {
         // GET_SENT_MESSAGES, GET_RECIEVED_MESSAGES, RECOVER_MESSAGES, SEND_MESSAGE,
         // DELETE_MESSAGE, EDIT_MESSAGE
@@ -181,20 +202,19 @@ public class MediaServer extends Thread implements ServerInterface {
                     for (Message message : messageDatabase.getRecievedMessages()) {
                         messages.add(message);
                     }
-                    messages.sort(Comparator.comparingInt(Message::getMessageID));
-                    for (Message item : messages) {
+                    ArrayList<Message> sortedMessages = new ArrayList<>(messages);
+                    sortedMessages.sort(Comparator.comparingInt(Message::getMessageID));
+                    for (Message item : sortedMessages) {
                         if (viewing.getUsername().equals(item.getSender()) ||
-                                viewing.getUsername().equals(item.getReciever())) {
+                            viewing.getUsername().equals(item.getReciever())) {
                             String itemInString = item.toString();
-                            if (item.hasPicture())
+                            if (item.hasPicture()) {
                                 itemInString += "|" + item.getPicture();
-                            writer.write(itemInString);
-                            writer.println();
-                            writer.flush();
+                            }
+                            RSASend(itemInString, publicKey, writer);
                         }
                     }
-                    writer.println("|ENDED HERE 857725|");
-                    writer.flush();
+                    RSASend("|ENDED HERE 857725|", publicKey, writer);
                     return viewing;
                 // public Message(User sender, User reciever, String content)
                 case SEND_MESSAGE:
@@ -211,8 +231,7 @@ public class MediaServer extends Thread implements ServerInterface {
                         message.addPicture(picture);
                     }
                     messageDatabase.sendMessage(message);
-                    writer.println(message);
-                    writer.flush();
+                    RSASend(message.toString(), publicKey, writer);
                     return viewing;
                 case DELETE_MESSAGE:
                     ArrayList<Message> sent = messageDatabase.getSentMessages();
@@ -345,6 +364,7 @@ public class MediaServer extends Thread implements ServerInterface {
     public static void main(String[] args) {
         System.out.println("Server started");
         database = new UserDatabase();
+        privateKey = new RSAKey();
 
         int port;
         try {
