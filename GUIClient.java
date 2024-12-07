@@ -17,6 +17,17 @@ import java.net.*;
 import java.util.Timer;
 import java.util.concurrent.atomic.*;
 
+/**
+ * Team Project -- GUIClient
+ *
+ * This runs the main gui for user interactions. It uses a client object to communicate with teh server.
+ *
+ * @author William Boulton, Alan Yi
+ *
+ * @version November 1, 2024
+ *
+ */
+
 public class GUIClient implements Runnable, GUIInterface {
     ArrayList<String> usernames;
     ArrayList<String> displayUsers;
@@ -42,7 +53,7 @@ public class GUIClient implements Runnable, GUIInterface {
 
     private Timer messageUpdateTimer;
     private File sendPic;
-
+    //construct the GUIClient object
     public GUIClient(ArrayList<String> usernames, UserClient client, String username) {
         this.usernames = usernames;
         viewingUsername = "";
@@ -107,7 +118,6 @@ public class GUIClient implements Runnable, GUIInterface {
     }
 
     private void sendMessage(String message, byte[] picture) {
-        // TODO Alan, the app seems to be collecting a picture, you just need to handle
         // how it is sent.
         if (message.contains("|")) {
             JOptionPane.showMessageDialog(null, "'|' character not allowed",
@@ -133,6 +143,8 @@ public class GUIClient implements Runnable, GUIInterface {
         }
     }
 
+    //used to allow "placehodler" text where the text field will say something on the inside but then
+    //disappear when you start to write in it. 
     private void placeHolder(JTextField textField, String placeholderText) {
         textField.setText(placeholderText);
         textField.setForeground(Color.GRAY);
@@ -154,6 +166,7 @@ public class GUIClient implements Runnable, GUIInterface {
         });
     }
 
+//gui pane to edit your profile, runs on the same thread as the main gui
     private void editProfile() {
         // edit your profile using the Jbutton
         JFrame frame = new JFrame("<html>Social Media App <sup>TM</sup></html>");
@@ -187,6 +200,7 @@ public class GUIClient implements Runnable, GUIInterface {
         } else {
             profilePicture = new JLabel("No Profile Picture");
         }
+        //all of the buttons for profile changes
         ActionListener listener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -344,7 +358,7 @@ public class GUIClient implements Runnable, GUIInterface {
         // user they are viewing appears on the right
 
         sendPic = null;
-
+//showing messages
         messageJList.setCellRenderer(new DefaultListCellRenderer() {
             @Override
             public Component getListCellRendererComponent(JList<?> list, Object value, int index,
@@ -363,7 +377,7 @@ public class GUIClient implements Runnable, GUIInterface {
         });
 
         placeHolder(searchField, "username");
-
+//all the buttons on the main pane
         ActionListener actionListener = new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -432,6 +446,7 @@ public class GUIClient implements Runnable, GUIInterface {
                 }
             }
         };
+        //selecting users
         userList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
@@ -477,7 +492,7 @@ public class GUIClient implements Runnable, GUIInterface {
                 }
             }
         });
-
+//selecting messages
         messageJList.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
