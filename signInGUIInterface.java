@@ -6,6 +6,15 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+/**
+ * Team Project -- UserClient
+ *
+ * This file contains the interface for the sign in GUI
+ *
+ * @author Alan Yi
+ *
+ * @version December 7, 2024
+ */
 public interface signInGUIInterface {
     SignInGUI signInPage = null;
     JTextField username = null;

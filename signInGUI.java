@@ -12,6 +12,15 @@ import java.util.Random;
 import java.io.IOException;
 import java.nio.file.Files;
 
+/**
+ * Team Project -- UserClient
+ *
+ * This file contains the sign in GUI
+ *
+ * @author Alan Yi
+ *
+ * @version December 7, 2024
+ */
 public class SignInGUI extends JComponent implements Runnable, signInGUIInterface {
 
     static int portNumber;
