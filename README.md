@@ -11,7 +11,9 @@ in your terminal. Then run the Client by typing in another terminal:
 ```bash
 $ java SignInGUI 8080
 ```
-Then you should be able to interact with the client based on the terminal prompts. For information about the prompts visit [Client.md](Docs/Client.md). If you cannot use the port 8080, you can change the port just by running them with different arguments. This means you should not need to recompile any of the classes already in the compiled folder.
+Then you should be able to interact with the client based on the terminal prompts. For information about the prompts visit [Client.md](Docs/Client.md). If you cannot use the port 8080, you can change the port just by running them with different arguments. This means you should not need to recompile any of the classes already in the compiled folder. 
+
+Our project also has a version where communication between the server and the client are encrypted using RSA encryption, however this makes the app run significantly slower, so I included both the encrypted and decrypted version. If you want to run the version that includeds the RSA encryption, run the same commands from the [cryptoCompiled folder](cryptoCompiled/).
 
 # Submissions
 William Boulton - Phase 1 submitted on Vocarium on November 3. 
