@@ -7,7 +7,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * Team Project -- UserClient
+ * Team Project -- SignInGUIInterface
  *
  * This file contains the interface for the sign in GUI
  *

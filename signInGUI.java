@@ -13,7 +13,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 
 /**
- * Team Project -- UserClient
+ * Team Project -- SignInGUI
  *
  * This file contains the sign in GUI
  *
