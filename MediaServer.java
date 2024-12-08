@@ -38,6 +38,10 @@ public class MediaServer extends Thread implements ServerInterface {
             final ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
             final ObjectInputStream ois = new ObjectInputStream(client.getInputStream());
 
+            // oos.reset(); 
+            // resets the outputstream if you cant run multiple clients
+            // but the user creation may act funky
+            
             String line = reader.readLine();
             if (line.equals("login")) {
                 while (true) {
@@ -361,7 +365,9 @@ public class MediaServer extends Thread implements ServerInterface {
                 try {
                     UserDatabase.updateDB();
                     for (Socket s : socket) {
-                        s.close();
+                        if (!s.isClosed()) {
+                            s.close();
+                        }
                     }
                     server.close();
                     System.out.println("Server shut down");
@@ -381,6 +387,7 @@ public class MediaServer extends Thread implements ServerInterface {
                     clientThread.start();
                 }
             }
+
         } catch (Exception e) {
             e.printStackTrace();
             return;
