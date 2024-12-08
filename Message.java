@@ -110,6 +110,10 @@ public class Message implements MessageInterface {
         return this.content;
     }
 
+    public void setContent(String content) {
+        this.content = content;
+    }
+
     @Override
     public void editMessage(String newContent) {
         synchronized (LOCK) {
