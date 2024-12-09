@@ -18,8 +18,8 @@ Our project also has a version where communication between the server and the cl
 # Submissions
 William Boulton - Phase 1 submitted on Vocarium on November 3. 
 William Boulton - Phase 2 submitted on Vocarium on November 17.
-William Boulton - Phase 3 submitted to Vocarium workspace on December .
-William Boulton - Report and Presentation submitted on Brightspace on December .
+William Boulton - Phase 3 submitted to Vocarium workspace on December 8.
+William Boulton - Report and Presentation submitted on Brightspace on December 8.
 
 # Interfaces
 Our file contains four interfaces, one for each main file. This means we have an interface for users, the userDatabase, messages, and the messageDatabase. The interfaces pair with the java classes as follows:
