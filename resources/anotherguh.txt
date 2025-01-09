@@ -1,0 +1,46 @@
+12|username|anotherguh|sending message|false
+13|username|anotherguh|new message|false
+14|username|anotherguh|sending message here again for testing purposes|false
+15|username|anotherguh|temporary message|false
+16|username|anotherguh|oiasihashjds|false
+17|username|anotherguh|jdjfjfjf|false
+18|username|anotherguh|one more time|false
+19|anotherguh|username|one from anotherguh|false
+20|anotherguh|username|another message here|false
+21|anotherguh|username|message to send|false
+22|anotherguh|username|how do i get the incoming message|false
+23|anotherguh|username|can I try again sir|false
+24|anotherguh|username|message here|false
+25|anotherguh|username|message again because testing sucks|false
+26|anotherguh|username|one more here|false
+27|anotherguh|username|is this going to scroll out|false
+28|anotherguh|username|ok it only happens the first time for some reason|false
+29|anotherguh|username|sending a message to you!|false
+30|anotherguh|username|why does this go away after this|false
+31|anotherguh|username|testing testing|false
+32|anotherguh|username|testing testing testing|false
+33|anotherguh|username|message time|false
+34|anotherguh|username|print debugging is the best|false
+35|anotherguh|username|this should work|false
+36|anotherguh|username|Nailed it!|false
+37|username|anotherguh|I have a message for you|false
+38|anotherguh|username|send it?|false
+39|username|anotherguh|ok the issue is that when I send a message to you it recieves the message but does not update the gui with the new message, Alan can you fix this?|false
+40|anotherguh|username|it doesnt|false
+41|anotherguh|username|what if I do it this way? \n\n something else|false
+42|username|anotherguh|no that is just a literal lol|false
+43|anotherguh|username|ok this should be able to fix it|false
+44|username|anotherguh|will this fix it|false
+45|username|anotherguh|will this work now|false
+46|username|anotherguh|I am going to try to send you a message|false
+47|anotherguh|username|it works just fine without the timertask It seems|false
+48|anotherguh|username|what if I send a message now|false
+49|username|anotherguh|why does it seem to be working here|false
+50|anotherguh|username|I am going to try to write you a message|false
+51|anotherguh|username|I will write another message|false
+52|username|anotherguh|oh it seems to work fine without the lambda thread but this one is|false
+74|username|anotherguh|nerd|false
+77|username|anotherguh|encrypted message|false
+79|username|anotherguh|here is another encrypted message|false
+6|username|anotherguh|edit test|false
+81|anotherguh|username|so this RSA encryption makes it pretty slow, but it is cool so I will probably keep it as an option for fun|false
