@@ -1,5 +1,7 @@
 # Welcome to the our social media app (tentatively named "SocialMediaApp")
 
+This was our final project for Problem Solving And Object-Oriented Programming (CS 18000) at Purdue University. Contributers to this project were 
+
 This readme gives a brief introduction to all of the classes and functions of our app so far. For more detailed documentation visit the Docs folder: [Documentation](Docs/). 
 
 # How to run
