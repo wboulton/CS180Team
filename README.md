@@ -1,8 +1,6 @@
 # Welcome to the our social media app (tentatively named "SocialMediaApp")
 
-This was our final project for Problem Solving And Object-Oriented Programming (CS 18000) at Purdue University. Contributers to this project were 
-
-This readme gives a brief introduction to all of the classes and functions of our app so far. For more detailed documentation visit the Docs folder: [Documentation](Docs/). 
+This was our final project for Problem Solving And Object-Oriented Programming (CS 18000) at Purdue University. Contributers to this project were [William Boulton](https://github.com/wboulton), [Mukund Veer Venkatesh](https://github.com/Mukund676), [Alan Yi](https://github.com/ailunyi), [Jai Menon](https://github.com/menonj15), and [KushKodiya](https://github.com/KushKodiya). This project is a complete social media application that allows for direct messaging between users. It was completed over the course of approximately a month and a half. There are detailed specifications and a final project report in the [Documentation folder](Docs/).
 
 # How to run
 At this stage in the project (phase 2) this app does not run with an actual GUI. This means that messageing does not look very good, but it does function with real time messaging as when one client sends a message to another client (that is currently logged in) it will appear in the termainl running the receiving client. These messages do not appear on the sender side at the current moment because of how we handle the terminal, this will be easily fixed when a GUI is implemented. To run the project as intended, navigate to the [compiled/ folder](compiled/) and run the server first by typing
